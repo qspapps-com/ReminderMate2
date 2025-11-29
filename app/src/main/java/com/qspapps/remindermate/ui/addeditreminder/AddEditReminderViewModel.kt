@@ -16,6 +16,7 @@ import javax.inject.Inject
 
 data class AddEditReminderUiState(
     val title: String = "",
+    val description: String = "",
     val startDateTime: LocalDateTime = LocalDateTime.now(),
     val recurrence: RecurrenceRule? = null,
     val isNewReminder: Boolean = true,
@@ -50,6 +51,7 @@ class AddEditReminderViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         title = reminder.title,
+                        description = reminder.description ?: "",
                         startDateTime = reminder.startDateTime,
                         recurrence = reminder.recurrence,
                         isNewReminder = false,
@@ -62,6 +64,10 @@ class AddEditReminderViewModel @Inject constructor(
 
     fun updateTitle(title: String) {
         _uiState.update { it.copy(title = title) }
+    }
+
+    fun updateDescription(description: String) {
+        _uiState.update { it.copy(description = description) }
     }
 
     fun updateStartDateTime(startDateTime: LocalDateTime) {
@@ -78,6 +84,7 @@ class AddEditReminderViewModel @Inject constructor(
             val reminder = Reminder(
                 id = reminderId ?: 0,
                 title = uiState.title,
+                description = uiState.description.takeIf { it.isNotBlank() },
                 startDateTime = uiState.startDateTime,
                 recurrence = uiState.recurrence
             )
