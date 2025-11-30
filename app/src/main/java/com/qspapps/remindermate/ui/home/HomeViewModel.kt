@@ -15,12 +15,14 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 data class HomeUiState(
     val selectedDate: LocalDate = LocalDate.now(),
     val reminders: List<ReminderInstance> = emptyList(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val showCompleted: Boolean = false
 )
 
 @HiltViewModel
@@ -43,7 +45,12 @@ class HomeViewModel @Inject constructor(
             val actionsFlow = reminderRepository.getAllActions()
 
             remindersFlow.combine(actionsFlow) { reminders, actions ->
-                reminderScheduler.getRemindersForDay(date, reminders, actions)
+                val instances = reminderScheduler.getRemindersForDay(date, reminders, actions)
+                if (_uiState.value.showCompleted) {
+                    instances
+                } else {
+                    instances.filter { !it.isCompleted }
+                }
             }.collect { remindersForDay ->
                 _uiState.update {
                     it.copy(
@@ -53,6 +60,11 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun toggleShowCompleted() {
+        _uiState.update { it.copy(showCompleted = !it.showCompleted) }
+        loadRemindersForDay(_uiState.value.selectedDate)
     }
 
     fun completeReminder(reminderInstance: ReminderInstance) {
@@ -66,15 +78,21 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun snoozeReminder(reminderInstance: ReminderInstance) {
+    fun snoozeReminder(reminderInstance: ReminderInstance, newTime: LocalDateTime) {
         viewModelScope.launch {
             val action = ReminderAction(
                 reminderId = reminderInstance.reminderId,
                 originalScheduledTime = reminderInstance.originalTime,
                 type = ActionType.SNOOZED,
-                resheduledTime = reminderInstance.displayTime.plusMinutes(10)
+                resheduledTime = newTime
             )
             reminderRepository.insertAction(action)
+        }
+    }
+
+    fun deleteReminder(reminderId: Long) {
+        viewModelScope.launch {
+            reminderRepository.deleteReminderById(reminderId)
         }
     }
 }

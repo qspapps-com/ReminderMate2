@@ -4,6 +4,7 @@ import android.content.Context
 import com.qspapps.remindermate.data.local.ReminderActionDao
 import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.local.ReminderDatabase
+import com.qspapps.remindermate.data.model.ReminderScheduler
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import dagger.Module
 import dagger.Provides
@@ -36,5 +37,11 @@ object AppModule {
     @Singleton
     fun provideReminderRepository(reminderDao: ReminderDao, reminderActionDao: ReminderActionDao): ReminderRepository {
         return ReminderRepository(reminderDao, reminderActionDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideReminderScheduler(): ReminderScheduler {
+        return ReminderScheduler()
     }
 }
