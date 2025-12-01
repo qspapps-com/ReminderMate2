@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.qspapps.remindermate.data.model.RecurrenceRule
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.utils.DateTimeUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +18,7 @@ import javax.inject.Inject
 data class AddEditReminderUiState(
     val title: String = "",
     val description: String = "",
-    val startDateTime: LocalDateTime = LocalDateTime.now(),
+    val startDateTime: LocalDateTime = DateTimeUtils.minsFromNow(5),
     val recurrence: RecurrenceRule? = null,
     val isNewReminder: Boolean = true,
     val isLoading: Boolean = false

@@ -1,6 +1,7 @@
 package com.qspapps.remindermate.ui.home
 
 import android.app.DatePickerDialog
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -72,7 +74,29 @@ fun HomeScreen(
             }
         }
     ) {
-        Box(modifier = Modifier.padding(it)) {
+        var swipeAmount = 0f
+        Box(
+            modifier = Modifier
+                .padding(it)
+                .fillMaxSize()
+                .pointerInput(uiState.selectedDate) {
+                    detectHorizontalDragGestures(
+                        onDragStart = { swipeAmount = 0f },
+                        onHorizontalDrag = { change, dragAmount ->
+                            change.consume()
+                            swipeAmount += dragAmount
+                        },
+                        onDragEnd = {
+                            val threshold = 100
+                            if (swipeAmount < -threshold) {
+                                viewModel.loadRemindersForDay(uiState.selectedDate.plusDays(1))
+                            } else if (swipeAmount > threshold) {
+                                viewModel.loadRemindersForDay(uiState.selectedDate.minusDays(1))
+                            }
+                        }
+                    )
+                }
+        ) {
             if (uiState.isLoading) {
                 CircularProgressIndicator()
             } else {

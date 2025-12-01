@@ -2,8 +2,6 @@ package com.qspapps.remindermate.ui.core
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Checkbox
@@ -27,12 +25,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.ui.home.HomeViewModel
+import com.qspapps.remindermate.utils.DateTimeUtils
 import com.qspapps.remindermate.utils.DateTimeUtils.formatTime
 import com.qspapps.remindermate.utils.DateTimeUtils.isDue
 import java.time.Instant
@@ -140,21 +137,21 @@ fun ReminderItem(reminderInstance: ReminderInstance, viewModel: HomeViewModel, n
                         onDismissRequest = { showMenu = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Snooze 15 mins") },
+                            text = { Text("Snooze +15 mins") },
                             onClick = {
                                 viewModel.snoozeReminder(
                                     reminderInstance,
-                                    reminderInstance.displayTime.plusMinutes(15)
+                                    DateTimeUtils.minsFromNow(15)
                                 )
                                 showMenu = false
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Snooze 1 day") },
+                            text = { Text("Snooze +1 day") },
                             onClick = {
                                 viewModel.snoozeReminder(
                                     reminderInstance,
-                                    reminderInstance.displayTime.plusDays(1)
+                                    DateTimeUtils.minsFromNow(24*60)
                                 )
                                 showMenu = false
                             }

@@ -2,6 +2,7 @@ package com.qspapps.remindermate.utils
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 object DateTimeUtils {
@@ -14,7 +15,7 @@ object DateTimeUtils {
         return localDateTime.isBefore(LocalDateTime.now())
     }
 
-    fun minutesFromNow(minutes: Long): LocalDateTime {
-        return LocalDateTime.now().plusMinutes(minutes)
+    fun minsFromNow(minutes: Long): LocalDateTime {
+        return LocalDateTime.now().plusMinutes(minutes).truncatedTo(ChronoUnit.MINUTES)
     }
 }
