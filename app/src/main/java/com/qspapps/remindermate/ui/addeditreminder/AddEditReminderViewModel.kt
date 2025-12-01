@@ -7,6 +7,7 @@ import com.qspapps.remindermate.data.model.RecurrenceRule
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.utils.DateTimeUtils
+import com.qspapps.remindermate.utils.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +28,7 @@ data class AddEditReminderUiState(
 @HiltViewModel
 class AddEditReminderViewModel @Inject constructor(
     private val reminderRepository: ReminderRepository,
+    private val alarmScheduler: ReminderAlarmScheduler,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -90,9 +92,11 @@ class AddEditReminderViewModel @Inject constructor(
                 recurrence = uiState.recurrence
             )
             if (uiState.isNewReminder) {
-                reminderRepository.insert(reminder)
+                val newId = reminderRepository.insert(reminder)
+                alarmScheduler.schedule(reminder.copy(id = newId))
             } else {
                 reminderRepository.update(reminder)
+                alarmScheduler.schedule(reminder)
             }
         }
     }

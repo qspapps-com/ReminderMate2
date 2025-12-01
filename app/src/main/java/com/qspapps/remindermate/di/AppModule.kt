@@ -4,8 +4,9 @@ import android.content.Context
 import com.qspapps.remindermate.data.local.ReminderActionDao
 import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.local.ReminderDatabase
-import com.qspapps.remindermate.data.model.ReminderScheduler
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.utils.NotificationService
+import com.qspapps.remindermate.utils.ReminderAlarmScheduler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,7 +42,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideReminderScheduler(): ReminderScheduler {
-        return ReminderScheduler()
+    fun provideReminderAlarmScheduler(@ApplicationContext context: Context, reminderActionDao: ReminderActionDao): ReminderAlarmScheduler {
+        return ReminderAlarmScheduler(context, reminderActionDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationService(@ApplicationContext context: Context): NotificationService {
+        return NotificationService(context)
     }
 }

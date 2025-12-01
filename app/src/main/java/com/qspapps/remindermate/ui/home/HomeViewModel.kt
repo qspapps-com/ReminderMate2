@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.ReminderAction
 import com.qspapps.remindermate.data.model.ReminderInstance
-import com.qspapps.remindermate.data.model.ReminderScheduler
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,8 +26,7 @@ data class HomeUiState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val reminderRepository: ReminderRepository,
-    private val reminderScheduler: ReminderScheduler
+    private val reminderRepository: ReminderRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -45,7 +43,7 @@ class HomeViewModel @Inject constructor(
             val actionsFlow = reminderRepository.getAllActions()
 
             remindersFlow.combine(actionsFlow) { reminders, actions ->
-                val instances = reminderScheduler.getRemindersForDay(date, reminders, actions)
+                val instances = ReminderInstance.getRemindersForDay(date, reminders, actions)
                 if (_uiState.value.showCompleted) {
                     instances
                 } else {
