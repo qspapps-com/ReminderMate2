@@ -169,7 +169,7 @@ fun AddEditReminderScreen(
                             onDayClick = { day ->
                                 val currentDays = recurrence.daysOfWeek ?: emptySet()
                                 val newDays = if (day in currentDays) currentDays - day else currentDays + day
-                                val finalDays = if (newDays.isEmpty()) setOf(uiState.startDateTime.dayOfWeek) else newDays
+                                val finalDays = newDays.ifEmpty { setOf(uiState.startDateTime.dayOfWeek) }
                                 viewModel.updateRecurrence(recurrence.copy(daysOfWeek = finalDays))
                             }
                         )
@@ -264,7 +264,7 @@ private fun DayOfWeekSelector(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
     ) {
-        for (day in DayOfWeek.values()) {
+        for (day in DayOfWeek.entries) {
             DayOfWeekButton(
                 day = day,
                 isSelected = day in selectedDays,
