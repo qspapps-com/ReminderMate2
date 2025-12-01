@@ -47,7 +47,7 @@ fun ReminderItem(reminderInstance: ReminderInstance, viewModel: HomeViewModel, n
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(Instant.now().toEpochMilli())
-    val timePickerState = rememberTimePickerState(now.hour, now.minute + 30)
+    val timePickerState = rememberTimePickerState(now.hour, (now.minute + 30)%60)
 
     if (showDatePicker) {
         DatePickerDialog(

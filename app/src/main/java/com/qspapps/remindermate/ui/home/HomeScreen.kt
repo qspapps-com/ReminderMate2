@@ -8,9 +8,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -27,7 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.qspapps.remindermate.ui.core.ReminderItem
 import java.time.LocalDate
@@ -56,7 +56,7 @@ fun HomeScreen(
                 actions = {
                     IconButton(onClick = { viewModel.toggleShowCompleted() }) {
                         Icon(
-                            imageVector = if (uiState.showCompleted) Icons.Filled.Done else Icons.Outlined.Done,
+                            imageVector = if (uiState.showCompleted) Icons.Filled.Check else Icons.Filled.CheckCircle,
                             contentDescription = if (uiState.showCompleted) "Hide Completed" else "Show Completed"
                         )
                     }
