@@ -31,4 +31,8 @@ class ReminderRepository(private val reminderDao: ReminderDao, private val remin
     suspend fun insertAction(reminderAction: ReminderAction) {
         reminderActionDao.insert(reminderAction)
     }
+
+    suspend fun deleteAction(reminderAction: ReminderAction) {
+        reminderActionDao.delete(reminderAction)
+    }
 }

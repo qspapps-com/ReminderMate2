@@ -67,14 +67,23 @@ class HomeViewModel @Inject constructor(
         loadRemindersForDay(_uiState.value.selectedDate)
     }
 
-    fun completeReminder(reminderInstance: ReminderInstance) {
+    fun toggleCompleted(reminderInstance: ReminderInstance) {
         viewModelScope.launch {
-            val action = ReminderAction(
-                reminderId = reminderInstance.reminderId,
-                originalScheduledTime = reminderInstance.originalTime,
-                type = ActionType.COMPLETED
-            )
-            reminderRepository.insertAction(action)
+            if (reminderInstance.isCompleted) {
+                val action = ReminderAction(
+                    reminderId = reminderInstance.reminderId,
+                    originalScheduledTime = reminderInstance.originalTime,
+                    type = ActionType.COMPLETED
+                )
+                reminderRepository.deleteAction(action)
+            } else {
+                val action = ReminderAction(
+                    reminderId = reminderInstance.reminderId,
+                    originalScheduledTime = reminderInstance.originalTime,
+                    type = ActionType.COMPLETED
+                )
+                reminderRepository.insertAction(action)
+            }
         }
     }
 

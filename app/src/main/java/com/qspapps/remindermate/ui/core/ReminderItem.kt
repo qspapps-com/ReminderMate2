@@ -119,7 +119,7 @@ fun ReminderItem(reminderInstance: ReminderInstance, viewModel: HomeViewModel, n
         leadingContent = {
             Checkbox(
                 checked = reminderInstance.isCompleted,
-                onCheckedChange = { viewModel.completeReminder(reminderInstance) }
+                onCheckedChange = { viewModel.toggleCompleted(reminderInstance) }
             )
         },
         headlineContent = { Text(reminderInstance.title, style = textStyle) },
