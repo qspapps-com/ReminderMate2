@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ReminderMateGemini"
+rootProject.name = "ReminderMate2"
 include(":app")
