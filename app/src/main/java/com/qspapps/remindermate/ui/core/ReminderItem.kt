@@ -151,11 +151,11 @@ fun ReminderItem(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Snooze +1 day") },
+                            text = { Text("Snooze 1 day") },
                             onClick = {
                                 onSnooze(
                                     reminderInstance,
-                                    DateTimeUtils.minsFromNow(24*60)
+                                    reminderInstance.displayTime.plusDays(1)
                                 )
                                 showMenu = false
                             }

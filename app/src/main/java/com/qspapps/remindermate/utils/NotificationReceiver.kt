@@ -72,7 +72,7 @@ class NotificationReceiver : BroadcastReceiver() {
                                 reminderId = reminderId,
                                 originalScheduledTime = originalTime,
                                 type = ActionType.SNOOZED,
-                                resheduledTime = snoozedTime
+                                rescheduledTime = snoozedTime
                             )
                             reminderActionDao.insert(action)
                             notificationManager.cancel(reminder.id.toInt())

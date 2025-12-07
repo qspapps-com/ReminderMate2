@@ -50,6 +50,20 @@ import java.time.format.TextStyle
 import java.util.Calendar
 import java.util.Locale
 
+private sealed class RepeatOption(val displayName: String) {
+    data object None : RepeatOption("None")
+    data object Minute : RepeatOption("Minute")
+    data object Hourly : RepeatOption("Hourly")
+    data object Daily : RepeatOption("Daily")
+    data object Weekdays : RepeatOption("Weekdays")
+    data object Weekends : RepeatOption("Weekends")
+    data object Weekly : RepeatOption("Weekly")
+    data object Monthly : RepeatOption("Monthly")
+    data object Yearly : RepeatOption("Yearly")
+
+    fun toRecurrenceRule(startDateTime: java.time.LocalDateTime): RecurrenceRule? = null
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditReminderScreen(
@@ -140,31 +154,30 @@ fun AddEditReminderScreen(
                         expanded = isFrequencyDropdownExpanded,
                         onDismissRequest = { isFrequencyDropdownExpanded = false }
                     ) {
-                        val options = listOf("None", "Minute", "Hourly", "Daily", "Weekdays", "Weekends", "Weekly", "Monthly", "Yearly")
+                        val options = listOf(RepeatOption.None, RepeatOption.Minute, RepeatOption.Hourly, RepeatOption.Daily, RepeatOption.Weekdays, RepeatOption.Weekends, RepeatOption.Weekly, RepeatOption.Monthly, RepeatOption.Yearly)
                         options.forEach { option ->
                             DropdownMenuItem(
-                                text = { Text(option) },
+                                text = { Text(option.displayName) },
                                 onClick = {
-                                    val newRule = when (option) {
-                                        "None" -> null
-                                        "Minute" -> RecurrenceRule(frequency = Frequency.MINUTE)
-                                        "Hourly" -> RecurrenceRule(frequency = Frequency.HOURLY)
-                                        "Daily" -> RecurrenceRule(frequency = Frequency.DAILY)
-                                        "Weekdays" -> RecurrenceRule(
+                                    val newRule: RecurrenceRule? = when (option) {
+                                        RepeatOption.None -> null
+                                        RepeatOption.Minute -> RecurrenceRule(frequency = Frequency.MINUTE)
+                                        RepeatOption.Hourly -> RecurrenceRule(frequency = Frequency.HOURLY)
+                                        RepeatOption.Daily -> RecurrenceRule(frequency = Frequency.DAILY)
+                                        RepeatOption.Weekdays -> RecurrenceRule(
                                             frequency = Frequency.WEEKLY,
                                             daysOfWeek = setOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY)
                                         )
-                                        "Weekends" -> RecurrenceRule(
+                                        RepeatOption.Weekends -> RecurrenceRule(
                                             frequency = Frequency.WEEKLY,
                                             daysOfWeek = setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
                                         )
-                                        "Weekly" -> RecurrenceRule(
+                                        RepeatOption.Weekly -> RecurrenceRule(
                                             frequency = Frequency.WEEKLY,
                                             daysOfWeek = setOf(uiState.startDateTime.dayOfWeek)
                                         )
-                                        "Monthly" -> RecurrenceRule(frequency = Frequency.MONTHLY)
-                                        "Yearly" -> RecurrenceRule(frequency = Frequency.YEARLY)
-                                        else -> uiState.recurrence
+                                        RepeatOption.Monthly -> RecurrenceRule(frequency = Frequency.MONTHLY)
+                                        RepeatOption.Yearly -> RecurrenceRule(frequency = Frequency.YEARLY)
                                     }
                                     viewModel.updateRecurrence(newRule)
                                     isFrequencyDropdownExpanded = false

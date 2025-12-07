@@ -24,5 +24,5 @@ data class ReminderAction(
     val originalScheduledTime: LocalDateTime,
     val type: ActionType,
     @Serializable(with = LocalDateTimeSerializer::class)
-    val resheduledTime: LocalDateTime? = null
+    val rescheduledTime: LocalDateTime? = null
 )

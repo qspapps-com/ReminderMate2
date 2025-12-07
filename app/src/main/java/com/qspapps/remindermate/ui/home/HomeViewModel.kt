@@ -98,7 +98,7 @@ class HomeViewModel @Inject constructor(
                 reminderId = reminderInstance.reminderId,
                 originalScheduledTime = reminderInstance.originalTime,
                 type = ActionType.SNOOZED,
-                resheduledTime = newTime
+                rescheduledTime = newTime
             )
             reminderRepository.insertAction(action)
             // Schedule the snoozed instance

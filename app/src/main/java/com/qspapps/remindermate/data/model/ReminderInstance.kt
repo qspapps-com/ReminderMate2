@@ -37,7 +37,7 @@ data class ReminderInstance(
                                 instances.add(ReminderInstance(reminder.id, reminder.title, reminder.description, origTime, origTime, isCompleted = true, isSnoozed = false))
                             }
                             ActionType.SNOOZED -> {
-                                val newTime = action.resheduledTime!!
+                                val newTime = action.rescheduledTime!!
                                 if (newTime.toLocalDate() == day) {
                                     instances.add(ReminderInstance(reminder.id, reminder.title, reminder.description, newTime, origTime, isCompleted = false, isSnoozed = true))
                                 }
@@ -50,12 +50,12 @@ data class ReminderInstance(
 
                 val incomingSnoozes = reminderActions.filter {
                     it.type == ActionType.SNOOZED &&
-                            it.resheduledTime?.toLocalDate() == day &&
+                            it.rescheduledTime?.toLocalDate() == day &&
                             it.originalScheduledTime.toLocalDate() != day
                 }
 
                 for (snooze in incomingSnoozes) {
-                    instances.add(ReminderInstance(reminder.id, reminder.title, reminder.description, snooze.resheduledTime!!, snooze.originalScheduledTime, isCompleted = false, isSnoozed = true))
+                    instances.add(ReminderInstance(reminder.id, reminder.title, reminder.description, snooze.rescheduledTime!!, snooze.originalScheduledTime, isCompleted = false, isSnoozed = true))
                 }
             }
 
@@ -76,7 +76,7 @@ data class ReminderInstance(
                 }
 
                 val snoozedAction = actions.firstOrNull { it.originalScheduledTime == originalTime && it.type == ActionType.SNOOZED }
-                val displayTime = snoozedAction?.resheduledTime ?: originalTime
+                val displayTime = snoozedAction?.rescheduledTime ?: originalTime
 
                 if (displayTime.isAfter(searchFrom)) {
                     return ReminderInstance(
@@ -98,7 +98,7 @@ data class ReminderInstance(
                     if (completedTimes.contains(originalTime)) continue
 
                     val snoozeAction = actions.find { it.originalScheduledTime == originalTime && it.type == ActionType.SNOOZED }
-                    val displayTime = snoozeAction?.resheduledTime ?: originalTime
+                    val displayTime = snoozeAction?.rescheduledTime ?: originalTime
 
                     if (displayTime.isAfter(daySearchFrom)) {
                         return ReminderInstance(

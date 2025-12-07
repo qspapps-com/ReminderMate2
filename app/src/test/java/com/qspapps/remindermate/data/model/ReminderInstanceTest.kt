@@ -371,7 +371,7 @@ class ReminderInstanceTest {
             reminderId = reminderId,
             type = type,
             originalScheduledTime = originalTime,
-            resheduledTime = rescheduledTime,
+            rescheduledTime = rescheduledTime,
         )
     }
 
