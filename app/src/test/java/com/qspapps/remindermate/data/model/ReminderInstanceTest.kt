@@ -358,4 +358,345 @@ class ReminderInstanceTest {
         result = ReminderInstance.calculateOccurrencesForDay(reminder, LocalDate.of(2024, 6, 17))
         assertEquals(0, result.size)
     }
+
+    // --- Tests for getNextOccurrence ---
+
+    private fun createAction(
+        reminderId: Long,
+        type: ActionType,
+        originalTime: LocalDateTime,
+        rescheduledTime: LocalDateTime? = null
+    ): ReminderAction {
+        return ReminderAction(
+            reminderId = reminderId,
+            type = type,
+            originalScheduledTime = originalTime,
+            resheduledTime = rescheduledTime,
+        )
+    }
+
+    @Test
+    fun getNextOccurrence_noRecurrence_noActions_returnsInstance() {
+        val start = LocalDateTime.of(2024, 7, 1, 10, 0)
+        val reminder = Reminder(1, "Test", null, start, null)
+
+        val next = ReminderInstance.getNextOccurrence(reminder, emptyList())
+
+        assertEquals(
+            ReminderInstance(1, "Test", null, start, start, isCompleted = false, isSnoozed = false),
+            next
+        )
+    }
+
+    @Test
+    fun getNextOccurrence_noRecurrence_afterTime_returnsNull() {
+        val start = LocalDateTime.of(2024, 7, 1, 10, 0)
+        val reminder = Reminder(1, "Test", null, start, null)
+
+        val next = ReminderInstance.getNextOccurrence(reminder, emptyList(), after = start.plusMinutes(1))
+
+        assertEquals(null, next)
+    }
+
+    @Test
+    fun getNextOccurrence_noRecurrence_completed_returnsNull() {
+        val start = LocalDateTime.of(2024, 7, 1, 10, 0)
+        val reminder = Reminder(1, "Test", null, start, null)
+        val actions = listOf(createAction(1, ActionType.COMPLETED, start))
+
+        val next = ReminderInstance.getNextOccurrence(reminder, actions)
+
+        assertEquals(null, next)
+    }
+
+    @Test
+    fun getNextOccurrence_noRecurrence_snoozed_returnsSnoozedInstance() {
+        val start = LocalDateTime.of(2024, 7, 1, 10, 0)
+        val snoozedTime = start.plusHours(1)
+        val reminder = Reminder(1, "Test", null, start, null)
+        val actions = listOf(createAction(1, ActionType.SNOOZED, start, snoozedTime))
+
+        val next = ReminderInstance.getNextOccurrence(reminder, actions)
+
+        assertEquals(
+            ReminderInstance(1, "Test", null, snoozedTime, start, isCompleted = false, isSnoozed = true),
+            next
+        )
+    }
+
+    @Test
+    fun getNextOccurrence_noRecurrence_snoozed_afterSnoozedTime_returnsNull() {
+        val start = LocalDateTime.of(2024, 7, 1, 10, 0)
+        val snoozedTime = start.plusHours(1)
+        val reminder = Reminder(1, "Test", null, start, null)
+        val actions = listOf(createAction(1, ActionType.SNOOZED, start, snoozedTime))
+
+        val next = ReminderInstance.getNextOccurrence(reminder, actions, after = snoozedTime.plusSeconds(1))
+
+        assertEquals(null, next)
+    }
+
+
+    @Test
+    fun getNextOccurrence_dailyRecurrence_noActions_returnsFirst() {
+        val start = LocalDateTime.of(2024, 7, 1, 10, 0)
+        val rule = RecurrenceRule(Frequency.DAILY)
+        val reminder = Reminder(1, "Test", null, start, rule)
+
+        val next = ReminderInstance.getNextOccurrence(reminder, emptyList())
+
+        assertEquals(
+            ReminderInstance(1, "Test", null, start, start, isCompleted = false, isSnoozed = false),
+            next
+        )
+    }
+
+    @Test
+    fun getNextOccurrence_dailyRecurrence_afterFirst_returnsSecond() {
+        val start = LocalDateTime.of(2024, 7, 1, 10, 0)
+        val rule = RecurrenceRule(Frequency.DAILY)
+        val reminder = Reminder(1, "Test", null, start, rule)
+
+        val next = ReminderInstance.getNextOccurrence(reminder, emptyList(), after = start.plusSeconds(1))
+
+        val expectedTime = start.plusDays(1)
+        assertEquals(
+            ReminderInstance(1, "Test", null, expectedTime, expectedTime, isCompleted = false, isSnoozed = false),
+            next
+        )
+    }
+
+    @Test
+    fun getNextOccurrence_dailyRecurrence_firstCompleted_returnsSecond() {
+        val start = LocalDateTime.of(2024, 7, 1, 10, 0)
+        val rule = RecurrenceRule(Frequency.DAILY)
+        val reminder = Reminder(1, "Test", null, start, rule)
+        val actions = listOf(createAction(1, ActionType.COMPLETED, start))
+
+        val next = ReminderInstance.getNextOccurrence(reminder, actions)
+
+        val expectedTime = start.plusDays(1)
+        assertEquals(
+            ReminderInstance(1, "Test", null, expectedTime, expectedTime, isCompleted = false, isSnoozed = false),
+            next
+        )
+    }
+
+    @Test
+    fun getNextOccurrence_dailyRecurrence_firstSnoozed_returnsSnoozed() {
+        val start = LocalDateTime.of(2024, 7, 1, 10, 0)
+        val snoozedTime = start.plusMinutes(30)
+        val rule = RecurrenceRule(Frequency.DAILY)
+        val reminder = Reminder(1, "Test", null, start, rule)
+        val actions = listOf(createAction(1, ActionType.SNOOZED, start, snoozedTime))
+
+        // Search from the beginning
+        val next = ReminderInstance.getNextOccurrence(reminder, actions)
+
+        assertEquals(
+            ReminderInstance(1, "Test", null, snoozedTime, start, isCompleted = false, isSnoozed = true),
+            next
+        )
+    }
+
+    @Test
+    fun getNextOccurrence_dailyRecurrence_firstSnoozed_afterSnooze_returnsNextDay() {
+        val start = LocalDateTime.of(2024, 7, 1, 10, 0)
+        val snoozedTime = start.plusMinutes(30)
+        val rule = RecurrenceRule(Frequency.DAILY)
+        val reminder = Reminder(1, "Test", null, start, rule)
+        val actions = listOf(createAction(1, ActionType.SNOOZED, start, snoozedTime))
+
+        // Search after the snoozed time
+        val next = ReminderInstance.getNextOccurrence(reminder, actions, after = snoozedTime.plusSeconds(1))
+
+        val expectedTime = start.plusDays(1)
+        assertEquals(
+            ReminderInstance(1, "Test", null, expectedTime, expectedTime, isCompleted = false, isSnoozed = false),
+            next
+        )
+    }
+
+    @Test
+    fun getNextOccurrence_dailyRecurrence_countLimitReached_returnsNull() {
+        val start = LocalDateTime.of(2024, 7, 1, 10, 0)
+        val rule = RecurrenceRule(Frequency.DAILY, count = 2)
+        val reminder = Reminder(1, "Test", null, start, rule)
+        val actions = listOf(
+            createAction(1, ActionType.COMPLETED, start),
+            createAction(1, ActionType.COMPLETED, start.plusDays(1))
+        )
+
+        val next = ReminderInstance.getNextOccurrence(reminder, actions)
+
+        assertEquals(null, next)
+    }
+
+    @Test
+    fun getNextOccurrence_weeklyRecurrence_findsNextCorrectDay() {
+        // Starts on a Wednesday
+        val start = LocalDateTime.of(2024, 7, 3, 10, 0)
+        // Recurrs on Monday, Friday
+        val rule = RecurrenceRule(Frequency.WEEKLY, daysOfWeek = setOf(DayOfWeek.MONDAY, DayOfWeek.FRIDAY))
+        val reminder = Reminder(1, "Test", null, start, rule)
+
+        // Find first occurrence after start
+        val next = ReminderInstance.getNextOccurrence(reminder, emptyList(), after = start)
+
+        // Expect it to be Friday, July 5th
+        val expectedTime = LocalDateTime.of(2024, 7, 5, 10, 0)
+        assertEquals(
+            ReminderInstance(1, "Test", null, expectedTime, expectedTime, isCompleted = false, isSnoozed = false),
+            next
+        )
+    }
+
+    // --- Tests for getRemindersForDay ---
+
+    @Test
+    fun getRemindersForDay_noReminders_returnsEmptyList() {
+        val day = LocalDate.of(2024, 7, 10)
+        val instances = ReminderInstance.getRemindersForDay(day, emptyList(), emptyList())
+        assertEquals(0, instances.size)
+    }
+
+    @Test
+    fun getRemindersForDay_oneTimeReminder_onDay_noActions() {
+        val day = LocalDate.of(2024, 7, 10)
+        val reminderTime = day.atTime(9, 0)
+        val reminder = Reminder(1, "One-time", null, reminderTime, null)
+
+        val instances = ReminderInstance.getRemindersForDay(day, listOf(reminder), emptyList())
+
+        assertEquals(1, instances.size)
+        assertEquals(
+            ReminderInstance(1, "One-time", null, reminderTime, reminderTime, isCompleted = false, isSnoozed = false),
+            instances.first()
+        )
+    }
+
+    @Test
+    fun getRemindersForDay_oneTimeReminder_completed() {
+        val day = LocalDate.of(2024, 7, 10)
+        val reminderTime = day.atTime(9, 0)
+        val reminder = Reminder(1, "One-time", null, reminderTime, null)
+        val actions = listOf(createAction(1, ActionType.COMPLETED, reminderTime))
+
+        val instances = ReminderInstance.getRemindersForDay(day, listOf(reminder), actions)
+
+        assertEquals(1, instances.size)
+        assertEquals(
+            ReminderInstance(1, "One-time", null, reminderTime, reminderTime, isCompleted = true, isSnoozed = false),
+            instances.first()
+        )
+    }
+
+    @Test
+    fun getRemindersForDay_oneTimeReminder_snoozed_onSameDay() {
+        val day = LocalDate.of(2024, 7, 10)
+        val originalTime = day.atTime(9, 0)
+        val snoozedTime = day.atTime(11, 0)
+        val reminder = Reminder(1, "One-time", null, originalTime, null)
+        val actions = listOf(createAction(1, ActionType.SNOOZED, originalTime, snoozedTime))
+
+        val instances = ReminderInstance.getRemindersForDay(day, listOf(reminder), actions)
+
+        assertEquals(1, instances.size)
+        assertEquals(
+            ReminderInstance(1, "One-time", null, snoozedTime, originalTime, isCompleted = false, isSnoozed = true),
+            instances.first()
+        )
+    }
+
+    @Test
+    fun getRemindersForDay_oneTimeReminder_snoozed_toDifferentDay() {
+        val day = LocalDate.of(2024, 7, 10)
+        val originalTime = day.atTime(9, 0)
+        val snoozedTime = day.plusDays(1).atTime(9, 0)
+        val reminder = Reminder(1, "One-time", null, originalTime, null)
+        val actions = listOf(createAction(1, ActionType.SNOOZED, originalTime, snoozedTime))
+
+        // Should not appear today, as it's snoozed to tomorrow
+        val instances = ReminderInstance.getRemindersForDay(day, listOf(reminder), actions)
+        assertEquals(0, instances.size)
+    }
+
+    @Test
+    fun getRemindersForDay_snoozedFromPreviousDay() {
+        val today = LocalDate.of(2024, 7, 10)
+        val yesterday = today.minusDays(1)
+        val originalTime = yesterday.atTime(20, 0)
+        val snoozedTime = today.atTime(8, 30)
+
+        val reminder = Reminder(1, "Snoozed In", null, originalTime, null)
+        val actions = listOf(createAction(1, ActionType.SNOOZED, originalTime, snoozedTime))
+
+        val instances = ReminderInstance.getRemindersForDay(today, listOf(reminder), actions)
+
+        assertEquals(1, instances.size)
+        assertEquals(
+            ReminderInstance(1, "Snoozed In", null, snoozedTime, originalTime, isCompleted = false, isSnoozed = true),
+            instances.first()
+        )
+    }
+
+    @Test
+    fun getRemindersForDay_dailyRecurrence_withMixedActions() {
+        val day = LocalDate.of(2024, 7, 10)
+        val start = LocalDateTime.of(2024, 7, 8, 14, 0)
+        val rule = RecurrenceRule(Frequency.DAILY)
+        val reminder = Reminder(1, "Daily", null, start, rule)
+
+        val occurrenceToday = day.atTime(14, 0)
+        val occurrenceTomorrow = day.plusDays(1).atTime(14, 0)
+
+        val actions = listOf(
+            createAction(1, ActionType.COMPLETED, start), // Day 1: Completed
+            createAction(1, ActionType.SNOOZED, start.plusDays(1), occurrenceTomorrow.plusHours(1)) // Day 2: Snoozed to tomorrow at 15:00
+        )
+
+        // For 'today' (July 10th), we expect to see the original occurrence at 14:00
+        val instances = ReminderInstance.getRemindersForDay(day, listOf(reminder), actions)
+
+        assertEquals(1, instances.size)
+        assertEquals(
+            ReminderInstance(1, "Daily", null, occurrenceToday, occurrenceToday, isCompleted = false, isSnoozed = false),
+            instances.first()
+        )
+    }
+
+    @Test
+    fun getRemindersForDay_sortsCorrectly() {
+        val day = LocalDate.of(2024, 7, 10)
+
+        // Reminder 1: Occurs at 10:00
+        val reminder1 = Reminder(1, "First", null, day.atTime(10, 0), null)
+
+        // Reminder 2: Occurs at 08:00, but snoozed to 11:00
+        val reminder2Time = day.atTime(8, 0)
+        val reminder2Snoozed = day.atTime(11, 0)
+        val reminder2 = Reminder(2, "Second Snoozed", null, reminder2Time, null)
+        val action2 = createAction(2, ActionType.SNOOZED, reminder2Time, reminder2Snoozed)
+
+        // Reminder 3: Snoozed from yesterday to 09:00 today
+        val reminder3Original = day.minusDays(1).atTime(20, 0)
+        val reminder3Snoozed = day.atTime(9, 0)
+        val reminder3 = Reminder(3, "Third Snoozed In", null, reminder3Original, null)
+        val action3 = createAction(3, ActionType.SNOOZED, reminder3Original, reminder3Snoozed)
+
+        val reminders = listOf(reminder1, reminder2, reminder3)
+        val actions = listOf(action2, action3)
+
+        val instances = ReminderInstance.getRemindersForDay(day, reminders, actions)
+
+        assertEquals(3, instances.size)
+        // Expected order by displayTime: 09:00, 10:00, 11:00
+        assertEquals(3, instances[0].reminderId)
+        assertEquals(1, instances[1].reminderId)
+        assertEquals(2, instances[2].reminderId)
+
+        assertEquals(reminder3Snoozed, instances[0].displayTime)
+        assertEquals(day.atTime(10, 0), instances[1].displayTime)
+        assertEquals(reminder2Snoozed, instances[2].displayTime)
+    }
 }

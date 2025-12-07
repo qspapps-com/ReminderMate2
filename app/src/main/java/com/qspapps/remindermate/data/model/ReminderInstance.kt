@@ -88,13 +88,10 @@ data class ReminderInstance(
                 return null
             }
 
-            reminder.recurrence
-            // Removed the old check: if (rule.count != null && completedTimes.size >= rule.count) { return null }
-
             var targetDay = searchFrom.toLocalDate()
             var daySearchFrom = searchFrom
 
-            for (i in 0..36500) { // Look ahead up to 100 years
+            repeat (36500) { // Look ahead up to 100 years
                 val occurrencesOnDay = calculateOccurrencesForDay(reminder, targetDay)
 
                 for (originalTime in occurrencesOnDay) {
