@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -98,11 +99,19 @@ fun HomeScreen(
                 }
         ) {
             if (uiState.isLoading) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(uiState.reminders) { reminderInstance ->
-                        ReminderItem(reminderInstance, viewModel, navController)
+                        ReminderItem(
+                            reminderInstance = reminderInstance,
+                            onCompletedChange = viewModel::toggleCompleted,
+                            onSnooze = viewModel::snoozeReminder,
+                            onDelete = viewModel::deleteReminder,
+                            onUpdate = { reminderId ->
+                                navController.navigate("add_edit_reminder/$reminderId")
+                            }
+                        )
                     }
                 }
             }

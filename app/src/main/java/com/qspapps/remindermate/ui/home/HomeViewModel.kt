@@ -6,6 +6,7 @@ import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.ReminderAction
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.utils.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +27,8 @@ data class HomeUiState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val reminderRepository: ReminderRepository
+    private val reminderRepository: ReminderRepository,
+    private val reminderAlarmScheduler: ReminderAlarmScheduler
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -67,20 +69,25 @@ class HomeViewModel @Inject constructor(
 
     fun toggleCompleted(reminderInstance: ReminderInstance) {
         viewModelScope.launch {
-            if (reminderInstance.isCompleted) {
+            val reminder = reminderRepository.getReminderById(reminderInstance.reminderId) ?: return@launch
+            if (reminderInstance.isCompleted) { // Is completed, so user wants to un-complete
                 val action = ReminderAction(
                     reminderId = reminderInstance.reminderId,
                     originalScheduledTime = reminderInstance.originalTime,
                     type = ActionType.COMPLETED
                 )
                 reminderRepository.deleteAction(action)
-            } else {
+                // Schedule this one again
+                reminderAlarmScheduler.scheduleInstance(reminderInstance.copy(isCompleted = false))
+            } else { // Is not completed, so user wants to complete
                 val action = ReminderAction(
                     reminderId = reminderInstance.reminderId,
                     originalScheduledTime = reminderInstance.originalTime,
                     type = ActionType.COMPLETED
                 )
                 reminderRepository.insertAction(action)
+                // Schedule next one if recurring
+                reminderAlarmScheduler.schedule(reminder, after = reminderInstance.displayTime)
             }
         }
     }
@@ -94,11 +101,18 @@ class HomeViewModel @Inject constructor(
                 resheduledTime = newTime
             )
             reminderRepository.insertAction(action)
+            // Schedule the snoozed instance
+            val snoozedInstance = reminderInstance.copy(displayTime = newTime, isCompleted = false)
+            reminderAlarmScheduler.scheduleInstance(snoozedInstance)
         }
     }
 
     fun deleteReminder(reminderId: Long) {
         viewModelScope.launch {
+            val reminder = reminderRepository.getReminderById(reminderId)
+            if(reminder != null) {
+                reminderAlarmScheduler.cancel(reminder)
+            }
             reminderRepository.deleteReminderById(reminderId)
         }
     }

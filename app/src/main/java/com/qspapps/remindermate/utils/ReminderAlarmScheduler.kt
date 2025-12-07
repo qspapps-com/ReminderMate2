@@ -39,8 +39,8 @@ class ReminderAlarmScheduler @Inject constructor(
             putExtra("TRIGGER_TIME", instance.displayTime) // LocalDateTime is serializable
         }
 
-        // Using triggerTime's hashcode along with reminderId to ensure uniqueness for different instances
-        val requestCode = instance.reminderId.toInt() + instance.displayTime.hashCode()
+        // Using reminderId as request code to ensure there is only one alarm per reminder.
+        val requestCode = instance.reminderId.toInt()
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -75,9 +75,6 @@ class ReminderAlarmScheduler @Inject constructor(
     }
 
     fun cancel(reminder: Reminder) {
-        // This cancel is tricky now, as the request code is dynamic.
-        // A simple cancel with just the reminder ID won't work if an instance is already scheduled.
-        // For now, we'll leave it, but a more robust implementation might need to store the active PendingIntent.
         val intent = Intent(context, NotificationReceiver::class.java).apply {
             action = "ACTION_TRIGGER_REMINDER"
             putExtra("REMINDER_ID", reminder.id)
@@ -92,6 +89,7 @@ class ReminderAlarmScheduler @Inject constructor(
 
         if (pendingIntent != null) {
             alarmManager.cancel(pendingIntent)
+            pendingIntent.cancel()
         }
     }
 }

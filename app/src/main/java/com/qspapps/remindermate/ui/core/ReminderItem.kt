@@ -26,9 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.navigation.NavController
 import com.qspapps.remindermate.data.model.ReminderInstance
-import com.qspapps.remindermate.ui.home.HomeViewModel
 import com.qspapps.remindermate.utils.DateTimeUtils
 import com.qspapps.remindermate.utils.DateTimeUtils.formatTime
 import com.qspapps.remindermate.utils.DateTimeUtils.isDue
@@ -38,7 +36,13 @@ import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReminderItem(reminderInstance: ReminderInstance, viewModel: HomeViewModel, navController: NavController) {
+fun ReminderItem(
+    reminderInstance: ReminderInstance,
+    onCompletedChange: (ReminderInstance) -> Unit,
+    onSnooze: (ReminderInstance, LocalDateTime) -> Unit,
+    onDelete: (Long) -> Unit,
+    onUpdate: (Long) -> Unit
+) {
     val now = LocalDateTime.now()
     var showMenu by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -84,7 +88,7 @@ fun ReminderItem(reminderInstance: ReminderInstance, viewModel: HomeViewModel, n
                             }
                         if (selectedDate != null) {
                             val newDateTime = selectedDate.atTime(timePickerState.hour, timePickerState.minute)
-                            viewModel.snoozeReminder(
+                            onSnooze(
                                 reminderInstance,
                                 newDateTime
                             )
@@ -116,11 +120,11 @@ fun ReminderItem(reminderInstance: ReminderInstance, viewModel: HomeViewModel, n
         leadingContent = {
             Checkbox(
                 checked = reminderInstance.isCompleted,
-                onCheckedChange = { viewModel.toggleCompleted(reminderInstance) }
+                onCheckedChange = { onCompletedChange(reminderInstance) }
             )
         },
         headlineContent = { Text(reminderInstance.title, style = textStyle) },
-        supportingContent = { reminderInstance.description?.let { Text(reminderInstance.description) }  },
+        supportingContent = { reminderInstance.description?.let { Text(it) }  },
         trailingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
@@ -139,7 +143,7 @@ fun ReminderItem(reminderInstance: ReminderInstance, viewModel: HomeViewModel, n
                         DropdownMenuItem(
                             text = { Text("Snooze +15 mins") },
                             onClick = {
-                                viewModel.snoozeReminder(
+                                onSnooze(
                                     reminderInstance,
                                     DateTimeUtils.minsFromNow(15)
                                 )
@@ -149,7 +153,7 @@ fun ReminderItem(reminderInstance: ReminderInstance, viewModel: HomeViewModel, n
                         DropdownMenuItem(
                             text = { Text("Snooze +1 day") },
                             onClick = {
-                                viewModel.snoozeReminder(
+                                onSnooze(
                                     reminderInstance,
                                     DateTimeUtils.minsFromNow(24*60)
                                 )
@@ -166,14 +170,14 @@ fun ReminderItem(reminderInstance: ReminderInstance, viewModel: HomeViewModel, n
                         DropdownMenuItem(
                             text = { Text("Update") },
                             onClick = {
-                                navController.navigate("add_edit_reminder?reminderId=${reminderInstance.reminderId}")
+                                onUpdate(reminderInstance.reminderId)
                                 showMenu = false
                             }
                         )
                         DropdownMenuItem(
                             text = { Text("Delete") },
                             onClick = {
-                                viewModel.deleteReminder(reminderInstance.reminderId)
+                                onDelete(reminderInstance.reminderId)
                                 showMenu = false
                             }
                         )
