@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class Frequency {
-    HOURLY, DAILY, WEEKLY, MONTHLY, YEARLY
+    MINUTE, HOURLY, DAILY, WEEKLY, MONTHLY, YEARLY
 }

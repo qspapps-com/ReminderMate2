@@ -88,9 +88,7 @@ data class ReminderInstance(
             }
 
             val rule = reminder.recurrence
-            if (rule.count != null && completedTimes.size >= rule.count) {
-                return null
-            }
+            // Removed the old check: if (rule.count != null && completedTimes.size >= rule.count) { return null }
 
             var targetDay = searchFrom.toLocalDate()
             var daySearchFrom = searchFrom
@@ -137,29 +135,79 @@ data class ReminderInstance(
             val rule = reminder.recurrence
 
             when (rule.frequency) {
-                Frequency.HOURLY -> {
+                Frequency.MINUTE -> {
                     var current: LocalDateTime
+                    var theoreticalCount: Int
+
                     if (targetDay.isEqual(start.toLocalDate())) {
                         current = start
+                        theoreticalCount = 1
                     } else {
-                        val hoursSinceStart = ChronoUnit.HOURS.between(start, targetDay.atTime(start.toLocalTime()))
+                        val startOfTargetDayAtStartTime = targetDay.atTime(start.toLocalTime())
+                        val minutesSinceStart = ChronoUnit.MINUTES.between(start, startOfTargetDayAtStartTime)
+                        
+                        // Calculate where the first occurrence on targetDay should be
+                        val remainder = minutesSinceStart % rule.interval
+                        val adjustment = if (remainder == 0L) 0L else rule.interval - remainder
+                        current = startOfTargetDayAtStartTime.plusMinutes(adjustment)
+                        
+                        // Calculate the 1-based index of this occurrence
+                        val minutesToFirstOccurrence = ChronoUnit.MINUTES.between(start, current)
+                        theoreticalCount = (minutesToFirstOccurrence / rule.interval).toInt() + 1
+                    }
+
+                    while (current.toLocalDate() == targetDay) {
+                        if (rule.count != null && theoreticalCount > rule.count) {
+                            break
+                        }
+                        
+                        if (!current.isBefore(start)) {
+                            occurrences.add(current)
+                        }
+                        current = current.plusMinutes(rule.interval.toLong())
+                        theoreticalCount++
+                    }
+                }
+                Frequency.HOURLY -> {
+                    var current: LocalDateTime
+                    var theoreticalCount: Int
+                    
+                    if (targetDay.isEqual(start.toLocalDate())) {
+                        current = start
+                        theoreticalCount = 1
+                    } else {
+                        val startOfTargetDayAtStartTime = targetDay.atTime(start.toLocalTime())
+                        val hoursSinceStart = ChronoUnit.HOURS.between(start, startOfTargetDayAtStartTime)
+
                         val remainder = hoursSinceStart % rule.interval
                         val adjustment = if (remainder == 0L) 0L else rule.interval - remainder
-                        current = targetDay.atTime(start.toLocalTime()).plusHours(adjustment)
+                        current = startOfTargetDayAtStartTime.plusHours(adjustment)
+
+                        // Calculate the 1-based index of this occurrence
+                        val hoursToFirstOccurrence = ChronoUnit.HOURS.between(start, current)
+                        theoreticalCount = (hoursToFirstOccurrence / rule.interval).toInt() + 1
                     }
                     
                     while (current.toLocalDate() == targetDay) {
+                        if (rule.count != null && theoreticalCount > rule.count) {
+                            break
+                        }
+
                         if (!current.isBefore(start)) {
                             occurrences.add(current)
                         }
                         current = current.plusHours(rule.interval.toLong())
+                        theoreticalCount++
                     }
                 }
 
                 Frequency.DAILY -> {
                     val daysBetween = ChronoUnit.DAYS.between(start.toLocalDate(), targetDay)
                     if (daysBetween >= 0 && daysBetween % rule.interval == 0L) {
-                        occurrences.add(LocalDateTime.of(targetDay, start.toLocalTime()))
+                        val occurrenceIndex = (daysBetween / rule.interval).toInt() + 1
+                        if (rule.count == null || occurrenceIndex <= rule.count) {
+                            occurrences.add(LocalDateTime.of(targetDay, start.toLocalTime()))
+                        }
                     }
                 }
 
@@ -169,8 +217,44 @@ data class ReminderInstance(
                         val startOfWeek = start.toLocalDate().minusDays(start.dayOfWeek.value.toLong() - 1)
                         val targetWeek = targetDay.minusDays(targetDay.dayOfWeek.value.toLong() - 1)
                         val weeksBetween = ChronoUnit.WEEKS.between(startOfWeek, targetWeek)
+                        
                         if (weeksBetween >= 0 && weeksBetween % rule.interval == 0L) {
-                            occurrences.add(LocalDateTime.of(targetDay, start.toLocalTime()))
+                            
+                            if (rule.count != null) {
+                                // Calculate occurrence index
+                                val sortedRequiredDays = requiredDays.sortedBy { it.value }
+                                val daysInRecurrence = requiredDays.size
+                                
+                                val occurrenceIndex: Int
+                                
+                                if (weeksBetween == 0L) {
+                                    // Start week. Count required days from start.dayOfWeek up to targetDay.dayOfWeek.
+                                    occurrenceIndex = sortedRequiredDays.count { it.value >= start.dayOfWeek.value && it.value <= targetDay.dayOfWeek.value }
+                                } else {
+                                    // Later recurrence week. 
+                                    
+                                    // 1. Occurrences in the starting (partial) week: days from start.dayOfWeek to end of week.
+                                    val firstPartialWeekCount = sortedRequiredDays.count { it.value >= start.dayOfWeek.value }
+                                    
+                                    // 2. Occurrences in full recurrence cycles between the start week and the target week.
+                                    val weeksAfterFirst = weeksBetween - 1
+                                    // fullRecurrencePeriods is the number of full 'interval' periods that occurred after the first week.
+                                    val fullRecurrencePeriods = (weeksAfterFirst / rule.interval.toLong()).toInt()
+                                    val occurrencesFromFullCycles = fullRecurrencePeriods * daysInRecurrence
+                                    
+                                    // 3. Occurrences in the current week up to targetDay.
+                                    val occurrencesInTargetWeek = sortedRequiredDays.count { it.value <= targetDay.dayOfWeek.value }
+
+                                    occurrenceIndex = firstPartialWeekCount + occurrencesFromFullCycles + occurrencesInTargetWeek
+                                }
+                                
+                                if (occurrenceIndex <= rule.count) {
+                                    occurrences.add(LocalDateTime.of(targetDay, start.toLocalTime()))
+                                }
+                            } else {
+                                // Original logic when rule.count is null
+                                occurrences.add(LocalDateTime.of(targetDay, start.toLocalTime()))
+                            }
                         }
                     }
                 }
@@ -179,7 +263,10 @@ data class ReminderInstance(
                     if (targetDay.dayOfMonth == start.dayOfMonth) {
                          val monthsBetween = ChronoUnit.MONTHS.between(start.toLocalDate().withDayOfMonth(1), targetDay.withDayOfMonth(1))
                         if (monthsBetween >= 0 && monthsBetween % rule.interval == 0L) {
-                            occurrences.add(LocalDateTime.of(targetDay, start.toLocalTime()))
+                            val occurrenceIndex = (monthsBetween / rule.interval).toInt() + 1
+                            if (rule.count == null || occurrenceIndex <= rule.count) {
+                                occurrences.add(LocalDateTime.of(targetDay, start.toLocalTime()))
+                            }
                         }
                     }
                 }
@@ -188,7 +275,10 @@ data class ReminderInstance(
                     if (targetDay.dayOfMonth == start.dayOfMonth && targetDay.month == start.month) {
                         val yearsBetween = ChronoUnit.YEARS.between(start.toLocalDate(), targetDay)
                         if (yearsBetween >= 0 && yearsBetween % rule.interval == 0L) {
-                            occurrences.add(LocalDateTime.of(targetDay, start.toLocalTime()))
+                            val occurrenceIndex = (yearsBetween / rule.interval).toInt() + 1
+                            if (rule.count == null || occurrenceIndex <= rule.count) {
+                                occurrences.add(LocalDateTime.of(targetDay, start.toLocalTime()))
+                            }
                         }
                     }
                 }

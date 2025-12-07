@@ -129,13 +129,15 @@ fun AddEditReminderScreen(
                         expanded = isFrequencyDropdownExpanded,
                         onDismissRequest = { isFrequencyDropdownExpanded = false }
                     ) {
-                        val options = listOf("None", "Daily", "Weekdays", "Weekends", "Weekly", "Monthly", "Yearly")
+                        val options = listOf("None", "Minute", "Hourly", "Daily", "Weekdays", "Weekends", "Weekly", "Monthly", "Yearly")
                         options.forEach { option ->
                             DropdownMenuItem(
                                 text = { Text(option) },
                                 onClick = {
                                     val newRule = when (option) {
                                         "None" -> null
+                                        "Minute" -> RecurrenceRule(frequency = Frequency.MINUTE)
+                                        "Hourly" -> RecurrenceRule(frequency = Frequency.HOURLY)
                                         "Daily" -> RecurrenceRule(frequency = Frequency.DAILY)
                                         "Weekdays" -> RecurrenceRule(
                                             frequency = Frequency.WEEKLY,
@@ -265,7 +267,7 @@ private fun DayOfWeekSelector(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally)
     ) {
-        for (day in DayOfWeek.entries) {
+        for (day in DayOfWeek.values()) {
             DayOfWeekButton(
                 day = day,
                 isSelected = day in selectedDays,

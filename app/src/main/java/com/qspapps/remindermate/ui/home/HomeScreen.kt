@@ -109,7 +109,7 @@ fun HomeScreen(
                             onSnooze = viewModel::snoozeReminder,
                             onDelete = viewModel::deleteReminder,
                             onUpdate = { reminderId ->
-                                navController.navigate("add_edit_reminder/$reminderId")
+                                navController.navigate("add_edit_reminder?reminderId=$reminderId")
                             }
                         )
                     }
