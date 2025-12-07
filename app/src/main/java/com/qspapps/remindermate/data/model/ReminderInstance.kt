@@ -88,7 +88,7 @@ data class ReminderInstance(
                 return null
             }
 
-            val rule = reminder.recurrence
+            reminder.recurrence
             // Removed the old check: if (rule.count != null && completedTimes.size >= rule.count) { return null }
 
             var targetDay = searchFrom.toLocalDate()

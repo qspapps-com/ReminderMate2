@@ -24,7 +24,7 @@ class ReminderRepository(private val reminderDao: ReminderDao, private val remin
         reminderDao.deleteById(id)
     }
 
-    fun getActionsForReminder(reminderId: Long): Flow<List<ReminderAction>> = reminderActionDao.getActionsForReminder(reminderId)
+    suspend fun getActionsByReminderId(reminderId: Long): List<ReminderAction> = reminderActionDao.getActionsByReminderId(reminderId)
 
     fun getAllActions(): Flow<List<ReminderAction>> = reminderActionDao.getAllActions()
 

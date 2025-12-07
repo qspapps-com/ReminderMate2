@@ -12,6 +12,7 @@ import com.qspapps.remindermate.di.ApplicationScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.io.Serializable
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -47,14 +48,14 @@ class NotificationReceiver : BroadcastReceiver() {
                 if (reminder != null) {
                     when (intent.action) {
                         "ACTION_TRIGGER_REMINDER" -> {
-                            val triggerTime = intent.getSerializableExtra("TRIGGER_TIME") as? LocalDateTime ?: return@launch
-                            val originalTime = intent.getSerializableExtra("ORIGINAL_TIME") as? LocalDateTime ?: return@launch
+                            val triggerTime = intent.getSerializableExtraCompatible<LocalDateTime>("TRIGGER_TIME") ?: return@launch
+                            val originalTime = intent.getSerializableExtraCompatible<LocalDateTime>("ORIGINAL_TIME") ?: return@launch
 
                             notificationService.showNotification(reminder, triggerTime, originalTime)
                             alarmScheduler.schedule(reminder, after = triggerTime)
                         }
                         "ACTION_COMPLETE" -> {
-                            val originalTime = intent.getSerializableExtra("ORIGINAL_TIME") as? LocalDateTime ?: return@launch
+                            val originalTime = intent.getSerializableExtraCompatible<LocalDateTime>("ORIGINAL_TIME") ?: return@launch
                             val action = ReminderAction(
                                 reminderId = reminderId,
                                 originalScheduledTime = originalTime,
@@ -65,7 +66,7 @@ class NotificationReceiver : BroadcastReceiver() {
                             alarmScheduler.schedule(reminder)
                         }
                         "ACTION_SNOOZE" -> {
-                            val originalTime = intent.getSerializableExtra("ORIGINAL_TIME") as? LocalDateTime ?: return@launch
+                            val originalTime = intent.getSerializableExtraCompatible<LocalDateTime>("ORIGINAL_TIME") ?: return@launch
                             val snoozedTime = LocalDateTime.now().plusMinutes(5)
                             val action = ReminderAction(
                                 reminderId = reminderId,
@@ -83,5 +84,14 @@ class NotificationReceiver : BroadcastReceiver() {
                 pendingResult.finish() // Ensure finish() is called to end the broadcast
             }
         }
+    }
+}
+
+private inline fun <reified T : Serializable> Intent.getSerializableExtraCompatible(key: String): T? {
+    return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+        getSerializableExtra(key, T::class.java)
+    } else {
+        @Suppress("DEPRECATION")
+        getSerializableExtra(key) as? T
     }
 }

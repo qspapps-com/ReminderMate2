@@ -50,8 +50,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideReminderAlarmScheduler(@ApplicationContext context: Context, reminderActionDao: ReminderActionDao): ReminderAlarmScheduler {
-        return ReminderAlarmScheduler(context, reminderActionDao)
+    fun provideReminderAlarmScheduler(@ApplicationContext context: Context, reminderRepository: ReminderRepository): ReminderAlarmScheduler {
+        return ReminderAlarmScheduler(context, reminderRepository)
     }
 
     @Provides

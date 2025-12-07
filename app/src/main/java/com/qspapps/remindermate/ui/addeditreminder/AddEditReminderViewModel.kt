@@ -30,7 +30,7 @@ data class AddEditReminderUiState(
 class AddEditReminderViewModel @Inject constructor(
     private val reminderRepository: ReminderRepository,
     private val alarmScheduler: ReminderAlarmScheduler,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddEditReminderUiState())
