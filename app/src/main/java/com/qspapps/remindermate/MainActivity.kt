@@ -1,9 +1,11 @@
 package com.qspapps.remindermate
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,15 +21,8 @@ class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
-        if (isGranted) {
-            // Permission is granted. Continue the action or workflow in your
-            // app.
-        } else {
-            // Explain to the user that the feature is unavailable because the
-            // features requires a permission that the user has denied. At the
-            // same time, respect the user's decision. Don't link to system
-            // settings in an effort to convince the user to change their
-            // decision.
+        if (!isGranted) {
+            Toast.makeText(this, "Notifications are disabled. You will not receive reminders.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -50,11 +45,18 @@ class MainActivity : ComponentActivity() {
             ) {
                 // FCM SDK (and your app) can post notifications.
             } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                // TODO: Display an educational UI explaining to the user the features that will be enabled
-                //       by granting the POST_NOTIFICATION permission. This UI should provide the user
-                //       with two choices: "Accept" and "No thanks". If the user chooses "Accept", then
-                //       you should launch the permission request again. If the user chooses "No thanks",
-                //       then you should allow the user to continue without notifications.
+                AlertDialog.Builder(this)
+                    .setTitle("Permission required")
+                    .setMessage("To ensure you receive timely reminders, this app requires permission to post notifications.")
+                    .setPositiveButton("Accept") { _, _ ->
+                        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                    .setNegativeButton("No thanks") { dialog, _ ->
+                        dialog.dismiss()
+                        Toast.makeText(this, "Notifications are disabled. You will not receive reminders.", Toast.LENGTH_LONG).show()
+                    }
+                    .create()
+                    .show()
             } else {
                 // Directly ask for the permission.
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
