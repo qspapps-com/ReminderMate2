@@ -46,6 +46,7 @@ import com.qspapps.remindermate.data.model.RecurrenceRule
 import java.time.DayOfWeek
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
+import java.util.Calendar
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -106,6 +107,15 @@ fun AddEditReminderScreen(
                     Button(onClick = { showTimePicker = true }) {
                         Text(text = uiState.startDateTime.format(DateTimeFormatter.ofPattern("HH:mm")))
                     }
+                }
+
+                if (uiState.showDateTimeError) {
+                    Text(
+                        text = "Cannot set reminder in the past",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -208,6 +218,7 @@ fun AddEditReminderScreen(
                         viewModel.saveReminder()
                         navController.popBackStack()
                     },
+                    enabled = uiState.title.isNotBlank() && !uiState.showDateTimeError,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(text = "Save")
@@ -227,6 +238,7 @@ fun AddEditReminderScreen(
             uiState.startDateTime.monthValue - 1,
             uiState.startDateTime.dayOfMonth
         )
+        datePickerDialog.datePicker.minDate = Calendar.getInstance().timeInMillis
         datePickerDialog.setOnDismissListener { showDatePicker = false }
         datePickerDialog.show()
     }

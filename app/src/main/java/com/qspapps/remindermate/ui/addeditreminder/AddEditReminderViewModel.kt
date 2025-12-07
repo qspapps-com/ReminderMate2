@@ -22,7 +22,8 @@ data class AddEditReminderUiState(
     val startDateTime: LocalDateTime = DateTimeUtils.minsFromNow(5),
     val recurrence: RecurrenceRule? = null,
     val isNewReminder: Boolean = true,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val showDateTimeError: Boolean = false
 )
 
 @HiltViewModel
@@ -58,7 +59,8 @@ class AddEditReminderViewModel @Inject constructor(
                         startDateTime = reminder.startDateTime,
                         recurrence = reminder.recurrence,
                         isNewReminder = false,
-                        isLoading = false
+                        isLoading = false,
+                        showDateTimeError = false
                     )
                 }
             }
@@ -74,7 +76,8 @@ class AddEditReminderViewModel @Inject constructor(
     }
 
     fun updateStartDateTime(startDateTime: LocalDateTime) {
-        _uiState.update { it.copy(startDateTime = startDateTime) }
+        val showError = startDateTime.isBefore(LocalDateTime.now())
+        _uiState.update { it.copy(startDateTime = startDateTime, showDateTimeError = showError) }
     }
 
     fun updateRecurrence(recurrence: RecurrenceRule?) {
@@ -84,6 +87,9 @@ class AddEditReminderViewModel @Inject constructor(
     fun saveReminder() {
         viewModelScope.launch {
             val uiState = _uiState.value
+            if (uiState.title.isBlank() || uiState.showDateTimeError) {
+                return@launch
+            }
             val reminder = Reminder(
                 id = reminderId ?: 0,
                 title = uiState.title,
