@@ -1,5 +1,6 @@
 package com.qspapps.remindermate.data.model
 
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -117,6 +118,9 @@ data class ReminderInstance(
             return null
         }
 
+        private fun getWeekValues(start: DayOfWeek): Map<DayOfWeek, Int> =
+            DayOfWeek.entries.associateWith { (7 + it.value - start.value) % 7 }
+
         fun calculateOccurrencesForDay(reminder: Reminder, targetDay: LocalDate): List<LocalDateTime> {
             val occurrences = mutableListOf<LocalDateTime>()
             val start = reminder.startDateTime
@@ -143,17 +147,18 @@ data class ReminderInstance(
                         current = start
                         theoreticalCount = 1
                     } else {
-                        val startOfTargetDayAtStartTime = targetDay.atTime(start.toLocalTime())
-                        val minutesSinceStart = ChronoUnit.MINUTES.between(start, startOfTargetDayAtStartTime)
-                        
-                        // Calculate where the first occurrence on targetDay should be
-                        val remainder = minutesSinceStart % rule.interval
-                        val adjustment = if (remainder == 0L) 0L else rule.interval - remainder
-                        current = startOfTargetDayAtStartTime.plusMinutes(adjustment)
-                        
+                        // Logic to find the first occurrence on targetDay, anchored at 00:00
+                        val targetDayStart = targetDay.atStartOfDay()
+                        val minutesBetween = ChronoUnit.MINUTES.between(start, targetDayStart)
+
+                        val remainder = minutesBetween % rule.interval
+                        val adjustmentMinutes = if (remainder == 0L) 0L else rule.interval - remainder
+
+                        current = targetDayStart.plusMinutes(adjustmentMinutes)
+
                         // Calculate the 1-based index of this occurrence
-                        val minutesToFirstOccurrence = ChronoUnit.MINUTES.between(start, current)
-                        theoreticalCount = (minutesToFirstOccurrence / rule.interval).toInt() + 1
+                        val minutesToCurrent = ChronoUnit.MINUTES.between(start, current)
+                        theoreticalCount = (minutesToCurrent / rule.interval).toInt() + 1
                     }
 
                     while (current.toLocalDate() == targetDay) {
@@ -176,16 +181,18 @@ data class ReminderInstance(
                         current = start
                         theoreticalCount = 1
                     } else {
-                        val startOfTargetDayAtStartTime = targetDay.atTime(start.toLocalTime())
-                        val hoursSinceStart = ChronoUnit.HOURS.between(start, startOfTargetDayAtStartTime)
+                        // Logic to find the first occurrence on targetDay, anchored at 00:00
+                        val targetDayStart = targetDay.atStartOfDay()
+                        val hoursBetween = ChronoUnit.HOURS.between(start, targetDayStart)
 
-                        val remainder = hoursSinceStart % rule.interval
-                        val adjustment = if (remainder == 0L) 0L else rule.interval - remainder
-                        current = startOfTargetDayAtStartTime.plusHours(adjustment)
+                        val remainder = hoursBetween % rule.interval
+                        val adjustmentHours = if (remainder == 0L) 0L else rule.interval - remainder
+
+                        current = targetDayStart.plusHours(adjustmentHours)
 
                         // Calculate the 1-based index of this occurrence
-                        val hoursToFirstOccurrence = ChronoUnit.HOURS.between(start, current)
-                        theoreticalCount = (hoursToFirstOccurrence / rule.interval).toInt() + 1
+                        val hoursToCurrent = ChronoUnit.HOURS.between(start, current)
+                        theoreticalCount = (hoursToCurrent / rule.interval).toInt() + 1
                     }
                     
                     while (current.toLocalDate() == targetDay) {
@@ -214,46 +221,42 @@ data class ReminderInstance(
                 Frequency.WEEKLY -> {
                     val requiredDays = rule.daysOfWeek ?: setOf(start.dayOfWeek)
                     if (requiredDays.contains(targetDay.dayOfWeek)) {
-                        val startOfWeek = start.toLocalDate().minusDays(start.dayOfWeek.value.toLong() - 1)
-                        val targetWeek = targetDay.minusDays(targetDay.dayOfWeek.value.toLong() - 1)
-                        val weeksBetween = ChronoUnit.WEEKS.between(startOfWeek, targetWeek)
                         
-                        if (weeksBetween >= 0 && weeksBetween % rule.interval == 0L) {
+                        // Calculate days between the start date and the target date
+                        val daysBetween = ChronoUnit.DAYS.between(start.toLocalDate(), targetDay)
+                        
+                        if (daysBetween >= 0) {
+                            // Calculate the number of full weeks passed since the day of week of the start date
+                            val weeksBetween = daysBetween / 7L
                             
-                            if (rule.count != null) {
-                                // Calculate occurrence index
-                                val sortedRequiredDays = requiredDays.sortedBy { it.value }
-                                val daysInRecurrence = requiredDays.size
-                                
-                                val occurrenceIndex: Int
-                                
-                                if (weeksBetween == 0L) {
-                                    // Start week. Count required days from start.dayOfWeek up to targetDay.dayOfWeek.
-                                    occurrenceIndex = sortedRequiredDays.count { it.value >= start.dayOfWeek.value && it.value <= targetDay.dayOfWeek.value }
-                                } else {
-                                    // Later recurrence week. 
-                                    
-                                    // 1. Occurrences in the starting (partial) week: days from start.dayOfWeek to end of week.
-                                    val firstPartialWeekCount = sortedRequiredDays.count { it.value >= start.dayOfWeek.value }
-                                    
-                                    // 2. Occurrences in full recurrence cycles between the start week and the target week.
-                                    val weeksAfterFirst = weeksBetween - 1
-                                    // fullRecurrencePeriods is the number of full 'interval' periods that occurred after the first week.
-                                    val fullRecurrencePeriods = (weeksAfterFirst / rule.interval.toLong()).toInt()
-                                    val occurrencesFromFullCycles = fullRecurrencePeriods * daysInRecurrence
-                                    
-                                    // 3. Occurrences in the current week up to targetDay.
-                                    val occurrencesInTargetWeek = sortedRequiredDays.count { it.value <= targetDay.dayOfWeek.value }
+                            // Check if the interval is met
+                            val shouldRecur = weeksBetween % rule.interval == 0L
 
-                                    occurrenceIndex = firstPartialWeekCount + occurrencesFromFullCycles + occurrencesInTargetWeek
-                                }
+                            if (shouldRecur) {
                                 
-                                if (occurrenceIndex <= rule.count) {
+                                if (rule.count != null) {
+                                    // Calculate occurrence index
+                                    val weeklyValues = getWeekValues(start.dayOfWeek)
+                                    val daysInRecurrence = requiredDays.size
+                                    
+                                    // Calculate total occurrences up to the end of the previous week block
+                                    val weeksPassed = weeksBetween 
+                                    
+                                    val occurrencesFromFullCycles = (weeksPassed / rule.interval) * daysInRecurrence
+                                    println("occurencesFromFullCycles:$occurrencesFromFullCycles")
+                                    // The index of the day within the current week block
+                                    val currentWeekDayIndex = requiredDays.count { d ->
+                                        weeklyValues.getOrDefault(d, 0) <= weeklyValues.getOrDefault(targetDay.dayOfWeek, 0) }
+                                    println("currentWeekdayIndex: $currentWeekDayIndex")
+                                    val occurrenceIndex = occurrencesFromFullCycles + currentWeekDayIndex
+                                    
+                                    if (occurrenceIndex <= rule.count) {
+                                        occurrences.add(LocalDateTime.of(targetDay, start.toLocalTime()))
+                                    }
+                                } else {
+                                    // Original logic when rule.count is null
                                     occurrences.add(LocalDateTime.of(targetDay, start.toLocalTime()))
                                 }
-                            } else {
-                                // Original logic when rule.count is null
-                                occurrences.add(LocalDateTime.of(targetDay, start.toLocalTime()))
                             }
                         }
                     }
