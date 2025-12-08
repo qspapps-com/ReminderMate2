@@ -1,11 +1,6 @@
 package com.qspapps.remindermate.ui.home
 
-import android.app.Activity
 import android.app.DatePickerDialog
-import android.content.Intent
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,18 +12,14 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -54,54 +45,12 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDatePicker by remember { mutableStateOf(false) }
-    var showMenu by remember { mutableStateOf(false) }
-    var showRestoreDialog by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
 
     val title = if (uiState.selectedDate.isEqual(LocalDate.now())) {
         "Today's Reminders"
     } else {
         uiState.selectedDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))
-    }
-
-    val backupLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.data?.also { uri ->
-                viewModel.backupReminders(uri)
-            }
-        }
-    }
-
-    val restoreLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.data?.also { uri ->
-                showRestoreDialog = uri
-            }
-        }
-    }
-
-    if (showRestoreDialog != null) {
-        AlertDialog(
-            onDismissRequest = { showRestoreDialog = null },
-            title = { Text("Restore Reminders") },
-            text = { Text("Do you want to delete all existing reminders before restoring?") },
-            confirmButton = {
-                TextButton(onClick = {
-                    showRestoreDialog?.let { viewModel.restoreReminders(it, true) }
-                    showRestoreDialog = null
-                }) { Text("Delete and Restore") }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    showRestoreDialog?.let { viewModel.restoreReminders(it, false) }
-                    showRestoreDialog = null
-                }) { Text("Keep Existing") }
-            }
-        )
     }
 
     Scaffold(
@@ -118,30 +67,8 @@ fun HomeScreen(
                     IconButton(onClick = { showDatePicker = true }) {
                         Icon(Icons.Default.DateRange, contentDescription = "Select Date")
                     }
-                    IconButton(onClick = { showMenu = !showMenu }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "More Options")
-                    }
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false }
-                    ) {
-                        DropdownMenuItem(onClick = {
-                            showMenu = false
-                            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                                addCategory(Intent.CATEGORY_OPENABLE)
-                                type = "application/json"
-                                putExtra(Intent.EXTRA_TITLE, "reminders.json")
-                            }
-                            backupLauncher.launch(intent)
-                        }, text = { Text("Backup") })
-                        DropdownMenuItem(onClick = {
-                            showMenu = false
-                            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                                addCategory(Intent.CATEGORY_OPENABLE)
-                                type = "application/json"
-                            }
-                            restoreLauncher.launch(intent)
-                        }, text = { Text("Restore") })
+                    IconButton(onClick = { navController.navigate("settings") }) {
+                        Icon(Icons.Default.Settings, contentDescription = "Settings")
                     }
                 }
             )
