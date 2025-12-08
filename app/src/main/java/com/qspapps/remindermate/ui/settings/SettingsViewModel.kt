@@ -21,9 +21,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.FileOutputStream
-import java.io.InputStreamReader
 import javax.inject.Inject
 
 data class SettingsUiState(
@@ -60,10 +57,8 @@ class SettingsViewModel @Inject constructor(
             val backupData = backupAndRestore.backup(BackupData(reminders, actions))
 
             withContext(Dispatchers.IO) {
-                context.contentResolver.openFileDescriptor(uri, "w")?.use {
-                    FileOutputStream(it.fileDescriptor).use {
-                        it.write(backupData.toByteArray())
-                    }
+                context.contentResolver.openOutputStream(uri)?.use {
+                    it.write(backupData)
                 }
             }
         }
@@ -72,17 +67,13 @@ class SettingsViewModel @Inject constructor(
     fun restoreReminders(uri: Uri, clearExisting: Boolean) {
         viewModelScope.launch {
             val data = withContext(Dispatchers.IO) {
-                val stringBuilder = StringBuilder()
                 context.contentResolver.openInputStream(uri)?.use {
-                    BufferedReader(InputStreamReader(it)).use {
-                        var line = it.readLine()
-                        while (line != null) {
-                            stringBuilder.append(line)
-                            line = it.readLine()
-                        }
-                    }
+                    it.readBytes()
                 }
-                stringBuilder.toString()
+            }
+
+            if (data == null) {
+                return@launch
             }
 
             if (clearExisting) {

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,10 +35,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.qspapps.remindermate.data.repository.Theme
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -128,6 +131,7 @@ fun SettingsScreen(
                     onClick = { showThemeDialog = true }
                 )
             }
+            item { Divider() }
             item {
                 SettingsSectionTitle("Data Management")
             }
@@ -137,10 +141,15 @@ fun SettingsScreen(
                     title = "Backup Data",
                     subtitle = "Save your data locally",
                     onClick = {
+                        val currentDateTime = LocalDateTime.now()
+                        val formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm")
+                        val formattedDateTime = currentDateTime.format(formatter)
+                        val fileName = "remindermate_${formattedDateTime}.json.gz"
+
                         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                             addCategory(Intent.CATEGORY_OPENABLE)
-                            type = "application/json"
-                            putExtra(Intent.EXTRA_TITLE, "reminders.json")
+                            type = "application/gzip"
+                            putExtra(Intent.EXTRA_TITLE, fileName)
                         }
                         backupLauncher.launch(intent)
                     }
@@ -154,7 +163,7 @@ fun SettingsScreen(
                     onClick = {
                         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                             addCategory(Intent.CATEGORY_OPENABLE)
-                            type = "application/json"
+                            type = "application/gzip"
                         }
                         restoreLauncher.launch(intent)
                     }
