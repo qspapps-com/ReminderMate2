@@ -8,11 +8,17 @@ import com.qspapps.remindermate.data.BackupAndRestore
 import com.qspapps.remindermate.data.BackupData
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.data.repository.Theme
+import com.qspapps.remindermate.data.repository.UserPreferencesRepository
 import com.qspapps.remindermate.utils.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
@@ -20,13 +26,32 @@ import java.io.FileOutputStream
 import java.io.InputStreamReader
 import javax.inject.Inject
 
+data class SettingsUiState(
+    val theme: Theme = Theme.SYSTEM
+)
+
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val reminderRepository: ReminderRepository,
     private val backupAndRestore: BackupAndRestore,
-    private val reminderAlarmScheduler: ReminderAlarmScheduler
+    private val reminderAlarmScheduler: ReminderAlarmScheduler,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
+
+    val uiState: StateFlow<SettingsUiState> = userPreferencesRepository.theme
+        .map { theme -> SettingsUiState(theme = theme) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = SettingsUiState()
+        )
+
+    fun updateTheme(theme: Theme) {
+        viewModelScope.launch {
+            userPreferencesRepository.setTheme(theme)
+        }
+    }
 
     fun backupReminders(uri: Uri) {
         viewModelScope.launch {

@@ -10,13 +10,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.qspapps.remindermate.data.repository.Theme
 import com.qspapps.remindermate.ui.navigation.AppNavigation
+import com.qspapps.remindermate.ui.settings.SettingsViewModel
 import com.qspapps.remindermate.ui.theme.ReminderMateTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: SettingsViewModel by viewModels()
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -31,7 +39,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         askNotificationPermission()
         setContent {
-            ReminderMateTheme {
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+            val useDarkTheme = when (uiState.theme) {
+                Theme.LIGHT -> false
+                Theme.DARK -> true
+                Theme.SYSTEM -> isSystemInDarkTheme()
+            }
+            ReminderMateTheme(darkTheme = useDarkTheme) {
                 AppNavigation()
             }
         }

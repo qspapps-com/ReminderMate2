@@ -6,6 +6,7 @@ import com.qspapps.remindermate.data.local.ReminderActionDao
 import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.local.ReminderDatabase
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.data.repository.UserPreferencesRepository
 import com.qspapps.remindermate.utils.NotificationService
 import com.qspapps.remindermate.utils.ReminderAlarmScheduler
 import dagger.Module
@@ -72,5 +73,11 @@ object AppModule {
     @Singleton
     fun provideBackupAndRestore(): BackupAndRestore {
         return BackupAndRestore()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserPreferencesRepository(@ApplicationContext context: Context): UserPreferencesRepository {
+        return UserPreferencesRepository(context)
     }
 }
