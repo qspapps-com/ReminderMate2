@@ -1,6 +1,7 @@
 package com.qspapps.remindermate.di
 
 import android.content.Context
+import com.qspapps.remindermate.data.BackupAndRestore
 import com.qspapps.remindermate.data.local.ReminderActionDao
 import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.local.ReminderDatabase
@@ -65,5 +66,11 @@ object AppModule {
     @Singleton
     fun provideApplicationScope(): CoroutineScope {
         return CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBackupAndRestore(): BackupAndRestore {
+        return BackupAndRestore()
     }
 }

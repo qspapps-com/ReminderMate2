@@ -29,4 +29,7 @@ interface ReminderActionDao {
 
     @Query("SELECT * FROM reminder_actions WHERE reminderId = :reminderId AND originalScheduledTime = :originalScheduledTime")
     suspend fun getAction(reminderId: Long, originalScheduledTime: LocalDateTime): ReminderAction?
+
+    @Query("DELETE FROM reminder_actions")
+    suspend fun deleteAll()
 }
