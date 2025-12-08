@@ -62,6 +62,32 @@ data class ReminderInstance(
             return instances.sortedBy { it.displayTime }
         }
 
+        private fun ceil(num: Int, denom:Int): Int = (num + denom - 1) / denom
+
+        private fun lastRecurrenceEstimateDaysFromStartDate(reminder: Reminder): LocalDate {
+            if (reminder.recurrence == null) {
+                return reminder.startDateTime.toLocalDate()
+            }
+            val recurrence = reminder.recurrence
+            if (recurrence.count == null) {
+                return reminder.startDateTime.toLocalDate().plusDays(365*10) // 10 years
+            }
+            val periodMinutes = when(recurrence.frequency) {
+                Frequency.MINUTE -> 1
+                Frequency.HOURLY -> 60
+                Frequency.DAILY -> 60*24
+                Frequency.WEEKLY -> 60*24*7
+                Frequency.MONTHLY -> 60*24*31
+                Frequency.YEARLY -> 60*24*365
+            }
+            val count = when(recurrence.frequency) {
+                Frequency.WEEKLY if (recurrence.daysOfWeek != null && recurrence.daysOfWeek.isNotEmpty()) ->
+                    ceil(recurrence.count, recurrence.daysOfWeek.size)
+                else -> recurrence.count
+            }
+            return reminder.startDateTime.toLocalDate().plusDays(ceil(
+                recurrence.interval* periodMinutes*count, 24*60).toLong())
+        }
         fun getNextOccurrence(reminder: Reminder, actions: List<ReminderAction>, after: LocalDateTime? = null): ReminderInstance? {
             val completedTimes = actions.filter { it.type == ActionType.COMPLETED }
                 .map { it.originalScheduledTime }
@@ -89,9 +115,9 @@ data class ReminderInstance(
             }
 
             var targetDay = searchFrom.toLocalDate()
-            var daySearchFrom = searchFrom
+            val daysSearchTo = lastRecurrenceEstimateDaysFromStartDate(reminder)
 
-            repeat (36500) { // Look ahead up to 100 years
+            while (targetDay <= daysSearchTo) { // Look ahead up to 10 years
                 val occurrencesOnDay = calculateOccurrencesForDay(reminder, targetDay)
 
                 for (originalTime in occurrencesOnDay) {
@@ -100,7 +126,7 @@ data class ReminderInstance(
                     val snoozeAction = actions.find { it.originalScheduledTime == originalTime && it.type == ActionType.SNOOZED }
                     val displayTime = snoozeAction?.rescheduledTime ?: originalTime
 
-                    if (displayTime.isAfter(daySearchFrom)) {
+                    if (displayTime.isAfter(searchFrom)) {
                         return ReminderInstance(
                             reminderId = reminder.id, title = reminder.title, description = reminder.description,
                             displayTime = displayTime, originalTime = originalTime,
@@ -109,9 +135,7 @@ data class ReminderInstance(
                     }
                 }
                 targetDay = targetDay.plusDays(1)
-                daySearchFrom = targetDay.atStartOfDay().minusNanos(1)
             }
-
             return null
         }
 
