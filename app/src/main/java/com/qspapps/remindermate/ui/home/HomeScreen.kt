@@ -12,8 +12,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -45,6 +48,7 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDatePicker by remember { mutableStateOf(false) }
+    var showMenu by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     val title = if (uiState.selectedDate.isEqual(LocalDate.now())) {
@@ -67,8 +71,28 @@ fun HomeScreen(
                     IconButton(onClick = { showDatePicker = true }) {
                         Icon(Icons.Default.DateRange, contentDescription = "Select Date")
                     }
-                    IconButton(onClick = { navController.navigate("settings") }) {
-                        Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Settings") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("settings")
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.Settings,
+                                        contentDescription = "Settings"
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             )
