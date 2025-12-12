@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -90,6 +91,19 @@ fun HomeScreen(
                                     Icon(
                                         Icons.Default.List,
                                         contentDescription = "All Reminders"
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Overdue Reminders") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("overdue_reminders")
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.Notifications,
+                                        contentDescription = "Overdue Reminders"
                                     )
                                 }
                             )

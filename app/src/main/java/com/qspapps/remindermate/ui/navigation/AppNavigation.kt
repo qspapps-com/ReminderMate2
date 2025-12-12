@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.qspapps.remindermate.ui.addeditreminder.AddEditReminderScreen
 import com.qspapps.remindermate.ui.allreminders.AllRemindersScreen
 import com.qspapps.remindermate.ui.home.HomeScreen
+import com.qspapps.remindermate.ui.overduereminders.OverdueRemindersScreen
 import com.qspapps.remindermate.ui.settings.SettingsScreen
 
 @Composable
@@ -32,6 +33,9 @@ fun AppNavigation() {
         }
         composable("all_reminders") {
             AllRemindersScreen(navController = navController)
+        }
+        composable("overdue_reminders") {
+            OverdueRemindersScreen(navController = navController)
         }
     }
 }

@@ -22,7 +22,7 @@ class ReminderAlarmScheduler @Inject constructor(
 
     suspend fun schedule(reminder: Reminder, after: LocalDateTime? = null) {
         val actions = reminderRepository.getActionsByReminderId(reminder.id)
-        val nextOccurrence = ReminderInstance.getNextOccurrence(reminder, actions, after)
+        val nextOccurrence = reminder.getNextOccurrence(actions, after)
 
         if (nextOccurrence != null) {
             scheduleInstance(nextOccurrence)
