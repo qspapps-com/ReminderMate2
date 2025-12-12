@@ -20,6 +20,7 @@ Built with a philosophy of simplicity and quality, Reminder Mate is your perfect
     *   **Manual**: Provides an option in settings to manually backup and restore your data.
 *   **🎨 Modern UI**: A clean and intuitive user interface built with the latest **Material 3** design guidelines.
 *   **🚫 100% Free & Ad-Free**: No ads, no in-app purchases, no subscriptions. Just a simple, free tool for everyone.
+*   **🌐 Multi-Language Support**: Available in Kannada, Hindi, Telugu, Tamil, Malayalam, Gujarati, Bengali, Marathi, English, Spanish, German, French, Chinese, Japanese and Arabic.
 
 ---
 
