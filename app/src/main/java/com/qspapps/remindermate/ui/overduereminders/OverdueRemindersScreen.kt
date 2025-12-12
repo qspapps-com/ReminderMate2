@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.qspapps.remindermate.ui.core.ReminderItem
+import com.qspapps.remindermate.ui.core.ReminderInstanceItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,10 +44,10 @@ fun OverdueRemindersScreen(
     ) { padding ->
         LazyColumn(modifier = Modifier.padding(padding)) {
             items(uiState.overdueReminders) { reminderInstance ->
-                ReminderItem(
+                ReminderInstanceItem(
                     reminderInstance = reminderInstance,
-                    onCompletedChange = {},
-                    onSnooze = { _, _ -> },
+                    onCompletedChange = viewModel::toggleCompleted,
+                    onSnooze = viewModel::snoozeReminder,
                     onDelete = viewModel::deleteReminder,
                     onUpdate = {
                         navController.navigate("add_edit_reminder?reminderId=${it}")

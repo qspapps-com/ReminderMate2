@@ -29,7 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.qspapps.remindermate.data.model.Frequency
-import com.qspapps.remindermate.ui.core.ReminderCard
+import com.qspapps.remindermate.ui.core.ReminderItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +56,7 @@ fun AllRemindersScreen(
     ) { padding ->
         Column(modifier = Modifier.padding(padding)) {
             var expanded by remember { mutableStateOf(false) }
-            val filterOptions = listOf(FilterType.All, FilterType.None) + Frequency.values().map(FilterType::FrequencyFilter)
+            val filterOptions = listOf(FilterType.All, FilterType.None) + Frequency.entries.map(FilterType::FrequencyFilter)
 
             val selectedText = when (val filter = uiState.selectedFilter) {
                 is FilterType.All -> "All"
@@ -107,7 +107,7 @@ fun AllRemindersScreen(
 
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(uiState.reminders) { reminder ->
-                    ReminderCard(
+                    ReminderItem(
                         reminder = reminder,
                         onUpdate = {
                             navController.navigate("add_edit_reminder?reminderId=${it}")

@@ -15,12 +15,12 @@ import com.qspapps.remindermate.ui.settings.SettingsScreen
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "home") {
-        composable("home") {
+    NavHost(navController = navController, startDestination = AppScreen.Home.route) {
+        composable(AppScreen.Home.route) {
             HomeScreen(navController = navController)
         }
         composable(
-            route = "add_edit_reminder?reminderId={reminderId}",
+            route = AppScreen.AddEditReminder.route,
             arguments = listOf(navArgument("reminderId") {
                 type = NavType.LongType
                 defaultValue = 0L
@@ -28,13 +28,13 @@ fun AppNavigation() {
         ) {
             AddEditReminderScreen(navController = navController)
         }
-        composable("settings") {
+        composable(AppScreen.Settings.route) {
             SettingsScreen(navController = navController)
         }
-        composable("all_reminders") {
+        composable(AppScreen.AllReminders.route) {
             AllRemindersScreen(navController = navController)
         }
-        composable("overdue_reminders") {
+        composable(AppScreen.OverdueReminders.route) {
             OverdueRemindersScreen(navController = navController)
         }
     }

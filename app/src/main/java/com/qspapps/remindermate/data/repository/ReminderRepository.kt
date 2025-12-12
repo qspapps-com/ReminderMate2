@@ -21,10 +21,12 @@ class ReminderRepository(private val reminderDao: ReminderDao, private val remin
     }
 
     suspend fun deleteReminderById(id: Long) {
+        // Associated actions are deleted using foreign key constraints
         reminderDao.deleteById(id)
     }
 
     suspend fun deleteAllReminders() {
+        // Associated actions are deleted using foreign key constraints
         reminderDao.deleteAll()
     }
 

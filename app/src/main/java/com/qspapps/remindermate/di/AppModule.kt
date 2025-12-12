@@ -1,7 +1,7 @@
 package com.qspapps.remindermate.di
 
 import android.content.Context
-import com.qspapps.remindermate.data.BackupAndRestore
+import com.qspapps.remindermate.data.local.BackupAndRestore
 import com.qspapps.remindermate.data.local.ReminderActionDao
 import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.local.ReminderDatabase

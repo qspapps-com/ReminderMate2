@@ -1,6 +1,6 @@
 package com.qspapps.remindermate.data.legacy
 
-import com.qspapps.remindermate.data.BackupData
+import com.qspapps.remindermate.data.local.BackupData
 import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.data.model.RecurrenceRule

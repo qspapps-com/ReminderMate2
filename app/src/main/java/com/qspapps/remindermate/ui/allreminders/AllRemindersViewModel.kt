@@ -1,10 +1,10 @@
 package com.qspapps.remindermate.ui.allreminders
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.ui.core.ReminderViewModel
 import com.qspapps.remindermate.utils.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class FilterType {
@@ -29,9 +28,9 @@ data class AllRemindersUiState(
 
 @HiltViewModel
 class AllRemindersViewModel @Inject constructor(
-    private val reminderRepository: ReminderRepository,
-    private val reminderAlarmScheduler: ReminderAlarmScheduler
-) : ViewModel() {
+    reminderRepository: ReminderRepository,
+    reminderAlarmScheduler: ReminderAlarmScheduler
+) : ReminderViewModel(reminderRepository, reminderAlarmScheduler) {
 
     private val _selectedFilter = MutableStateFlow<FilterType>(FilterType.All)
 
@@ -53,15 +52,5 @@ class AllRemindersViewModel @Inject constructor(
 
     fun setFilter(filter: FilterType) {
         _selectedFilter.value = filter
-    }
-
-    fun deleteReminder(reminderId: Long) {
-        viewModelScope.launch {
-            val reminder = reminderRepository.getReminderById(reminderId)
-            if (reminder != null) {
-                reminderAlarmScheduler.cancel(reminder)
-            }
-            reminderRepository.deleteReminderById(reminderId)
-        }
     }
 }

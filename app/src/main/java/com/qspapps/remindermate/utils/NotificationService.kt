@@ -60,7 +60,7 @@ class NotificationService(private val context: Context) {
             .setContentIntent(activityPendingIntent)
             .setAutoCancel(true)
             .addAction(0, "Complete", completePendingIntent)
-            .addAction(0, "Snooze 5 min", snoozePendingIntent)
+            .addAction(0, "Snooze +5 min", snoozePendingIntent)
             .build()
 
         notificationManager.notify(reminder.id.toInt(), notification)

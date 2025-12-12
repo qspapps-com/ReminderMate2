@@ -67,7 +67,7 @@ class NotificationReceiver : BroadcastReceiver() {
                         }
                         "ACTION_SNOOZE" -> {
                             val originalTime = intent.getSerializableExtraCompatible<LocalDateTime>("ORIGINAL_TIME") ?: return@launch
-                            val snoozedTime = LocalDateTime.now().plusMinutes(5)
+                            val snoozedTime = DateTimeUtils.minsFromNow(5)
                             val action = ReminderAction(
                                 reminderId = reminderId,
                                 originalScheduledTime = originalTime,

@@ -1,4 +1,4 @@
-package com.qspapps.remindermate.data
+package com.qspapps.remindermate.data.local
 
 import com.qspapps.remindermate.data.legacy.DataConverter
 import com.qspapps.remindermate.data.legacy.JsonReminder

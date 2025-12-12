@@ -12,10 +12,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -38,7 +35,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.qspapps.remindermate.ui.core.ReminderItem
+import com.qspapps.remindermate.ui.core.ReminderInstanceItem
+import com.qspapps.remindermate.ui.navigation.AppScreen
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -58,6 +56,12 @@ fun HomeScreen(
     } else {
         uiState.selectedDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))
     }
+
+    val menuItems = listOf(
+        AppScreen.AllReminders,
+        AppScreen.OverdueReminders,
+        AppScreen.Settings
+    )
 
     Scaffold(
         topBar = {
@@ -81,52 +85,28 @@ fun HomeScreen(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }
                         ) {
-                            DropdownMenuItem(
-                                text = { Text("All Reminders") },
-                                onClick = {
-                                    showMenu = false
-                                    navController.navigate("all_reminders")
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Default.List,
-                                        contentDescription = "All Reminders"
-                                    )
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Overdue Reminders") },
-                                onClick = {
-                                    showMenu = false
-                                    navController.navigate("overdue_reminders")
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Default.Notifications,
-                                        contentDescription = "Overdue Reminders"
-                                    )
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Settings") },
-                                onClick = {
-                                    showMenu = false
-                                    navController.navigate("settings")
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Default.Settings,
-                                        contentDescription = "Settings"
-                                    )
-                                }
-                            )
+                            menuItems.forEach { screen ->
+                                DropdownMenuItem(
+                                    text = { Text(screen.displayName!!) },
+                                    onClick = {
+                                        showMenu = false
+                                        navController.navigate(screen.route)
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            screen.icon!!,
+                                            contentDescription = screen.displayName
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 }
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate("add_edit_reminder") }) {
+            FloatingActionButton(onClick = { navController.navigate(AppScreen.AddEditReminder.createRoute(0L)) }) {
                 Icon(Icons.Default.Add, contentDescription = "Add Reminder")
             }
         }
@@ -159,13 +139,13 @@ fun HomeScreen(
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(uiState.reminders) { reminderInstance ->
-                        ReminderItem(
+                        ReminderInstanceItem(
                             reminderInstance = reminderInstance,
                             onCompletedChange = viewModel::toggleCompleted,
                             onSnooze = viewModel::snoozeReminder,
                             onDelete = viewModel::deleteReminder,
                             onUpdate = { reminderId ->
-                                navController.navigate("add_edit_reminder?reminderId=$reminderId")
+                                navController.navigate(AppScreen.AddEditReminder.createRoute(reminderId))
                             }
                         )
                     }

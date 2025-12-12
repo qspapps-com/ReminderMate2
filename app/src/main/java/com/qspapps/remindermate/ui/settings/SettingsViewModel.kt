@@ -4,8 +4,8 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.qspapps.remindermate.data.BackupAndRestore
-import com.qspapps.remindermate.data.BackupData
+import com.qspapps.remindermate.data.local.BackupAndRestore
+import com.qspapps.remindermate.data.local.BackupData
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.data.repository.Theme
