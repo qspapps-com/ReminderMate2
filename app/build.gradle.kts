@@ -78,4 +78,5 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.kotlinx.serialization.json)
+    implementation("androidx.appcompat:appcompat:1.6.1")
 }

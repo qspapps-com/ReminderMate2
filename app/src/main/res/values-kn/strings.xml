@@ -1,0 +1,132 @@
+<resources>
+    <string name="app_name">ರಿಮೈಂಡರ್‌ಮೇಟ್</string>
+    <string name="add_reminder">ಜ್ಞಾಪನೆ ಸೇರಿಸಿ</string>
+    <string name="delete_all">ಎಲ್ಲವನ್ನೂ ಅಳಿಸಿ</string>
+    <string name="today_reminders">ಇಂದಿನ ಜ್ಞಾಪನೆಗಳು</string>
+    <string name="hide_completed">ಪೂರ್ಣಗೊಂಡಿದ್ದನ್ನು ಮರೆಮಾಡಿ</string>
+    <string name="show_completed">ಪೂರ್ಣಗೊಂಡಿದ್ದನ್ನು ತೋರಿಸಿ</string>
+    <string name="select_date">ದಿನಾಂಕ ಆರಿಸಿ</string>
+    <string name="more_options">ಹೆಚ್ಚಿನ ಆಯ್ಕೆಗಳು</string>
+    <string name="delete_reminder">ಜ್ಞಾಪನೆ ಅಳಿಸುವುದೇ?</string>
+    <string name="delete_reminder_confirmation">ನೀವು ಈ ಒಂದು ನಿದರ್ಶನವನ್ನು ಮಾತ್ರ ಅಳಿಸಲು ಬಯಸುವಿರಾ ಅಥವಾ ಮುಂದಿನ ಎಲ್ಲ ನಿದರ್ಶನಗಳನ್ನೂ ಅಳಿಸಲು ಬಯಸುವಿರಾ?</string>
+    <string name="delete_confirmation_simple">ಈ ಜ್ಞಾಪನೆಯನ್ನು ಅಳಿಸಲು ನಿಮಗೆ ಖಚಿತವಾಗಿದೆಯೇ?</string>
+    <string name="delete_all_occurrences">ಎಲ್ಲ ನಿದರ್ಶನಗಳನ್ನೂ ಅಳಿಸಿ</string>
+    <string name="delete_this_instance">ಈ ನಿದರ್ಶನವನ್ನು ಅಳಿಸಿ</string>
+    <string name="delete">ಅಳಿಸಿ</string>
+    <string name="cancel">ರದ್ದು</string>
+    <string name="home_date_format">MMM dd, yyyy</string>
+    <string name="settings_title">ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="all_reminders_title">ಎಲ್ಲ ಜ್ಞಾಪನೆಗಳು</string>
+    <string name="overdue_reminders_title">ಸಮಯ ಮೀರಿದ ಜ್ಞಾಪನೆಗಳು</string>
+    <string name="add_reminder_title">ಜ್ಞಾಪನೆ ಸೇರಿಸಿ</string>
+    <string name="edit_reminder_title">ಜ್ಞಾಪನೆ ಸಂಪಾದಿಸಿ</string>
+    <string name="cancel_button">ರದ್ದುಮಾಡಿ</string>
+    <string name="title_label">ಶೀರ್ಷಿಕೆ</string>
+    <string name="description_label">ವಿವರಣೆ</string>
+    <string name="past_reminder_error">ಹಿಂದಿನ ಸಮಯದಲ್ಲಿ ಜ್ಞಾಪನೆ ಹೊಂದಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ</string>
+    <string name="repeats_label">ಪುನರಾವರ್ತನೆ</string>
+    <string name="every_label">ಪ್ರತಿ</string>
+    <string name="number_of_times_label">ಎಷ್ಟು ಬಾರಿ</string>
+    <string name="save_button">ಉಳಿಸಿ</string>
+    <string name="repeat_option_none">ಯಾವುದೂ ಇಲ್ಲ</string>
+    <string name="repeat_option_minute">ನಿಮಿಷ</string>
+    <string name="repeat_option_hourly">ಪ್ರತಿ ಗಂಟೆ</string>
+    <string name="repeat_option_daily">ದಿನನಿತ್ಯ</string>
+    <string name="repeat_option_weekdays">ವಾರದ ದಿನಗಳು</string>
+    <string name="repeat_option_weekends">ವಾರಾಂತ್ಯಗಳು</string>
+    <string name="repeat_option_weekly">ವಾರಕ್ಕೊಮ್ಮೆ</string>
+    <string name="repeat_option_monthly">ತಿಂಗಳಿಗೊಮ್ಮೆ</string>
+    <string name="repeat_option_yearly">ವರ್ಷಕ್ಕೊಮ್ಮೆ</string>
+    <string name="all_reminders_screen_title">ಎಲ್ಲ ಜ್ಞಾಪನೆಗಳು</string>
+    <string name="back_button_content_description">ಹಿಂದೆ</string>
+    <string name="filter_by_frequency_label">ಆವರ್ತನದಿಂದ ಶೋಧಿಸಿ</string>
+    <string name="filter_option_all">ಎಲ್ಲಾ</string>
+    <string name="filter_option_none">ಯಾವುದೂ ಇಲ್ಲ</string>
+    <string name="overdue_reminders_screen_title">ಸಮಯ ಮೀರಿದ ಜ್ಞಾಪನೆಗಳು</string>
+    <string name="restore_reminders_dialog_title">ಜ್ಞಾಪನೆಗಳನ್ನು ಮರುಸ್ಥಾಪಿಸಿ</string>
+    <string name="restore_reminders_dialog_text">ಮರುಸ್ಥಾಪಿಸುವ ಮೊದಲು ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಎಲ್ಲ ಜ್ಞಾಪನೆಗಳನ್ನು ಅಳಿಸಲು ಬಯಸುವಿರಾ?</string>
+    <string name="delete_and_restore_button">ಅಳಿಸಿ ಮತ್ತು ಮರುಸ್ಥಾಪಿಸಿ</string>
+    <string name="keep_existing_button">ಅಸ್ತಿತ್ವದಲ್ಲಿರುವದನ್ನು ಉಳಿಸಿ</string>
+    <string name="clear_all_reminders_dialog_title">ಎಲ್ಲ ಜ್ಞಾಪನೆಗಳನ್ನು ಅಳಿಸಿ</string>
+    <string name="clear_all_reminders_dialog_text">ಎಲ್ಲ ಜ್ಞಾಪನೆಗಳನ್ನು ಅಳಿಸಲು ನಿಮಗೆ ಖಚಿತವಾಗಿದೆಯೇ? ಈ ಕ್ರಿಯೆಯನ್ನು ಹಿಂಪಡೆಯಲು ಸಾಧ್ಯವಿಲ್ಲ.</string>
+    <string name="clear_button">ಅಳಿಸಿ</string>
+    <string name="settings_screen_title">ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="appearance_section_title">ತೋರಿಕೆ</string>
+    <string name="theme_setting_title">ಥೀಮ್</string>
+    <string name="hide_completed_reminders_setting_title">ಪೂರ್ಣಗೊಂಡ ಜ್ಞಾಪನೆಗಳನ್ನು ಮರೆಮಾಡಿ</string>
+    <string name="data_management_section_title">ಡೇಟಾ ನಿರ್ವಹಣೆ</string>
+    <string name="backup_data_setting_title">ಡೇಟಾ ಬ್ಯಾಕಪ್ ಮಾಡಿ</string>
+    <string name="backup_data_setting_subtitle">ನಿಮ್ಮ ಡೇಟಾವನ್ನು ಸ್ಥಳೀಯವಾಗಿ ಉಳಿಸಿ</string>
+    <string name="restore_data_setting_title">ಡೇಟಾ ಮರುಸ್ಥಾಪಿಸಿ</string>
+    <string name="restore_data_setting_subtitle">ಹಿಂದಿನ ಬ್ಯಾಕಪ್‌ನಿಂದ ಮರುಸ್ಥಾಪಿಸಿ</string>
+    <string name="clear_all_reminders_setting_title">ಎಲ್ಲ ಜ್ಞಾಪನೆಗಳನ್ನು ಅಳಿಸಿ</string>
+    <string name="clear_all_reminders_setting_subtitle">ಉಳಿಸಿದ ಎಲ್ಲ ಜ್ಞಾಪನೆಗಳನ್ನು ಅಳಿಸಿ</string>
+    <string name="choose_theme_dialog_title">ಥೀಮ್ ಆರಿಸಿ</string>
+    <string name="theme_light">ಬೆಳಕು</string>
+    <string name="theme_dark">ಕತ್ತಲೆ</string>
+    <string name="theme_system">ಸಿಸ್ಟಮ್</string>
+    <string name="reminder_item_date_time_format">MMM dd, yyyy \'ರಂದು\' hh:mm a</string>
+    <string name="reminder_starts_prefix">ಪ್ರಾರಂಭ: </string>
+    <string name="update_menu_item">ನವೀಕರಿಸಿ</string>
+    <string name="delete_menu_item">ಅಳಿಸಿ</string>
+    <string name="one_time_reminder">ಒಂದು-ಬಾರಿಯ ಜ್ಞಾಪನೆ</string>
+    <string name="repeats_prefix">ಪುನರಾವರ್ತನೆ </string>
+    <string name="recurrence_on_prefix"> ರಂದು </string>
+    <string name="ok_button">ಸರಿ</string>
+    <string name="select_time_title">ಸಮಯ ಆರಿಸಿ</string>
+    <string name="snooze_15_minutes_menu_item">ನಿದ್ರಾವಸ್ಥೆ +15 ನಿಮಿಷ</string>
+    <string name="snooze_1_day_menu_item">ನಿದ್ರಾವಸ್ಥೆ 1 ದಿನ</string>
+    <string name="custom_snooze_menu_item">ಕಸ್ಟಮ್ ನಿದ್ರಾವಸ್ಥೆ</string>
+    <string name="language_setting_title">ಭಾಷೆ</string>
+    <string name="choose_language_dialog_title">ಭಾಷೆ ಆರಿಸಿ</string>
+    <string name="language_english">ಇಂಗ್ಲೀಷ್</string>
+    <string name="language_hindi">ಹಿಂದಿ</string>
+    <string name="language_spanish">ಸ್ಪ್ಯಾನಿಷ್</string>
+    <string name="language_german">ಜರ್ಮನ್</string>
+    <string name="language_french">ಫ್ರೆಂಚ್</string>
+    <string name="language_chinese">ಚೈನೀಸ್</string>
+    <string name="language_japanese">ಜಪಾನೀಸ್</string>
+    <string name="language_arabic">ಅರೇಬಿಕ್</string>
+    <string name="language_kannada">ಕನ್ನಡ</string>
+    <string name="language_telugu">ತೆಲುಗು</string>
+    <string name="language_tamil">ತಮಿಳು</string>
+    <string name="language_malayalam">ಮಲಯಾಳಂ</string>
+    <string name="language_gujarati">ಗುಜರಾತಿ</string>
+    <string name="language_bengali">ಬೆಂಗಾಲಿ</string>
+    <string name="language_marathi">ಮರಾಠಿ</string>
+    <plurals name="recurrence_minute">
+        <!-- Changed from "ಪ್ರತಿ ನಿಮಿಷ" to "ಪ್ರತಿ %d ನಿಮಿಷ" to include %d -->
+        <item quantity="one">ಪ್ರತಿ %d ನಿಮಿಷ</item>
+        <item quantity="other">ಪ್ರತಿ %d ನಿಮಿಷಗಳು</item>
+    </plurals>
+    <plurals name="recurrence_hour">
+        <!-- Changed from "ಪ್ರತಿ ಗಂಟೆ" to "ಪ್ರತಿ %d ಗಂಟೆ" to include %d -->
+        <item quantity="one">ಪ್ರತಿ %d ಗಂಟೆ</item>
+        <item quantity="other">ಪ್ರತಿ %d ಗಂಟೆಗಳು</item>
+    </plurals>
+    <plurals name="recurrence_day">
+        <!-- Changed from "ಪ್ರತಿ ದಿನ" to "ಪ್ರತಿ %d ದಿನ" to include %d -->
+        <item quantity="one">ಪ್ರತಿ %d ದಿನ</item>
+        <item quantity="other">ಪ್ರತಿ %d ದಿನಗಳು</item>
+    </plurals>
+    <plurals name="recurrence_week">
+        <!-- Changed from "ಪ್ರತಿ ವಾರ" to "ಪ್ರತಿ %d ವಾರ" to include %d -->
+        <item quantity="one">ಪ್ರತಿ %d ವಾರ</item>
+        <item quantity="other">ಪ್ರತಿ %d ವಾರಗಳು</item>
+    </plurals>
+    <plurals name="recurrence_month">
+        <!-- Changed from "ಪ್ರತಿ ತಿಂಗಳು" to "ಪ್ರತಿ %d ತಿಂಗಳು" to include %d -->
+        <item quantity="one">ಪ್ರತಿ %d ತಿಂಗಳು</item>
+        <item quantity="other">ಪ್ರತಿ %d ತಿಂಗಳುಗಳು</item>
+    </plurals>
+    <plurals name="recurrence_year">
+        <!-- Changed from "ಪ್ರತಿ ವರ್ಷ" to "ಪ್ರತಿ %d ವರ್ಷ" to include %d -->
+        <item quantity="one">ಪ್ರತಿ %d ವರ್ಷ</item>
+        <item quantity="other">ಪ್ರತಿ %d ವರ್ಷಗಳು</item>
+    </plurals>
+    <plurals name="recurrence_for_times">
+        <!-- Changed from " 1 ಬಾರಿಗಾಗಿ" to " %d ಬಾರಿಗಾಗಿ" to include %d -->
+        <item quantity="one"> %d ಬಾರಿಗಾಗಿ</item>
+        <item quantity="other"> %d ಬಾರಿಗಳಿಗಾಗಿ</item>
+    </plurals>
+</resources>
