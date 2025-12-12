@@ -31,7 +31,7 @@ data class Reminder(
     }
 
     fun getNextOccurrence(actions: List<ReminderAction>, after: LocalDateTime? = null): ReminderInstance? {
-        val completedTimes = actions.filter { it.type == ActionType.COMPLETED }
+        val ignoredTimes = actions.filter { it.type == ActionType.COMPLETED || it.type == ActionType.DELETED }
             .map { it.originalScheduledTime }
             .toSet()
 
@@ -39,7 +39,7 @@ data class Reminder(
 
         if (recurrence == null) {
             val originalTime = startDateTime
-            if (completedTimes.contains(originalTime)) {
+            if (ignoredTimes.contains(originalTime)) {
                 return null
             }
 
@@ -50,7 +50,7 @@ data class Reminder(
                 return ReminderInstance(
                     reminderId = id, title = title, description = description,
                     displayTime = displayTime, originalTime = originalTime,
-                    isCompleted = false, isSnoozed = snoozedAction != null
+                    isCompleted = false, isSnoozed = snoozedAction != null, isRecurring = false
                 )
             }
             return null
@@ -63,7 +63,7 @@ data class Reminder(
             val occurrencesOnDay = calculateOccurrencesForDay(this, targetDay)
 
             for (originalTime in occurrencesOnDay) {
-                if (completedTimes.contains(originalTime)) continue
+                if (ignoredTimes.contains(originalTime)) continue
 
                 val snoozeAction = actions.find { it.originalScheduledTime == originalTime && it.type == ActionType.SNOOZED }
                 val displayTime = snoozeAction?.rescheduledTime ?: originalTime
@@ -72,7 +72,7 @@ data class Reminder(
                     return ReminderInstance(
                         reminderId = id, title = title, description = description,
                         displayTime = displayTime, originalTime = originalTime,
-                        isCompleted = false, isSnoozed = snoozeAction != null
+                        isCompleted = false, isSnoozed = snoozeAction != null, isRecurring = true
                     )
                 }
             }

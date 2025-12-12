@@ -10,7 +10,8 @@ data class ReminderInstance(
     val displayTime: LocalDateTime, // The time to show on the UI (could be original or snoozed)
     val originalTime: LocalDateTime, // The original scheduled time
     val isCompleted: Boolean,
-    val isSnoozed: Boolean
+    val isSnoozed: Boolean,
+    val isRecurring: Boolean // New field
 ) {
     companion object {
         fun getRemindersForDay(
@@ -51,6 +52,9 @@ data class ReminderInstance(
                                 instances.add(createInstance(reminder, originalTime, newTime, isSnoozed = true))
                             }
                         }
+                        ActionType.DELETED -> {
+                            // Do not add to the list
+                        }
                         null -> {
                             instances.add(createInstance(reminder, originalTime))
                         }
@@ -84,7 +88,8 @@ data class ReminderInstance(
                 displayTime = displayTime,
                 originalTime = originalTime,
                 isCompleted = isCompleted,
-                isSnoozed = isSnoozed
+                isSnoozed = isSnoozed,
+                isRecurring = reminder.recurrence != null // Set the new field
             )
         }
 

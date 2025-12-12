@@ -48,7 +48,8 @@ fun OverdueRemindersScreen(
                     reminderInstance = reminderInstance,
                     onCompletedChange = viewModel::toggleCompleted,
                     onSnooze = viewModel::snoozeReminder,
-                    onDelete = viewModel::deleteReminder,
+                    onDeleteInstance = viewModel::deleteReminderInstance,
+                    onDeleteReminder = viewModel::deleteReminder,
                     onUpdate = {
                         navController.navigate("add_edit_reminder?reminderId=${it}")
                     }

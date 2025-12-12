@@ -64,4 +64,20 @@ abstract class ReminderViewModel(
             reminderRepository.deleteReminderById(reminderId)
         }
     }
+
+    fun deleteReminderInstance(reminderInstance: ReminderInstance) {
+        viewModelScope.launch {
+            val action = ReminderAction(
+                reminderId = reminderInstance.reminderId,
+                originalScheduledTime = reminderInstance.originalTime,
+                type = ActionType.DELETED
+            )
+            reminderRepository.insertAction(action)
+            // Since we're deleting an instance, we need to schedule the next one if it's a recurring reminder.
+            val reminder = reminderRepository.getReminderById(reminderInstance.reminderId)
+            if (reminder?.recurrence != null) {
+                reminderAlarmScheduler.schedule(reminder, after = reminderInstance.displayTime)
+            }
+        }
+    }
 }

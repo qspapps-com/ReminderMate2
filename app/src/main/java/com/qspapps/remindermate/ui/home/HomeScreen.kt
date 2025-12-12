@@ -33,8 +33,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.qspapps.remindermate.R
 import com.qspapps.remindermate.ui.core.ReminderInstanceItem
 import com.qspapps.remindermate.ui.navigation.AppScreen
 import java.time.LocalDate
@@ -52,7 +54,7 @@ fun HomeScreen(
     val context = LocalContext.current
 
     val title = if (uiState.selectedDate.isEqual(LocalDate.now())) {
-        "Today's Reminders"
+        stringResource(id = R.string.today_reminders)
     } else {
         uiState.selectedDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))
     }
@@ -71,15 +73,15 @@ fun HomeScreen(
                     IconButton(onClick = { viewModel.toggleShowCompleted() }) {
                         Icon(
                             imageVector = if (uiState.showCompleted) Icons.Filled.Check else Icons.Filled.CheckCircle,
-                            contentDescription = if (uiState.showCompleted) "Hide Completed" else "Show Completed"
+                            contentDescription = if (uiState.showCompleted) stringResource(id = R.string.hide_completed) else stringResource(id = R.string.show_completed)
                         )
                     }
                     IconButton(onClick = { showDatePicker = true }) {
-                        Icon(Icons.Default.DateRange, contentDescription = "Select Date")
+                        Icon(Icons.Default.DateRange, contentDescription = stringResource(id = R.string.select_date))
                     }
                     Box {
                         IconButton(onClick = { showMenu = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_options))
                         }
                         DropdownMenu(
                             expanded = showMenu,
@@ -107,7 +109,7 @@ fun HomeScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { navController.navigate(AppScreen.AddEditReminder.createRoute(0L)) }) {
-                Icon(Icons.Default.Add, contentDescription = "Add Reminder")
+                Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.add_reminder))
             }
         }
     ) {
@@ -143,7 +145,8 @@ fun HomeScreen(
                             reminderInstance = reminderInstance,
                             onCompletedChange = viewModel::toggleCompleted,
                             onSnooze = viewModel::snoozeReminder,
-                            onDelete = viewModel::deleteReminder,
+                            onDeleteInstance = viewModel::deleteReminderInstance,
+                            onDeleteReminder = viewModel::deleteReminder,
                             onUpdate = { reminderId ->
                                 navController.navigate(AppScreen.AddEditReminder.createRoute(reminderId))
                             }

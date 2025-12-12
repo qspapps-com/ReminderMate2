@@ -40,15 +40,17 @@ fun ReminderInstanceItem(
     reminderInstance: ReminderInstance,
     onCompletedChange: (ReminderInstance) -> Unit,
     onSnooze: (ReminderInstance, LocalDateTime) -> Unit,
-    onDelete: (Long) -> Unit,
+    onDeleteInstance: (ReminderInstance) -> Unit,
+    onDeleteReminder: (Long) -> Unit,
     onUpdate: (Long) -> Unit
 ) {
     val now = LocalDateTime.now()
     var showMenu by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
+    var showDeleteConfirmation by remember { mutableStateOf<ReminderInstance?>(null) } // Changed to hold the instance
     val datePickerState = rememberDatePickerState(Instant.now().toEpochMilli())
-    val timePickerState = rememberTimePickerState(now.hour, (now.minute + 30)%60)
+    val timePickerState = rememberTimePickerState(now.hour, (now.minute + 30) % 60)
 
     if (showDatePicker) {
         DatePickerDialog(
@@ -110,6 +112,15 @@ fun ReminderInstanceItem(
         }
     }
 
+    // Call the new DeleteConfirmationDialog
+    showDeleteConfirmation?.let { reminderToDelete ->
+        DeleteConfirmationDialog(
+            reminderInstance = reminderToDelete,
+            onDismiss = { showDeleteConfirmation = null },
+            onDeleteInstance = onDeleteInstance,
+            onDeleteReminder = onDeleteReminder
+        )
+    }
 
     val textStyle = if (reminderInstance.isCompleted) {
         MaterialTheme.typography.bodyLarge.copy(textDecoration = TextDecoration.LineThrough)
@@ -124,13 +135,13 @@ fun ReminderInstanceItem(
             )
         },
         headlineContent = { Text(reminderInstance.title, style = textStyle) },
-        supportingContent = { reminderInstance.description?.let { Text(it) }  },
+        supportingContent = { reminderInstance.description?.let { Text(it) } },
         trailingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     formatTime(reminderInstance.displayTime),
                     color = if (isDue(reminderInstance.displayTime)) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
-                ) // Consider formatting this better
+                )
 
                 Box {
                     IconButton(onClick = { showMenu = true }) {
@@ -177,7 +188,7 @@ fun ReminderInstanceItem(
                         DropdownMenuItem(
                             text = { Text("Delete") },
                             onClick = {
-                                onDelete(reminderInstance.reminderId)
+                                showDeleteConfirmation = reminderInstance // Set the instance to show the dialog
                                 showMenu = false
                             }
                         )
