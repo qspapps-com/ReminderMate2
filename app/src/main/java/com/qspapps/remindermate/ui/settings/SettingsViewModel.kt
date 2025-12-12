@@ -16,15 +16,16 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class SettingsUiState(
-    val theme: Theme = Theme.SYSTEM
+    val theme: Theme = Theme.SYSTEM,
+    val hideCompleted: Boolean = false
 )
 
 @HiltViewModel
@@ -36,17 +37,26 @@ class SettingsViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
-    val uiState: StateFlow<SettingsUiState> = userPreferencesRepository.theme
-        .map { theme -> SettingsUiState(theme = theme) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = SettingsUiState()
-        )
+    val uiState: StateFlow<SettingsUiState> = combine(
+        userPreferencesRepository.theme,
+        userPreferencesRepository.hideCompleted
+    ) { theme, hideCompleted ->
+        SettingsUiState(theme, hideCompleted)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = SettingsUiState()
+    )
 
     fun updateTheme(theme: Theme) {
         viewModelScope.launch {
             userPreferencesRepository.setTheme(theme)
+        }
+    }
+
+    fun updateHideCompleted(hide: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.setHideCompleted(hide)
         }
     }
 
@@ -105,6 +115,16 @@ class SettingsViewModel @Inject constructor(
             newReminders.forEach { reminder ->
                 reminderAlarmScheduler.schedule(reminder)
             }
+        }
+    }
+
+    fun clearAllReminders() {
+        viewModelScope.launch {
+            val allReminders = reminderRepository.getAllReminders().first()
+            allReminders.forEach { reminder ->
+                reminderAlarmScheduler.cancel(reminder)
+            }
+            clearDatabase()
         }
     }
 

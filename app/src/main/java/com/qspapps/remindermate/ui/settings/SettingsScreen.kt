@@ -14,8 +14,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,6 +52,7 @@ fun SettingsScreen(
 ) {
     var showRestoreDialog by remember { mutableStateOf<Uri?>(null) }
     var showThemeDialog by remember { mutableStateOf(false) }
+    var showClearAllDialog by remember { mutableStateOf(false) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val backupLauncher = rememberLauncherForActivityResult(
@@ -88,6 +91,23 @@ fun SettingsScreen(
                     showRestoreDialog?.let { viewModel.restoreReminders(it, false) }
                     showRestoreDialog = null
                 }) { Text("Keep Existing") }
+            }
+        )
+    }
+
+    if (showClearAllDialog) {
+        AlertDialog(
+            onDismissRequest = { showClearAllDialog = false },
+            title = { Text("Clear All Reminders") },
+            text = { Text("Are you sure you want to delete all reminders? This action cannot be undone.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.clearAllReminders()
+                    showClearAllDialog = false
+                }) { Text("Clear") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showClearAllDialog = false }) { Text("Cancel") }
             }
         )
     }
@@ -131,6 +151,14 @@ fun SettingsScreen(
                     onClick = { showThemeDialog = true }
                 )
             }
+            item {
+                SettingsSwitchItem(
+                    icon = Icons.Default.VisibilityOff,
+                    title = "Hide completed reminders",
+                    checked = uiState.hideCompleted,
+                    onCheckedChange = { viewModel.updateHideCompleted(it) }
+                )
+            }
             item { Divider() }
             item {
                 SettingsSectionTitle("Data Management")
@@ -167,6 +195,14 @@ fun SettingsScreen(
                         }
                         restoreLauncher.launch(intent)
                     }
+                )
+            }
+            item {
+                SettingsItem(
+                    icon = Icons.Default.Delete,
+                    title = "Clear All Reminders",
+                    subtitle = "Delete all saved reminders",
+                    onClick = { showClearAllDialog = true }
                 )
             }
         }

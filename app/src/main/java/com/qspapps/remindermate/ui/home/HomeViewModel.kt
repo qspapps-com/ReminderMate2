@@ -6,12 +6,14 @@ import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.ReminderAction
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.data.repository.UserPreferencesRepository
 import com.qspapps.remindermate.utils.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -22,20 +24,25 @@ data class HomeUiState(
     val selectedDate: LocalDate = LocalDate.now(),
     val reminders: List<ReminderInstance> = emptyList(),
     val isLoading: Boolean = false,
-    val showCompleted: Boolean = false
+    val showCompleted: Boolean = true
 )
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val reminderRepository: ReminderRepository,
-    private val reminderAlarmScheduler: ReminderAlarmScheduler
+    private val reminderAlarmScheduler: ReminderAlarmScheduler,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     init {
-        loadRemindersForDay(LocalDate.now())
+        viewModelScope.launch {
+            val hideCompleted = userPreferencesRepository.hideCompleted.first()
+            _uiState.update { it.copy(showCompleted = !hideCompleted) }
+            loadRemindersForDay(LocalDate.now())
+        }
     }
 
     fun loadRemindersForDay(date: LocalDate) {
