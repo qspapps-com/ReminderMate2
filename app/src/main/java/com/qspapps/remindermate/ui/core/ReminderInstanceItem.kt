@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,24 +13,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
+import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.utils.DateTimeUtils
 import com.qspapps.remindermate.utils.DateTimeUtils.formatTime
 import com.qspapps.remindermate.utils.DateTimeUtils.isDue
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,75 +38,19 @@ fun ReminderInstanceItem(
     onDeleteReminder: (Long) -> Unit,
     onUpdate: (Long) -> Unit
 ) {
-    val now = LocalDateTime.now()
     var showMenu by remember { mutableStateOf(false) }
-    var showDatePicker by remember { mutableStateOf(false) }
-    var showTimePicker by remember { mutableStateOf(false) }
-    var showDeleteConfirmation by remember { mutableStateOf<ReminderInstance?>(null) } // Changed to hold the instance
-    val datePickerState = rememberDatePickerState(Instant.now().toEpochMilli())
-    val timePickerState = rememberTimePickerState(now.hour, (now.minute + 30) % 60)
+    var showCustomSnoozeDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirmation by remember { mutableStateOf<ReminderInstance?>(null) }
 
-    if (showDatePicker) {
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showDatePicker = false
-                        showTimePicker = true
-                    }
-                ) {
-                    Text("OK")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showDatePicker = false }
-                ) {
-                    Text("Cancel")
-                }
+    if (showCustomSnoozeDialog) {
+        CustomSnoozeDialogs(
+            onDismiss = { showCustomSnoozeDialog = false },
+            onConfirm = { newDateTime ->
+                onSnooze(reminderInstance, newDateTime)
             }
-        ) {
-            DatePicker(state = datePickerState)
-        }
+        )
     }
 
-    if (showTimePicker) {
-        TimePickerDialog(
-            onDismissRequest = { showTimePicker = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showTimePicker = false
-                        val selectedDate =
-                            datePickerState.selectedDateMillis?.let {
-                                Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
-                            }
-                        if (selectedDate != null) {
-                            val newDateTime = selectedDate.atTime(timePickerState.hour, timePickerState.minute)
-                            onSnooze(
-                                reminderInstance,
-                                newDateTime
-                            )
-                        }
-                    }
-                ) {
-                    Text("OK")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showTimePicker = false }
-                ) {
-                    Text("Cancel")
-                }
-            }
-        ) {
-            TimePicker(state = timePickerState)
-        }
-    }
-
-    // Call the new DeleteConfirmationDialog
     showDeleteConfirmation?.let { reminderToDelete ->
         DeleteConfirmationDialog(
             reminderInstance = reminderToDelete,
@@ -145,14 +83,14 @@ fun ReminderInstanceItem(
 
                 Box {
                     IconButton(onClick = { showMenu = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                        Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_options))
                     }
                     DropdownMenu(
                         expanded = showMenu,
                         onDismissRequest = { showMenu = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Snooze +15 mins") },
+                            text = { Text(stringResource(id = R.string.snooze_15_minutes_menu_item)) },
                             onClick = {
                                 onSnooze(
                                     reminderInstance,
@@ -162,7 +100,7 @@ fun ReminderInstanceItem(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Snooze 1 day") },
+                            text = { Text(stringResource(id = R.string.snooze_1_day_menu_item)) },
                             onClick = {
                                 onSnooze(
                                     reminderInstance,
@@ -172,23 +110,23 @@ fun ReminderInstanceItem(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Custom Snooze") },
+                            text = { Text(stringResource(id = R.string.custom_snooze_menu_item)) },
                             onClick = {
                                 showMenu = false
-                                showDatePicker = true
+                                showCustomSnoozeDialog = true
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Update") },
+                            text = { Text(stringResource(id = R.string.update_menu_item)) },
                             onClick = {
                                 onUpdate(reminderInstance.reminderId)
                                 showMenu = false
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Delete") },
+                            text = { Text(stringResource(id = R.string.delete_menu_item)) },
                             onClick = {
-                                showDeleteConfirmation = reminderInstance // Set the instance to show the dialog
+                                showDeleteConfirmation = reminderInstance
                                 showMenu = false
                             }
                         )
@@ -196,22 +134,5 @@ fun ReminderInstanceItem(
                 }
             }
         }
-    )
-}
-
-@Composable
-fun TimePickerDialog(
-    title: String = "Select Time",
-    onDismissRequest: () -> Unit,
-    confirmButton: @Composable () -> Unit,
-    dismissButton: (@Composable () -> Unit)?,
-    content: @Composable () -> Unit,
-) {
-    androidx.compose.material3.AlertDialog(
-        onDismissRequest = onDismissRequest,
-        title = { Text(title) },
-        text = content,
-        confirmButton = confirmButton,
-        dismissButton = dismissButton
     )
 }

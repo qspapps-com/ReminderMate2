@@ -24,10 +24,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.ui.core.ReminderItem
 
@@ -42,12 +44,12 @@ fun AllRemindersScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("All Reminders") },
+                title = { Text(stringResource(id = R.string.all_reminders_screen_title)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(id = R.string.back_button_content_description)
                         )
                     }
                 }
@@ -59,9 +61,9 @@ fun AllRemindersScreen(
             val filterOptions = listOf(FilterType.All, FilterType.None) + Frequency.entries.map(FilterType::FrequencyFilter)
 
             val selectedText = when (val filter = uiState.selectedFilter) {
-                is FilterType.All -> "All"
-                is FilterType.None -> "None"
-                is FilterType.FrequencyFilter -> filter.frequency.name.lowercase().replaceFirstChar { it.uppercase() }
+                is FilterType.All -> stringResource(id = R.string.filter_option_all)
+                is FilterType.None -> stringResource(id = R.string.filter_option_none)
+                is FilterType.FrequencyFilter -> stringResource(id = filter.frequency.toStringResource())
             }
 
             Box(
@@ -77,7 +79,7 @@ fun AllRemindersScreen(
                         value = selectedText,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Filter by frequency") },
+                        label = { Text(stringResource(id = R.string.filter_by_frequency_label)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                         modifier = Modifier
                             .menuAnchor()
@@ -89,9 +91,9 @@ fun AllRemindersScreen(
                     ) {
                         filterOptions.forEach { filter ->
                             val text = when (filter) {
-                                is FilterType.All -> "All"
-                                is FilterType.None -> "None"
-                                is FilterType.FrequencyFilter -> filter.frequency.name.lowercase().replaceFirstChar { it.uppercase() }
+                                is FilterType.All -> stringResource(id = R.string.filter_option_all)
+                                is FilterType.None -> stringResource(id = R.string.filter_option_none)
+                                is FilterType.FrequencyFilter -> stringResource(id = filter.frequency.toStringResource())
                             }
                             DropdownMenuItem(
                                 text = { Text(text) },
@@ -117,5 +119,17 @@ fun AllRemindersScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun Frequency.toStringResource(): Int {
+    return when (this) {
+        Frequency.MINUTE -> R.string.repeat_option_minute
+        Frequency.HOURLY -> R.string.repeat_option_hourly
+        Frequency.DAILY -> R.string.repeat_option_daily
+        Frequency.WEEKLY -> R.string.repeat_option_weekly
+        Frequency.MONTHLY -> R.string.repeat_option_monthly
+        Frequency.YEARLY -> R.string.repeat_option_yearly
     }
 }

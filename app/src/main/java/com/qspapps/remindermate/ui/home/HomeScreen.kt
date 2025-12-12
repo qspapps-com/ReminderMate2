@@ -56,7 +56,7 @@ fun HomeScreen(
     val title = if (uiState.selectedDate.isEqual(LocalDate.now())) {
         stringResource(id = R.string.today_reminders)
     } else {
-        uiState.selectedDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))
+        uiState.selectedDate.format(DateTimeFormatter.ofPattern(stringResource(id = R.string.home_date_format)))
     }
 
     val menuItems = listOf(
@@ -89,7 +89,7 @@ fun HomeScreen(
                         ) {
                             menuItems.forEach { screen ->
                                 DropdownMenuItem(
-                                    text = { Text(screen.displayName!!) },
+                                    text = { Text(stringResource(id = screen.displayName!!)) },
                                     onClick = {
                                         showMenu = false
                                         navController.navigate(screen.route)
@@ -97,7 +97,7 @@ fun HomeScreen(
                                     leadingIcon = {
                                         Icon(
                                             screen.icon!!,
-                                            contentDescription = screen.displayName
+                                            contentDescription = stringResource(id = screen.displayName!!)
                                         )
                                     }
                                 )

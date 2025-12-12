@@ -14,5 +14,95 @@
     <string name="delete_this_instance">Delete this instance</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
-
+    <string name="home_date_format">MMM dd, yyyy</string>
+    <string name="settings_title">Settings</string>
+    <string name="all_reminders_title">All Reminders</string>
+    <string name="overdue_reminders_title">Overdue Reminders</string>
+    <string name="add_reminder_title">Add Reminder</string>
+    <string name="edit_reminder_title">Edit Reminder</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="title_label">Title</string>
+    <string name="description_label">Description</string>
+    <string name="past_reminder_error">Cannot set reminder in the past</string>
+    <string name="repeats_label">Repeats</string>
+    <string name="every_label">Every</string>
+    <string name="number_of_times_label">Number of times</string>
+    <string name="save_button">Save</string>
+    <string name="repeat_option_none">None</string>
+    <string name="repeat_option_minute">Minute</string>
+    <string name="repeat_option_hourly">Hourly</string>
+    <string name="repeat_option_daily">Daily</string>
+    <string name="repeat_option_weekdays">Weekdays</string>
+    <string name="repeat_option_weekends">Weekends</string>
+    <string name="repeat_option_weekly">Weekly</string>
+    <string name="repeat_option_monthly">Monthly</string>
+    <string name="repeat_option_yearly">Yearly</string>
+    <string name="all_reminders_screen_title">All Reminders</string>
+    <string name="back_button_content_description">Back</string>
+    <string name="filter_by_frequency_label">Filter by frequency</string>
+    <string name="filter_option_all">All</string>
+    <string name="filter_option_none">None</string>
+    <string name="overdue_reminders_screen_title">Overdue Reminders</string>
+    <string name="restore_reminders_dialog_title">Restore Reminders</string>
+    <string name="restore_reminders_dialog_text">Do you want to delete all existing reminders before restoring?</string>
+    <string name="delete_and_restore_button">Delete and Restore</string>
+    <string name="keep_existing_button">Keep Existing</string>
+    <string name="clear_all_reminders_dialog_title">Clear All Reminders</string>
+    <string name="clear_all_reminders_dialog_text">Are you sure you want to delete all reminders? This action cannot be undone.</string>
+    <string name="clear_button">Clear</string>
+    <string name="settings_screen_title">Settings</string>
+    <string name="appearance_section_title">Appearance</string>
+    <string name="theme_setting_title">Theme</string>
+    <string name="hide_completed_reminders_setting_title">Hide completed reminders</string>
+    <string name="data_management_section_title">Data Management</string>
+    <string name="backup_data_setting_title">Backup Data</string>
+    <string name="backup_data_setting_subtitle">Save your data locally</string>
+    <string name="restore_data_setting_title">Restore Data</string>
+    <string name="restore_data_setting_subtitle">Restore from a previous backup</string>
+    <string name="clear_all_reminders_setting_title">Clear All Reminders</string>
+    <string name="clear_all_reminders_setting_subtitle">Delete all saved reminders</string>
+    <string name="choose_theme_dialog_title">Choose theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System</string>
+    <string name="reminder_item_date_time_format">MMM dd, yyyy \'at\' hh:mm a</string>
+    <string name="reminder_starts_prefix">Starts: </string>
+    <string name="update_menu_item">Update</string>
+    <string name="delete_menu_item">Delete</string>
+    <string name="one_time_reminder">One-time reminder</string>
+    <string name="repeats_prefix">Repeats </string>
+    <string name="recurrence_on_prefix"> on </string>
+    <string name="ok_button">OK</string>
+    <string name="select_time_title">Select Time</string>
+    <string name="snooze_15_minutes_menu_item">Snooze +15 mins</string>
+    <string name="snooze_1_day_menu_item">Snooze 1 day</string>
+    <string name="custom_snooze_menu_item">Custom Snooze</string>
+    <plurals name="recurrence_minute">
+        <item quantity="one">every minute</item>
+        <item quantity="other">every %d minutes</item>
+    </plurals>
+    <plurals name="recurrence_hour">
+        <item quantity="one">hourly</item>
+        <item quantity="other">every %d hours</item>
+    </plurals>
+    <plurals name="recurrence_day">
+        <item quantity="one">daily</item>
+        <item quantity="other">every %d days</item>
+    </plurals>
+    <plurals name="recurrence_week">
+        <item quantity="one">weekly</item>
+        <item quantity="other">every %d weeks</item>
+    </plurals>
+    <plurals name="recurrence_month">
+        <item quantity="one">monthly</item>
+        <item quantity="other">every %d months</item>
+    </plurals>
+    <plurals name="recurrence_year">
+        <item quantity="one">yearly</item>
+        <item quantity="other">every %d years</item>
+    </plurals>
+    <plurals name="recurrence_for_times">
+        <item quantity="one"> for 1 time</item>
+        <item quantity="other"> for %d times</item>
+    </plurals>
 </resources>

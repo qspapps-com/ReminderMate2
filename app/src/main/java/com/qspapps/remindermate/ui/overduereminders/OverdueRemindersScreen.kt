@@ -14,9 +14,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.qspapps.remindermate.R
 import com.qspapps.remindermate.ui.core.ReminderInstanceItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,12 +32,12 @@ fun OverdueRemindersScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Overdue Reminders") },
+                title = { Text(stringResource(id = R.string.overdue_reminders_screen_title)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(id = R.string.back_button_content_description)
                         )
                     }
                 }

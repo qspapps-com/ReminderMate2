@@ -38,10 +38,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.data.model.RecurrenceRule
 import java.time.DayOfWeek
@@ -50,16 +52,16 @@ import java.time.format.TextStyle
 import java.util.Calendar
 import java.util.Locale
 
-private sealed class RepeatOption(val displayName: String) {
-    data object None : RepeatOption("None")
-    data object Minute : RepeatOption("Minute")
-    data object Hourly : RepeatOption("Hourly")
-    data object Daily : RepeatOption("Daily")
-    data object Weekdays : RepeatOption("Weekdays")
-    data object Weekends : RepeatOption("Weekends")
-    data object Weekly : RepeatOption("Weekly")
-    data object Monthly : RepeatOption("Monthly")
-    data object Yearly : RepeatOption("Yearly")
+private sealed class RepeatOption(val displayName: Int) {
+    data object None : RepeatOption(R.string.repeat_option_none)
+    data object Minute : RepeatOption(R.string.repeat_option_minute)
+    data object Hourly : RepeatOption(R.string.repeat_option_hourly)
+    data object Daily : RepeatOption(R.string.repeat_option_daily)
+    data object Weekdays : RepeatOption(R.string.repeat_option_weekdays)
+    data object Weekends : RepeatOption(R.string.repeat_option_weekends)
+    data object Weekly : RepeatOption(R.string.repeat_option_weekly)
+    data object Monthly : RepeatOption(R.string.repeat_option_monthly)
+    data object Yearly : RepeatOption(R.string.repeat_option_yearly)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,12 +79,12 @@ fun AddEditReminderScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (uiState.isNewReminder) "Add Reminder" else "Edit Reminder") },
+                title = { Text(stringResource(if (uiState.isNewReminder) R.string.add_reminder_title else R.string.edit_reminder_title)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Cancel"
+                            contentDescription = stringResource(id = R.string.cancel_button)
                         )
                     }
                 }
@@ -101,14 +103,14 @@ fun AddEditReminderScreen(
                 OutlinedTextField(
                     value = uiState.title,
                     onValueChange = { viewModel.updateTitle(it) },
-                    label = { Text("Title") },
+                    label = { Text(stringResource(id = R.string.title_label)) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = uiState.description,
                     onValueChange = { viewModel.updateDescription(it) },
-                    label = { Text("Description") },
+                    label = { Text(stringResource(id = R.string.description_label)) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -124,7 +126,7 @@ fun AddEditReminderScreen(
 
                 if (uiState.showDateTimeError) {
                     Text(
-                        text = "Cannot set reminder in the past",
+                        text = stringResource(id = R.string.past_reminder_error),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(top = 4.dp)
@@ -141,7 +143,7 @@ fun AddEditReminderScreen(
                     OutlinedTextField(
                         value = uiState.recurrence.toDisplayString(),
                         onValueChange = { },
-                        label = { Text("Repeats") },
+                        label = { Text(stringResource(id = R.string.repeats_label)) },
                         readOnly = true,
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = isFrequencyDropdownExpanded)
@@ -155,7 +157,7 @@ fun AddEditReminderScreen(
                         val options = listOf(RepeatOption.None, RepeatOption.Minute, RepeatOption.Hourly, RepeatOption.Daily, RepeatOption.Weekdays, RepeatOption.Weekends, RepeatOption.Weekly, RepeatOption.Monthly, RepeatOption.Yearly)
                         options.forEach { option ->
                             DropdownMenuItem(
-                                text = { Text(option.displayName) },
+                                text = { Text(stringResource(id = option.displayName)) },
                                 onClick = {
                                     val newRule: RecurrenceRule? = when (option) {
                                         RepeatOption.None -> null
@@ -206,7 +208,7 @@ fun AddEditReminderScreen(
                             val interval = intervalString.toIntOrNull()?.coerceAtLeast(1) ?: 1
                             viewModel.updateRecurrence(recurrence.copy(interval = interval))
                         },
-                        label = { Text("Every") },
+                        label = { Text(stringResource(id = R.string.every_label)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -217,7 +219,7 @@ fun AddEditReminderScreen(
                             val count = countString.toIntOrNull()
                             viewModel.updateRecurrence(recurrence.copy(count = count))
                         },
-                        label = { Text("Number of times") },
+                        label = { Text(stringResource(id = R.string.number_of_times_label)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -233,7 +235,7 @@ fun AddEditReminderScreen(
                     enabled = uiState.title.isNotBlank() && !uiState.showDateTimeError,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Save")
+                    Text(text = stringResource(id = R.string.save_button))
                 }
             }
         }
@@ -270,16 +272,24 @@ fun AddEditReminderScreen(
     }
 }
 
+@Composable
 private fun RecurrenceRule?.toDisplayString(): String {
-    if (this == null) return "None"
+    if (this == null) return stringResource(id = R.string.repeat_option_none)
 
     if (this.frequency == Frequency.WEEKLY) {
         val weekdays = setOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY)
         val weekends = setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
-        if (this.daysOfWeek == weekdays) return "Weekdays"
-        if (this.daysOfWeek == weekends) return "Weekends"
+        if (this.daysOfWeek == weekdays) return stringResource(id = R.string.repeat_option_weekdays)
+        if (this.daysOfWeek == weekends) return stringResource(id = R.string.repeat_option_weekends)
     }
-    return this.frequency.name.lowercase().replaceFirstChar { it.uppercase() }
+    return when (this.frequency) {
+        Frequency.MINUTE -> stringResource(id = R.string.repeat_option_minute)
+        Frequency.HOURLY -> stringResource(id = R.string.repeat_option_hourly)
+        Frequency.DAILY -> stringResource(id = R.string.repeat_option_daily)
+        Frequency.WEEKLY -> stringResource(id = R.string.repeat_option_weekly)
+        Frequency.MONTHLY -> stringResource(id = R.string.repeat_option_monthly)
+        Frequency.YEARLY -> stringResource(id = R.string.repeat_option_yearly)
+    }
 }
 
 @Composable
