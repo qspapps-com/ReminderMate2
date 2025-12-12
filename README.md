@@ -54,7 +54,7 @@ This project is a modern Android application built entirely with **Kotlin** and 
 *   **Database**: [Room](https://developer.android.com/training/data-storage/room) for robust and efficient local data persistence.
 *   **Asynchronous Programming**: [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) for managing background threads.
 *   **Dependency Injection**: [Hilt](https://developer.android.com/training/dependency-injection/hilt-android) for managing dependencies.
-*   **Scheduling**: [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager) or [AlarmManager](https://developer.android.com/training/scheduling/alarms) for reliable reminder scheduling.
+*   **Scheduling**: [AlarmManager](https://developer.android.com/training/scheduling/alarms) for reliable reminder scheduling.
 
 ---
 
