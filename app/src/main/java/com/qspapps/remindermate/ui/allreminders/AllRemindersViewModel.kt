@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.utils.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,7 +23,8 @@ data class AllRemindersUiState(
 
 @HiltViewModel
 class AllRemindersViewModel @Inject constructor(
-    private val reminderRepository: ReminderRepository
+    private val reminderRepository: ReminderRepository,
+    private val reminderAlarmScheduler: ReminderAlarmScheduler
 ) : ViewModel() {
 
     private val _selectedFrequency = MutableStateFlow<Frequency?>(null)
@@ -45,5 +47,15 @@ class AllRemindersViewModel @Inject constructor(
 
     fun setFrequencyFilter(frequency: Frequency?) {
         _selectedFrequency.value = frequency
+    }
+
+    fun deleteReminder(reminderId: Long) {
+        viewModelScope.launch {
+            val reminder = reminderRepository.getReminderById(reminderId)
+            if (reminder != null) {
+                reminderAlarmScheduler.cancel(reminder)
+            }
+            reminderRepository.deleteReminderById(reminderId)
+        }
     }
 }
