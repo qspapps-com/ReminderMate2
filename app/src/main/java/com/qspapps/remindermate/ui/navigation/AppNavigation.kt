@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.qspapps.remindermate.ui.addeditreminder.AddEditReminderScreen
+import com.qspapps.remindermate.ui.allreminders.AllRemindersScreen
 import com.qspapps.remindermate.ui.home.HomeScreen
 import com.qspapps.remindermate.ui.settings.SettingsScreen
 
@@ -28,6 +29,9 @@ fun AppNavigation() {
         }
         composable("settings") {
             SettingsScreen(navController = navController)
+        }
+        composable("all_reminders") {
+            AllRemindersScreen(navController = navController)
         }
     }
 }

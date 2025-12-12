@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,7 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.qspapps.remindermate.ui.core.ReminderItem
 import java.time.LocalDate
@@ -79,6 +80,19 @@ fun HomeScreen(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }
                         ) {
+                            DropdownMenuItem(
+                                text = { Text("All Reminders") },
+                                onClick = {
+                                    showMenu = false
+                                    navController.navigate("all_reminders")
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        Icons.Default.List,
+                                        contentDescription = "All Reminders"
+                                    )
+                                }
+                            )
                             DropdownMenuItem(
                                 text = { Text("Settings") },
                                 onClick = {
