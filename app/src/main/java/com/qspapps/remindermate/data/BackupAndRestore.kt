@@ -5,8 +5,6 @@ import com.qspapps.remindermate.data.legacy.JsonReminder
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.model.ReminderAction
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream

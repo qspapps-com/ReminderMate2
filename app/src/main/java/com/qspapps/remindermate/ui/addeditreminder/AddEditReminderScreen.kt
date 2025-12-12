@@ -60,8 +60,6 @@ private sealed class RepeatOption(val displayName: String) {
     data object Weekly : RepeatOption("Weekly")
     data object Monthly : RepeatOption("Monthly")
     data object Yearly : RepeatOption("Yearly")
-
-    fun toRecurrenceRule(startDateTime: java.time.LocalDateTime): RecurrenceRule? = null
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

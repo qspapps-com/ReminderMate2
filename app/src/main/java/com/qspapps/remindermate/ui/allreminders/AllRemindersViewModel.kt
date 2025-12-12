@@ -15,9 +15,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed class FilterType {
+    object All : FilterType()
+    object None : FilterType()
+    data class FrequencyFilter(val frequency: Frequency) : FilterType()
+}
+
 data class AllRemindersUiState(
     val reminders: List<Reminder> = emptyList(),
-    val selectedFrequency: Frequency? = null,
+    val selectedFilter: FilterType = FilterType.All,
     val isLoading: Boolean = false
 )
 
@@ -27,26 +33,26 @@ class AllRemindersViewModel @Inject constructor(
     private val reminderAlarmScheduler: ReminderAlarmScheduler
 ) : ViewModel() {
 
-    private val _selectedFrequency = MutableStateFlow<Frequency?>(null)
+    private val _selectedFilter = MutableStateFlow<FilterType>(FilterType.All)
 
     val uiState: StateFlow<AllRemindersUiState> = combine(
         reminderRepository.getAllReminders(),
-        _selectedFrequency
-    ) { reminders, frequency ->
-        val filteredReminders = if (frequency == null) {
-            reminders
-        } else {
-            reminders.filter { it.recurrence?.frequency == frequency }
+        _selectedFilter
+    ) { reminders, filter ->
+        val filteredReminders = when (filter) {
+            FilterType.All -> reminders
+            FilterType.None -> reminders.filter { it.recurrence == null }
+            is FilterType.FrequencyFilter -> reminders.filter { it.recurrence?.frequency == filter.frequency }
         }
-        AllRemindersUiState(reminders = filteredReminders)
+        AllRemindersUiState(reminders = filteredReminders, selectedFilter = filter)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = AllRemindersUiState(isLoading = true)
     )
 
-    fun setFrequencyFilter(frequency: Frequency?) {
-        _selectedFrequency.value = frequency
+    fun setFilter(filter: FilterType) {
+        _selectedFilter.value = filter
     }
 
     fun deleteReminder(reminderId: Long) {

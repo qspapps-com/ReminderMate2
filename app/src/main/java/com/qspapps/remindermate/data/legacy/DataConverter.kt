@@ -187,10 +187,7 @@ data class JsonRecurrence(
     val repeatInterval: Int,
     val intervalUnit: String, // e.g., "minute", "hour", "day"
     val endTime: String? = null
-) {
-    // Helper to get actual Java LocalDateTime object
-    fun getParsedStartTime(): LocalDateTime? = DateHelper.parse(startTime)
-}
+)
 
 @Serializable
 data class JsonReminderInstance(
@@ -202,21 +199,4 @@ data class JsonReminderInstance(
     val scheduledTime: String,
 
     val status: String // e.g., "todo", "completed"
-) {
-    fun isCompleted() = status.equals("completed", ignoreCase = true)
-}
-
-// --- Date Parsing Helper ---
-object DateHelper {
-    // Matches format: "8 Dec 2025 07:00 PM"
-    private val formatter = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a", Locale.ENGLISH)
-
-    fun parse(dateString: String): LocalDateTime? {
-        return try {
-            LocalDateTime.parse(dateString, formatter)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-}
+)

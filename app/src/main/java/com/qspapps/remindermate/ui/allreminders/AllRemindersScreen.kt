@@ -56,8 +56,13 @@ fun AllRemindersScreen(
     ) { padding ->
         Column(modifier = Modifier.padding(padding)) {
             var expanded by remember { mutableStateOf(false) }
-            val items = listOf(null) + Frequency.values()
-            val selectedText = uiState.selectedFrequency?.name?.lowercase()?.replaceFirstChar { it.uppercase() } ?: "All"
+            val filterOptions = listOf(FilterType.All, FilterType.None) + Frequency.values().map(FilterType::FrequencyFilter)
+
+            val selectedText = when (val filter = uiState.selectedFilter) {
+                is FilterType.All -> "All"
+                is FilterType.None -> "None"
+                is FilterType.FrequencyFilter -> filter.frequency.name.lowercase().replaceFirstChar { it.uppercase() }
+            }
 
             Box(
                 modifier = Modifier
@@ -82,12 +87,16 @@ fun AllRemindersScreen(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
-                        items.forEach { frequency ->
-                            val text = frequency?.name?.lowercase()?.replaceFirstChar { it.uppercase() } ?: "All"
+                        filterOptions.forEach { filter ->
+                            val text = when (filter) {
+                                is FilterType.All -> "All"
+                                is FilterType.None -> "None"
+                                is FilterType.FrequencyFilter -> filter.frequency.name.lowercase().replaceFirstChar { it.uppercase() }
+                            }
                             DropdownMenuItem(
                                 text = { Text(text) },
                                 onClick = {
-                                    viewModel.setFrequencyFilter(frequency)
+                                    viewModel.setFilter(filter)
                                     expanded = false
                                 }
                             )
