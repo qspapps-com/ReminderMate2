@@ -21,7 +21,7 @@ enum class Theme {
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
-class UserPreferencesRepository @Inject constructor(@ApplicationContext private val context: Context) {
+class UserPreferencesRepository @Inject constructor(@param:ApplicationContext private val context: Context) {
 
     private object PreferencesKeys {
         val THEME = stringPreferencesKey("theme")
