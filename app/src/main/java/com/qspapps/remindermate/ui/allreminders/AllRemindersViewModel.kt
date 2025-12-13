@@ -5,7 +5,7 @@ import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.ui.core.ReminderViewModel
-import com.qspapps.remindermate.utils.ReminderAlarmScheduler
+import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

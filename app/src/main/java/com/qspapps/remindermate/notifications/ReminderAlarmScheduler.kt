@@ -1,4 +1,4 @@
-package com.qspapps.remindermate.utils
+package com.qspapps.remindermate.notifications
 
 import android.app.AlarmManager
 import android.app.PendingIntent

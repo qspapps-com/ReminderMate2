@@ -7,8 +7,8 @@ import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.local.ReminderDatabase
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.data.repository.UserPreferencesRepository
-import com.qspapps.remindermate.utils.NotificationService
-import com.qspapps.remindermate.utils.ReminderAlarmScheduler
+import com.qspapps.remindermate.notifications.NotificationService
+import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

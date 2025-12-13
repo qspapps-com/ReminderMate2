@@ -57,11 +57,9 @@ com.qspapps.remindermate/
 ├── data/                  # Data layer implementation
 │   ├── model/             # Data Transfer Objects (DTOs) and domain models
 │   ├── local/             # Room DAO and database definitions
-│   ├── remote/            # Retrofit API service interfaces
 │   └── repository/        # Repository implementations
-│
 ├── di/                    # Feature-specific or app-wide Hilt modules
-│
+├── notifications/         # Notification-related classes and services
 ├── ui/                    # Presentation layer (Jetpack Compose)
 │   ├── navigation/        # Navigation graph and route definitions (e.g., AppNavigation.kt)
 │   ├── theme/             # App theme, colors, typography (Theme.kt, Color.kt)

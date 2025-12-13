@@ -7,7 +7,7 @@ import com.qspapps.remindermate.data.model.RecurrenceRule
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.utils.DateTimeUtils
-import com.qspapps.remindermate.utils.ReminderAlarmScheduler
+import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

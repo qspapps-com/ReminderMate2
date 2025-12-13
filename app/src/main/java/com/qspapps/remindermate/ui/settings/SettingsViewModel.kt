@@ -10,7 +10,7 @@ import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.data.repository.Theme
 import com.qspapps.remindermate.data.repository.UserPreferencesRepository
-import com.qspapps.remindermate.utils.ReminderAlarmScheduler
+import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers

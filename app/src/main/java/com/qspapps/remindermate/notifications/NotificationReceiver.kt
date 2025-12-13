@@ -1,14 +1,16 @@
-package com.qspapps.remindermate.utils
+package com.qspapps.remindermate.notifications
 
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import com.qspapps.remindermate.data.local.ReminderActionDao
 import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.ReminderAction
 import com.qspapps.remindermate.di.ApplicationScope
+import com.qspapps.remindermate.utils.DateTimeUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -88,7 +90,7 @@ class NotificationReceiver : BroadcastReceiver() {
 }
 
 private inline fun <reified T : Serializable> Intent.getSerializableExtraCompatible(key: String): T? {
-    return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         getSerializableExtra(key, T::class.java)
     } else {
         @Suppress("DEPRECATION")

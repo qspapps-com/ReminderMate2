@@ -6,7 +6,7 @@ import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.ReminderAction
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.data.repository.ReminderRepository
-import com.qspapps.remindermate.utils.ReminderAlarmScheduler
+import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 

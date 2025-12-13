@@ -168,7 +168,7 @@ class ReminderTest {
         val next = reminder.getNextOccurrence(emptyList())
 
         assertEquals(
-            ReminderInstance(1, "Test", null, start, start, isCompleted = false, isSnoozed = false),
+            ReminderInstance(1, "Test", null, start, start, isCompleted = false, isSnoozed = false, isRecurring = false),
             next
         )
     }
@@ -204,7 +204,7 @@ class ReminderTest {
         val next = reminder.getNextOccurrence(actions)
 
         assertEquals(
-            ReminderInstance(1, "Test", null, snoozedTime, start, isCompleted = false, isSnoozed = true),
+            ReminderInstance(1, "Test", null, snoozedTime, start, isCompleted = false, isSnoozed = true, isRecurring = false),
             next
         )
     }
@@ -230,7 +230,7 @@ class ReminderTest {
         val next = reminder.getNextOccurrence(emptyList())
 
         assertEquals(
-            ReminderInstance(1, "Test", null, start, start, isCompleted = false, isSnoozed = false),
+            ReminderInstance(1, "Test", null, start, start, isCompleted = false, isSnoozed = false, isRecurring = true),
             next
         )
     }
@@ -245,7 +245,7 @@ class ReminderTest {
 
         val expectedTime = start.plusDays(1)
         assertEquals(
-            ReminderInstance(1, "Test", null, expectedTime, expectedTime, isCompleted = false, isSnoozed = false),
+            ReminderInstance(1, "Test", null, expectedTime, expectedTime, isCompleted = false, isSnoozed = false, isRecurring = true),
             next
         )
     }
@@ -261,7 +261,7 @@ class ReminderTest {
 
         val expectedTime = start.plusDays(1)
         assertEquals(
-            ReminderInstance(1, "Test", null, expectedTime, expectedTime, isCompleted = false, isSnoozed = false),
+            ReminderInstance(1, "Test", null, expectedTime, expectedTime, isCompleted = false, isSnoozed = false, isRecurring = true),
             next
         )
     }
@@ -278,7 +278,7 @@ class ReminderTest {
         val next = reminder.getNextOccurrence(actions)
 
         assertEquals(
-            ReminderInstance(1, "Test", null, snoozedTime, start, isCompleted = false, isSnoozed = true),
+            ReminderInstance(1, "Test", null, snoozedTime, start, isCompleted = false, isSnoozed = true, isRecurring = true),
             next
         )
     }
@@ -296,7 +296,7 @@ class ReminderTest {
 
         val expectedTime = start.plusDays(1)
         assertEquals(
-            ReminderInstance(1, "Test", null, expectedTime, expectedTime, isCompleted = false, isSnoozed = false),
+            ReminderInstance(1, "Test", null, expectedTime, expectedTime, isCompleted = false, isSnoozed = false, isRecurring = true),
             next
         )
     }
