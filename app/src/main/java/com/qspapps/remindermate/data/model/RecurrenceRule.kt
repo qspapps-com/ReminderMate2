@@ -1,7 +1,10 @@
 package com.qspapps.remindermate.data.model
 
+import android.util.Log
 import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
+
+private const val TAG = "RecurrenceRule"
 
 @Serializable
 data class RecurrenceRule(
@@ -38,7 +41,7 @@ data class RecurrenceRule(
                 }
                 RecurrenceRule(frequency, interval, daysOfWeek, count)
             } catch (e: Exception) {
-                // Log the exception or handle it as needed
+                Log.e(TAG, "Error parsing recurrence rule: $ruleString", e)
                 null
             }
         }

@@ -1,5 +1,6 @@
 package com.qspapps.remindermate.data.legacy
 
+import android.util.Log
 import com.qspapps.remindermate.data.local.BackupData
 import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.Frequency
@@ -12,8 +13,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-// --- CONVERTER OBJECT ---
-
+private const val TAG = "DataConverter"
 object DataConverter {
 
     // 1. Formatter matching your JSON format
@@ -80,7 +80,25 @@ object DataConverter {
                 if (firstTime != null && finalTime != null) {
 
                     // A. Check for SNOOZE (If original time != final time)
-                    if (!firstTime.isEqual(finalTime)) {
+                    if (instance.status.equals("completed", ignoreCase = true)) {
+                        targetActions.add(
+                            ReminderAction(
+                                reminderId = reminderId,
+                                originalScheduledTime = firstTime, // Completed at the rescheduled time
+                                type = ActionType.COMPLETED,
+                                rescheduledTime = finalTime
+                            )
+                        )
+                    } else if (instance.status.equals("deleted", ignoreCase = true)) {
+                        targetActions.add(
+                            ReminderAction(
+                                reminderId = reminderId,
+                                originalScheduledTime = firstTime, // Completed at the rescheduled time
+                                type = ActionType.DELETED,
+                                rescheduledTime = finalTime
+                            )
+                        )
+                    } else if (!firstTime.isEqual(finalTime)) {
                         targetActions.add(
                             ReminderAction(
                                 reminderId = reminderId,
@@ -89,19 +107,11 @@ object DataConverter {
                                 rescheduledTime = finalTime
                             )
                         )
+                    } else {
+                        Log.w(TAG, "Unable to add reminder action for $instance")
                     }
-
-                    // B. Check for COMPLETION
-                    if (instance.status.equals("completed", ignoreCase = true)) {
-                        targetActions.add(
-                            ReminderAction(
-                                reminderId = reminderId,
-                                originalScheduledTime = finalTime, // Completed at the rescheduled time
-                                type = ActionType.COMPLETED,
-                                rescheduledTime = null
-                            )
-                        )
-                    }
+                } else {
+                    Log.w(TAG, "firstTime or finalTime is null: $firstTime, $finalTime")
                 }
             }
         }
@@ -167,6 +177,7 @@ object DataConverter {
         return try {
             LocalDateTime.parse(dateStr, formatter)
         } catch (e: Exception) {
+            Log.w(TAG, "Unable to parse date $dateStr. ${e.message}")
             null
         }
     }

@@ -54,7 +54,8 @@ fun OverdueRemindersScreen(
                     onDeleteReminder = viewModel::deleteReminder,
                     onUpdate = {
                         navController.navigate("add_edit_reminder?reminderId=${it}")
-                    }
+                    },
+                    showDate = true
                 )
             }
         }

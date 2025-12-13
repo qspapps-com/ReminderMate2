@@ -10,6 +10,10 @@ object DateTimeUtils {
         val formatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.getDefault())
         return localDateTime.format(formatter)
     }
+    fun formatDate(localDateTime: LocalDateTime): String {
+        val formatter = DateTimeFormatter.ofPattern("dd MMM, yyyy", Locale.getDefault())
+        return localDateTime.format(formatter)
+    }
 
     fun isDue(localDateTime: LocalDateTime): Boolean {
         return localDateTime.isBefore(LocalDateTime.now())

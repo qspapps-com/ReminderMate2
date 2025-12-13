@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.utils.DateTimeUtils
+import com.qspapps.remindermate.utils.DateTimeUtils.formatDate
 import com.qspapps.remindermate.utils.DateTimeUtils.formatTime
 import com.qspapps.remindermate.utils.DateTimeUtils.isDue
 import java.time.LocalDateTime
@@ -36,7 +37,8 @@ fun ReminderInstanceItem(
     onSnooze: (ReminderInstance, LocalDateTime) -> Unit,
     onDeleteInstance: (ReminderInstance) -> Unit,
     onDeleteReminder: (Long) -> Unit,
-    onUpdate: (Long) -> Unit
+    onUpdate: (Long) -> Unit,
+    showDate: Boolean
 ) {
     var showMenu by remember { mutableStateOf(false) }
     var showCustomSnoozeDialog by remember { mutableStateOf(false) }
@@ -73,7 +75,7 @@ fun ReminderInstanceItem(
             )
         },
         headlineContent = { Text(reminderInstance.title, style = textStyle) },
-        supportingContent = { reminderInstance.description?.let { Text(it) } },
+        supportingContent = { getSupportingContent(reminderInstance, showDate)?.let { Text(it) } },
         trailingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
@@ -135,4 +137,15 @@ fun ReminderInstanceItem(
             }
         }
     )
+}
+
+fun getSupportingContent(reminderInstance: ReminderInstance, showDate: Boolean):String? {
+    val s1 = reminderInstance.description
+    val s2 = if (showDate) formatDate(reminderInstance.displayTime) else null
+    return when {
+        s1 != null && s2 != null -> "$s1\n$s2"
+        s1 != null -> s1 // s2 must be null here
+        s2 != null -> s2 // s1 must be null here
+        else -> null // Both are null
+    }
 }

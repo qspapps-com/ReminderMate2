@@ -149,7 +149,8 @@ fun HomeScreen(
                             onDeleteReminder = viewModel::deleteReminder,
                             onUpdate = { reminderId ->
                                 navController.navigate(AppScreen.AddEditReminder.createRoute(reminderId))
-                            }
+                            },
+                            showDate = false
                         )
                     }
                 }
