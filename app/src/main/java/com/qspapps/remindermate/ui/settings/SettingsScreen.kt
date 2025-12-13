@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
@@ -38,7 +37,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -46,7 +44,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.repository.Theme
-import com.qspapps.remindermate.utils.LanguageManager
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -127,13 +124,6 @@ fun SettingsScreen(
         )
     }
 
-    if (showLanguageDialog) {
-        LanguageSelectionDialog(
-            onLanguageSelected = { LanguageManager.setLanguage(navController.context, it) },
-            onDismiss = { showLanguageDialog = false }
-        )
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -163,14 +153,6 @@ fun SettingsScreen(
                     title = stringResource(id = R.string.theme_setting_title),
                     subtitle = stringResource(id = uiState.theme.toStringResource()),
                     onClick = { showThemeDialog = true }
-                )
-            }
-            item {
-                SettingsItem(
-                    icon = Icons.Default.Language,
-                    title = stringResource(id = R.string.language_setting_title),
-                    subtitle = java.util.Locale.getDefault().displayName,
-                    onClick = { showLanguageDialog = true }
                 )
             }
             item {
@@ -229,32 +211,6 @@ fun SettingsScreen(
             }
         }
     }
-}
-
-@Composable
-fun LanguageSelectionDialog(
-    onLanguageSelected: (String) -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(id = R.string.choose_language_dialog_title)) },
-        text = {
-            Column {
-                LanguageManager.getAvailableLanguages().forEach { (languageCode, languageName) ->
-                    ListItem(
-                        headlineContent = { Text(languageName) },
-                        modifier = Modifier.clickable { onLanguageSelected(languageCode); onDismiss() },
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(id = R.string.cancel_button))
-            }
-        }
-    )
 }
 
 @Composable
