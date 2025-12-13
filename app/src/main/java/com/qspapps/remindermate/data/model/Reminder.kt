@@ -89,7 +89,7 @@ data class Reminder(
             return emptyList()
         }
 
-        if (reminder.recurrence == null) {
+        if (reminder.recurrence == null || reminder.recurrence.interval == 0) {
             if (start.toLocalDate() == targetDay) {
                 occurrences.add(start)
             }
