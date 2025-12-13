@@ -110,8 +110,11 @@ object DataConverter {
     }
 
     // --- Helper: Map basic recurrence ---
-    private fun mapSimpleRecurrence(jsonRec: JsonRecurrence): RecurrenceRule {
+    private fun mapSimpleRecurrence(jsonRec: JsonRecurrence): RecurrenceRule? {
         val freq = mapFrequency(jsonRec.intervalUnit)
+        if (freq == null || jsonRec.repeatInterval == 0) {
+            return null
+        }
         return RecurrenceRule(
             frequency = freq,
             interval = jsonRec.repeatInterval,
@@ -148,7 +151,7 @@ object DataConverter {
         }
     }
 
-    private fun mapFrequency(unit: String): Frequency {
+    private fun mapFrequency(unit: String): Frequency? {
         return when (unit.lowercase()) {
             "minute" -> Frequency.MINUTE
             "hour" -> Frequency.HOURLY
@@ -156,7 +159,7 @@ object DataConverter {
             "week" -> Frequency.WEEKLY
             "month" -> Frequency.MONTHLY
             "year" -> Frequency.YEARLY
-            else -> Frequency.DAILY // Default fallback
+            else -> null
         }
     }
 

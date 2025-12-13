@@ -79,15 +79,15 @@ fun ReminderItem(
 private fun formatRecurrenceRule(rule: RecurrenceRule?): String {
     if (rule == null) return stringResource(id = R.string.one_time_reminder)
 
-    val sb = StringBuilder(stringResource(id = R.string.repeats_prefix))
+    val sb = StringBuilder(stringResource(id = R.string.repeats_prefix) + " ")
     when (rule.frequency) {
         Frequency.HOURLY -> sb.append(pluralStringResource(id = R.plurals.recurrence_hour, count = rule.interval, rule.interval))
         Frequency.DAILY -> sb.append(pluralStringResource(id = R.plurals.recurrence_day, count = rule.interval, rule.interval))
         Frequency.WEEKLY -> {
             sb.append(pluralStringResource(id = R.plurals.recurrence_week, count = rule.interval, rule.interval))
-            rule.daysOfWeek?.let {
-                sb.append(stringResource(id = R.string.recurrence_on_prefix))
-                sb.append(it.joinToString { day -> day.name.lowercase().replaceFirstChar { it.uppercase() } })
+            rule.daysOfWeek?.let { daysOfWeek ->
+                sb.append(" " + stringResource(id = R.string.recurrence_on_prefix) + " ")
+                sb.append(daysOfWeek.sortedBy { it.value }.joinToString { day -> day.name.lowercase().replaceFirstChar { it.uppercase() } })
             }
         }
         Frequency.MONTHLY -> sb.append(pluralStringResource(id = R.plurals.recurrence_month, count = rule.interval, rule.interval))
