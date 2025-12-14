@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.data.repository.UserPreferencesRepository
+import com.qspapps.remindermate.notifications.NotificationService
 import com.qspapps.remindermate.ui.core.ReminderViewModel
 import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,8 +30,9 @@ data class HomeUiState(
 class HomeViewModel @Inject constructor(
     reminderRepository: ReminderRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
-    reminderAlarmScheduler: ReminderAlarmScheduler
-) : ReminderViewModel(reminderRepository, reminderAlarmScheduler) {
+    reminderAlarmScheduler: ReminderAlarmScheduler,
+    notificationService: NotificationService
+) : ReminderViewModel(reminderRepository, reminderAlarmScheduler, notificationService) {
 
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     private val _showCompleted = MutableStateFlow(true)

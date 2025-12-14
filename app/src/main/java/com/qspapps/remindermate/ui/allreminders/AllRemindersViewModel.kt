@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.notifications.NotificationService
 import com.qspapps.remindermate.ui.core.ReminderViewModel
 import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,8 +30,9 @@ data class AllRemindersUiState(
 @HiltViewModel
 class AllRemindersViewModel @Inject constructor(
     reminderRepository: ReminderRepository,
-    reminderAlarmScheduler: ReminderAlarmScheduler
-) : ReminderViewModel(reminderRepository, reminderAlarmScheduler) {
+    reminderAlarmScheduler: ReminderAlarmScheduler,
+    notificationService: NotificationService
+) : ReminderViewModel(reminderRepository, reminderAlarmScheduler, notificationService) {
 
     private val _selectedFilter = MutableStateFlow<FilterType>(FilterType.All)
 

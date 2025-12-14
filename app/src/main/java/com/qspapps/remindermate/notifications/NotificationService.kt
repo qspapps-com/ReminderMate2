@@ -57,22 +57,23 @@ class NotificationService(private val context: Context) {
             snoozeIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        val largeIcon = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
 
         val notification = NotificationCompat.Builder(context, REMINDER_CHANNEL_ID)
             .setSmallIcon(R.drawable.outline_alarm_on_24)
-            .setLargeIcon(largeIcon)
             .setContentTitle(reminder.title)
             .setContentText(reminder.description ?: "Due at ${triggerTime.format(DateTimeFormatter.ofPattern("HH:mm"))}")
             .setContentIntent(activityPendingIntent)
             .setAutoCancel(true)
             .addAction(0, "Complete", completePendingIntent)
-            .addAction(0, "Snooze +${Constants.SNOOZE_MINUTES} mins", snoozePendingIntent)
+            .addAction(0, "Snooze ${Constants.SNOOZE_MINUTES} mins", snoozePendingIntent)
             .build()
 
         notificationManager.notify(reminder.id.toInt(), notification)
     }
 
+    fun cancelNotification(notificationId: Int) {
+        notificationManager.cancel(notificationId)
+    }
     companion object {
         const val REMINDER_CHANNEL_ID = "REMINDER_CHANNEL_ID"
     }

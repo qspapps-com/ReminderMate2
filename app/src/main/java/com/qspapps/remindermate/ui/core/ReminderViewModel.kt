@@ -6,13 +6,15 @@ import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.ReminderAction
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.notifications.NotificationService
 import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 abstract class ReminderViewModel(
     protected val reminderRepository: ReminderRepository,
-    protected val reminderAlarmScheduler: ReminderAlarmScheduler
+    protected val reminderAlarmScheduler: ReminderAlarmScheduler,
+    protected val notificationService: NotificationService
 ) : ViewModel() {
 
     fun toggleCompleted(reminderInstance: ReminderInstance) {
@@ -34,6 +36,7 @@ abstract class ReminderViewModel(
                     type = ActionType.COMPLETED
                 )
                 reminderRepository.insertAction(action)
+                notificationService.cancelNotification(reminderInstance.reminderId.toInt())
                 // Schedule next one if recurring
                 reminderAlarmScheduler.schedule(reminder, after = reminderInstance.displayTime)
             }
@@ -49,6 +52,7 @@ abstract class ReminderViewModel(
                 rescheduledTime = newTime
             )
             reminderRepository.insertAction(action)
+            notificationService.cancelNotification(reminderInstance.reminderId.toInt())
             // Schedule the snoozed instance
             val snoozedInstance = reminderInstance.copy(displayTime = newTime, isCompleted = false)
             reminderAlarmScheduler.scheduleInstance(snoozedInstance)
@@ -59,6 +63,7 @@ abstract class ReminderViewModel(
         viewModelScope.launch {
             val reminder = reminderRepository.getReminderById(reminderId)
             if(reminder != null) {
+                notificationService.cancelNotification(reminderId.toInt())
                 reminderAlarmScheduler.cancel(reminder)
             }
             reminderRepository.deleteReminderById(reminderId)
@@ -73,6 +78,7 @@ abstract class ReminderViewModel(
                 type = ActionType.DELETED
             )
             reminderRepository.insertAction(action)
+            notificationService.cancelNotification(reminderInstance.reminderId.toInt())
             // Since we're deleting an instance, we need to schedule the next one if it's a recurring reminder.
             val reminder = reminderRepository.getReminderById(reminderInstance.reminderId)
             if (reminder?.recurrence != null) {

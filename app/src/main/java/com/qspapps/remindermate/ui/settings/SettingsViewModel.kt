@@ -30,7 +30,7 @@ data class SettingsUiState(
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val reminderRepository: ReminderRepository,
     private val backupAndRestore: BackupAndRestore,
     private val reminderAlarmScheduler: ReminderAlarmScheduler,

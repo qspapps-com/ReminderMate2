@@ -3,6 +3,7 @@ package com.qspapps.remindermate.ui.overduereminders
 import androidx.lifecycle.viewModelScope
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.notifications.NotificationService
 import com.qspapps.remindermate.ui.core.ReminderViewModel
 import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,8 +22,9 @@ data class OverdueRemindersUiState(
 @HiltViewModel
 class OverdueRemindersViewModel @Inject constructor(
     reminderRepository: ReminderRepository,
-    reminderAlarmScheduler: ReminderAlarmScheduler
-) : ReminderViewModel(reminderRepository, reminderAlarmScheduler) {
+    reminderAlarmScheduler: ReminderAlarmScheduler,
+    notificationService: NotificationService
+) : ReminderViewModel(reminderRepository, reminderAlarmScheduler, notificationService) {
 
     val uiState: StateFlow<OverdueRemindersUiState> = combine(
         reminderRepository.getAllReminders(),
