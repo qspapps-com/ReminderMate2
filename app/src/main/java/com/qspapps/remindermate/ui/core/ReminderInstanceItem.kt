@@ -26,14 +26,14 @@ import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.utils.DateTimeUtils
 import com.qspapps.remindermate.utils.DateTimeUtils.formatDate
 import com.qspapps.remindermate.utils.DateTimeUtils.formatTime
-import com.qspapps.remindermate.utils.DateTimeUtils.isDue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReminderInstanceItem(
     reminderInstance: ReminderInstance,
     actions: ReminderActions,
-    showDate: Boolean
+    showDate: Boolean,
+    isOverdue: Boolean
 ) {
     var showMenu by remember { mutableStateOf(false) }
     var showCustomSnoozeDialog by remember { mutableStateOf(false) }
@@ -75,7 +75,7 @@ fun ReminderInstanceItem(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     formatTime(reminderInstance.displayTime),
-                    color = if (isDue(reminderInstance.displayTime)) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                    color = if (isOverdue) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                 )
 
                 Box {
