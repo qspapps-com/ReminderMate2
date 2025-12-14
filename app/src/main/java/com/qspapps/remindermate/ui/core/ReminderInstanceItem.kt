@@ -27,17 +27,12 @@ import com.qspapps.remindermate.utils.DateTimeUtils
 import com.qspapps.remindermate.utils.DateTimeUtils.formatDate
 import com.qspapps.remindermate.utils.DateTimeUtils.formatTime
 import com.qspapps.remindermate.utils.DateTimeUtils.isDue
-import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReminderInstanceItem(
     reminderInstance: ReminderInstance,
-    onCompletedChange: (ReminderInstance) -> Unit,
-    onSnooze: (ReminderInstance, LocalDateTime) -> Unit,
-    onDeleteInstance: (ReminderInstance) -> Unit,
-    onDeleteReminder: (Long) -> Unit,
-    onUpdate: (Long) -> Unit,
+    actions: ReminderActions,
     showDate: Boolean
 ) {
     var showMenu by remember { mutableStateOf(false) }
@@ -48,7 +43,7 @@ fun ReminderInstanceItem(
         CustomSnoozeDialogs(
             onDismiss = { showCustomSnoozeDialog = false },
             onConfirm = { newDateTime ->
-                onSnooze(reminderInstance, newDateTime)
+                actions.onSnooze(reminderInstance, newDateTime)
             }
         )
     }
@@ -57,8 +52,8 @@ fun ReminderInstanceItem(
         DeleteConfirmationDialog(
             reminderInstance = reminderToDelete,
             onDismiss = { showDeleteConfirmation = null },
-            onDeleteInstance = onDeleteInstance,
-            onDeleteReminder = onDeleteReminder
+            onDeleteInstance = actions.onDeleteInstance,
+            onDeleteReminder = actions.onDeleteReminder
         )
     }
 
@@ -71,7 +66,7 @@ fun ReminderInstanceItem(
         leadingContent = {
             Checkbox(
                 checked = reminderInstance.isCompleted,
-                onCheckedChange = { onCompletedChange(reminderInstance) }
+                onCheckedChange = { actions.onCompletedChange(reminderInstance) }
             )
         },
         headlineContent = { Text(reminderInstance.title, style = textStyle) },
@@ -94,7 +89,7 @@ fun ReminderInstanceItem(
                         DropdownMenuItem(
                             text = { Text(stringResource(id = R.string.snooze_15_minutes_menu_item)) },
                             onClick = {
-                                onSnooze(
+                                actions.onSnooze(
                                     reminderInstance,
                                     DateTimeUtils.minsFromNow(15)
                                 )
@@ -104,7 +99,7 @@ fun ReminderInstanceItem(
                         DropdownMenuItem(
                             text = { Text(stringResource(id = R.string.snooze_1_day_menu_item)) },
                             onClick = {
-                                onSnooze(
+                                actions.onSnooze(
                                     reminderInstance,
                                     reminderInstance.displayTime.plusDays(1)
                                 )
@@ -121,7 +116,7 @@ fun ReminderInstanceItem(
                         DropdownMenuItem(
                             text = { Text(stringResource(id = R.string.update_menu_item)) },
                             onClick = {
-                                onUpdate(reminderInstance.reminderId)
+                                actions.onUpdate(reminderInstance.reminderId)
                                 showMenu = false
                             }
                         )

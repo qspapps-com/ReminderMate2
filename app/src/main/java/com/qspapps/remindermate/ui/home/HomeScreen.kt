@@ -143,11 +143,7 @@ fun HomeScreen(
                     items(uiState.reminders) { reminderInstance ->
                         ReminderInstanceItem(
                             reminderInstance = reminderInstance,
-                            onCompletedChange = viewModel::toggleCompleted,
-                            onSnooze = viewModel::snoozeReminder,
-                            onDeleteInstance = viewModel::deleteReminderInstance,
-                            onDeleteReminder = viewModel::deleteReminder,
-                            onUpdate = { reminderId ->
+                            actions = viewModel.getReminderActions {  reminderId ->
                                 navController.navigate(AppScreen.AddEditReminder.createRoute(reminderId))
                             },
                             showDate = false

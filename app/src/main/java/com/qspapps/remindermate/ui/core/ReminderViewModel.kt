@@ -86,4 +86,14 @@ abstract class ReminderViewModel(
             }
         }
     }
+
+    fun getReminderActions(onUpdate: (Long) -> Unit): ReminderActions {
+        return ReminderActions(
+            onCompletedChange = ::toggleCompleted,
+            onSnooze = ::snoozeReminder,
+            onDeleteInstance = ::deleteReminderInstance,
+            onDeleteReminder = ::deleteReminder,
+            onUpdate = onUpdate
+        )
+    }
 }

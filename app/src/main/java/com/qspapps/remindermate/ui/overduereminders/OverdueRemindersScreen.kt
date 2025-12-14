@@ -20,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.ui.core.ReminderInstanceItem
+import com.qspapps.remindermate.ui.navigation.AppScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,12 +49,8 @@ fun OverdueRemindersScreen(
             items(uiState.overdueReminders) { reminderInstance ->
                 ReminderInstanceItem(
                     reminderInstance = reminderInstance,
-                    onCompletedChange = viewModel::toggleCompleted,
-                    onSnooze = viewModel::snoozeReminder,
-                    onDeleteInstance = viewModel::deleteReminderInstance,
-                    onDeleteReminder = viewModel::deleteReminder,
-                    onUpdate = {
-                        navController.navigate("add_edit_reminder?reminderId=${it}")
+                    actions = viewModel.getReminderActions {  reminderId ->
+                        navController.navigate(AppScreen.AddEditReminder.createRoute(reminderId))
                     },
                     showDate = true
                 )
