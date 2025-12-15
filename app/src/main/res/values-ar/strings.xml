@@ -151,4 +151,10 @@
         <item quantity="many"> %d مرة</item>
         <item quantity="other"> %d مرة</item>
     </plurals>
+
+    <string name="notifications_disabled_toast">الإشعارات معطلة. لن تتلقى تذكيرات.</string>
+    <string name="permission_required_title">إذن مطلوب</string>
+    <string name="notification_permission_rationale">لضمان تلقي التذكيرات في الوقت المناسب، يحتاج هذا التطبيق إلى إذن لنشر الإشعارات.</string>
+    <string name="permission_accept">قبول</string>
+    <string name="permission_decline">لا، شكراً</string>
 </resources>

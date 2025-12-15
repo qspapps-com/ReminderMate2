@@ -123,4 +123,9 @@
         <item quantity="one"> %d సారి కోసం</item>
         <item quantity="other"> %d సార్లు కోసం</item>
     </plurals>
+    <string name="notifications_disabled_toast">నోటిఫికేషన్‌లు నిలిపివేయబడ్డాయి. మీరు రిమైండర్‌లను స్వీకరించరు.</string>
+    <string name="permission_required_title">అనుమతి అవసరం</string>
+    <string name="notification_permission_rationale">మీరు సమయానుకూల రిమైండర్‌లను స్వీకరిస్తారని నిర్ధారించుకోవడానికి, నోటిఫికేషన్‌లను పోస్ట్ చేయడానికి ఈ యాప్‌కి అనుమతి అవసరం.</string>
+    <string name="permission_accept">అంగీకరించండి</string>
+    <string name="permission_decline">వద్దు, ధన్యవాదాలు</string>
 </resources>

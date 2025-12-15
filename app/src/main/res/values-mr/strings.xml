@@ -123,4 +123,9 @@
         <item quantity="one"> %d वेळेसाठी</item>
         <item quantity="other"> %d वेळांसाठी</item>
     </plurals>
+    <string name="notifications_disabled_toast">सूचना अक्षम केल्या आहेत. तुम्हाला आठवण करून देणारे संदेश (रिमाइंडर) मिळणार नाहीत.</string>
+    <string name="permission_required_title">परवानगी आवश्यक</string>
+    <string name="notification_permission_rationale">तुम्हाला वेळेवर रिमाइंडर मिळतील याची खात्री करण्यासाठी, या ॲपला सूचना पाठवण्याची परवानगी आवश्यक आहे.</string>
+    <string name="permission_accept">स्वीकारा</string>
+    <string name="permission_decline">नको, धन्यवाद</string>
 </resources>

@@ -123,4 +123,10 @@
         <item quantity="one"> 1 बार के लिए</item>
         <item quantity="other"> %d बार के लिए</item>
     </plurals>
+
+    <string name="notifications_disabled_toast">सूचनाएं अक्षम हैं। आपको अनुस्मारक (रिमाइंडर) प्राप्त नहीं होंगे।</string>
+    <string name="permission_required_title">अनुमति आवश्यक है</string>
+    <string name="notification_permission_rationale">यह सुनिश्चित करने के लिए कि आपको समय पर रिमाइंडर मिलें, इस ऐप को सूचनाएं भेजने की अनुमति की आवश्यकता है।</string>
+    <string name="permission_accept">स्वीकार करें</string>
+    <string name="permission_decline">जी नहीं, धन्यवाद</string>
 </resources>

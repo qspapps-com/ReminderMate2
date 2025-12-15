@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (!isGranted) {
-            Toast.makeText(this, "Notifications are disabled. You will not receive reminders.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.notifications_disabled_toast), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -60,14 +60,14 @@ class MainActivity : ComponentActivity() {
                 // FCM SDK (and your app) can post notifications.
             } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
                 AlertDialog.Builder(this)
-                    .setTitle("Permission required")
-                    .setMessage("To ensure you receive timely reminders, this app requires permission to post notifications.")
-                    .setPositiveButton("Accept") { _, _ ->
+                    .setTitle(getString(R.string.permission_required_title))
+                    .setMessage(getString(R.string.notification_permission_rationale))
+                    .setPositiveButton(getString(R.string.permission_accept)) { _, _ ->
                         requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                     }
-                    .setNegativeButton("No thanks") { dialog, _ ->
+                    .setNegativeButton(getString(R.string.permission_decline)) { dialog, _ ->
                         dialog.dismiss()
-                        Toast.makeText(this, "Notifications are disabled. You will not receive reminders.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, getString(R.string.notifications_disabled_toast), Toast.LENGTH_LONG).show()
                     }
                     .create()
                     .show()

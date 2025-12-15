@@ -95,6 +95,11 @@
     <string name="language_gujarati">Gujarati</string>
     <string name="language_bengali">Bengali</string>
     <string name="language_marathi">Marathi</string>
+    <string name="notifications_disabled_toast">Notifications are disabled. You will not receive reminders.</string>
+    <string name="permission_required_title">Permission required</string>
+    <string name="notification_permission_rationale">To ensure you receive timely reminders, this app requires permission to post notifications.</string>
+    <string name="permission_accept">Accept</string>
+    <string name="permission_decline">No thanks</string>
     <plurals name="recurrence_minute">
         <item quantity="one">every minute</item>
         <item quantity="other">every %d minutes</item>

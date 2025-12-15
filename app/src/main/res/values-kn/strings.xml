@@ -130,4 +130,9 @@
         <item quantity="one"> %d ಬಾರಿಗಾಗಿ</item>
         <item quantity="other"> %d ಬಾರಿಗಳಿಗಾಗಿ</item>
     </plurals>
+    <string name="notifications_disabled_toast">ಅಧಿಸೂಚನೆಗಳನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ. ನೀವು ಜ್ಞಾಪನೆಗಳನ್ನು ಸ್ವೀಕರಿಸುವುದಿಲ್ಲ.</string>
+    <string name="permission_required_title">ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</string>
+    <string name="notification_permission_rationale">ನೀವು ಸಮಯೋಚಿತ ಜ್ಞಾಪನೆಗಳನ್ನು ಸ್ವೀಕರಿಸುವುದನ್ನು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಲು, ಅಧಿಸೂಚನೆಗಳನ್ನು ಕಳುಹಿಸಲು ಈ ಅಪ್ಲಿಕೇಶನ್‌ಗೆ ಅನುಮತಿಯ ಅಗತ್ಯವಿದೆ.</string>
+    <string name="permission_accept">ಒಪ್ಪಿಕೊಳ್ಳಿ</string>
+    <string name="permission_decline">ಬೇಡ, ಧನ್ಯವಾದಗಳು</string>
 </resources>

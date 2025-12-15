@@ -123,4 +123,9 @@
         <item quantity="one"> %d തവണത്തേക്ക്</item>
         <item quantity="other"> %d തവണത്തേക്ക്</item>
     </plurals>
+    <string name="notifications_disabled_toast">അറിയിപ്പുകൾ പ്രവർത്തനരഹിതമാക്കി. നിങ്ങൾക്ക് ഓർമ്മപ്പെടുത്തലുകൾ ലഭിക്കില്ല.</string>
+    <string name="permission_required_title">അനുമതി ആവശ്യമാണ്</string>
+    <string name="notification_permission_rationale">നിങ്ങൾക്ക് കൃത്യസമയത്ത് ഓർമ്മപ്പെടുത്തലുകൾ ലഭിക്കുന്നുണ്ടെന്ന് ഉറപ്പാക്കാൻ, ഈ ആപ്പിന് അറിയിപ്പുകൾ അയയ്‌ക്കുന്നതിനുള്ള അനുമതി ആവശ്യമാണ്.</string>
+    <string name="permission_accept">സ്വീകരിക്കുക</string>
+    <string name="permission_decline">വേണ്ട, നന്ദി</string>
 </resources>

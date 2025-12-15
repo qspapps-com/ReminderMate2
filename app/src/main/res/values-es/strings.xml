@@ -123,4 +123,10 @@
         <item quantity="one"> por 1 vez</item>
         <item quantity="other"> por %d veces</item>
     </plurals>
+
+    <string name="notifications_disabled_toast">Las notificaciones están desactivadas. No recibirá recordatorios.</string>
+    <string name="permission_required_title">Permiso necesario</string>
+    <string name="notification_permission_rationale">Para asegurar que reciba recordatorios oportunos, esta aplicación requiere permiso para enviar notificaciones.</string>
+    <string name="permission_accept">Aceptar</string>
+    <string name="permission_decline">No, gracias</string>
 </resources>

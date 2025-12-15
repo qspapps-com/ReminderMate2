@@ -123,4 +123,9 @@
         <item quantity="one"> %d বারের জন্য</item>
         <item quantity="other"> %d বারগুলির জন্য</item>
     </plurals>
+    <string name="notifications_disabled_toast">নোটিফিকেশন বন্ধ আছে। আপনি রিমাইন্ডার পাবেন না।</string>
+    <string name="permission_required_title">অনুমতি প্রয়োজন</string>
+    <string name="notification_permission_rationale">আপনি যাতে সময়মতো রিমাইন্ডার পান তা নিশ্চিত করতে, এই অ্যাপটির নোটিফিকেশন পাঠানোর অনুমতি প্রয়োজন।</string>
+    <string name="permission_accept">গ্রহণ করুন</string>
+    <string name="permission_decline">না, ধন্যবাদ</string>
 </resources>

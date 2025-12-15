@@ -123,4 +123,9 @@
         <item quantity="one"> pour %d fois</item>
         <item quantity="other"> pour %d fois</item>
     </plurals>
+    <string name="notifications_disabled_toast">Les notifications sont désactivées. Vous ne recevrez pas de rappels.</string>
+    <string name="permission_required_title">Permission requise</string>
+    <string name="notification_permission_rationale">Pour garantir la réception des rappels en temps voulu, cette application nécessite l\'autorisation d\'envoyer des notifications.</string>
+    <string name="permission_accept">Accepter</string>
+    <string name="permission_decline">Non merci</string>
 </resources>

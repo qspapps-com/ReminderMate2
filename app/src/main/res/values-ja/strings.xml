@@ -116,4 +116,10 @@
     <plurals name="recurrence_for_times">
         <item quantity="other">%d回</item>
     </plurals>
+
+    <string name="notifications_disabled_toast">通知が無効になっています。リマインダーは届きません。</string>
+    <string name="permission_required_title">権限が必要です</string>
+    <string name="notification_permission_rationale">タイムリーにリマインダーを受け取るために、このアプリには通知を送信する権限が必要です。</string>
+    <string name="permission_accept">許可</string>
+    <string name="permission_decline">いいえ</string>
 </resources>

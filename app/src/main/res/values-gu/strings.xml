@@ -123,4 +123,9 @@
         <item quantity="one"> %d વખત માટે</item>
         <item quantity="other"> %d વખત માટે</item>
     </plurals>
+    <string name="notifications_disabled_toast">સૂચનાઓ અક્ષમ છે. તમને રિમાઇન્ડર્સ પ્રાપ્ત થશે નહીં.</string>
+    <string name="permission_required_title">પરવાનગી જરૂરી છે</string>
+    <string name="notification_permission_rationale">તમને સમયસર રિમાઇન્ડર્સ મળે તે સુનિશ્ચિત કરવા માટે, આ એપ્લિકેશનને સૂચનાઓ પોસ્ટ કરવા માટે પરવાનગીની જરૂર છે.</string>
+    <string name="permission_accept">સ્વીકારો</string>
+    <string name="permission_decline">ના આભાર</string>
 </resources>

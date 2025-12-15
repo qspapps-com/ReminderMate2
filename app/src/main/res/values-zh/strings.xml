@@ -116,4 +116,10 @@
     <plurals name="recurrence_for_times">
         <item quantity="other"> %d 次</item>
     </plurals>
+
+    <string name="notifications_disabled_toast">通知已禁用。您将不会收到提醒。</string>
+    <string name="permission_required_title">需要许可</string>
+    <string name="notification_permission_rationale">为确保您及时收到提醒，此应用需要发送通知的权限。</string>
+    <string name="permission_accept">接受</string>
+    <string name="permission_decline">不用了</string>
 </resources>

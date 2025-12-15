@@ -123,4 +123,10 @@
         <item quantity="one"> für 1 Mal</item>
         <item quantity="other"> für %d Mal</item>
     </plurals>
+
+    <string name="notifications_disabled_toast">Benachrichtigungen sind deaktiviert. Sie erhalten keine Erinnerungen.</string>
+    <string name="permission_required_title">Berechtigung erforderlich</string>
+    <string name="notification_permission_rationale">Um sicherzustellen, dass Sie rechtzeitige Erinnerungen erhalten, benötigt diese App die Berechtigung zum Senden von Benachrichtigungen.</string>
+    <string name="permission_accept">Akzeptieren</string>
+    <string name="permission_decline">Nein danke</string>
 </resources>
