@@ -243,6 +243,18 @@ fun DeveloperInfoSection(onWebsiteClick: () -> Unit) {
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
+            text = "qspapps.com",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .clip(RoundedCornerShape(4.dp))
+                .clickable { onWebsiteClick() }
+                .padding(4.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
             text = "© 2025 qspapps.com. Made In India.",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.outline
