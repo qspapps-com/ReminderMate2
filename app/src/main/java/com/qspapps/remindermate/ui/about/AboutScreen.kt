@@ -119,7 +119,7 @@ fun AppHeaderSection() {
         Surface(
             modifier = Modifier.size(100.dp),
             shape = RoundedCornerShape(24.dp),
-            color = MaterialTheme.colorScheme.primaryContainer,
+            color = Color.White,
             shadowElevation = 4.dp
         ) {
             Box(contentAlignment = Alignment.Center) {
