@@ -56,7 +56,6 @@ fun SettingsScreen(
     var showRestoreDialog by remember { mutableStateOf<Uri?>(null) }
     var showThemeDialog by remember { mutableStateOf(false) }
     var showClearAllDialog by remember { mutableStateOf(false) }
-    var showLanguageDialog by remember { mutableStateOf(false) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val backupLauncher = rememberLauncherForActivityResult(

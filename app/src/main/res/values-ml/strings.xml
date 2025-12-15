@@ -128,4 +128,7 @@
     <string name="notification_permission_rationale">നിങ്ങൾക്ക് കൃത്യസമയത്ത് ഓർമ്മപ്പെടുത്തലുകൾ ലഭിക്കുന്നുണ്ടെന്ന് ഉറപ്പാക്കാൻ, ഈ ആപ്പിന് അറിയിപ്പുകൾ അയയ്‌ക്കുന്നതിനുള്ള അനുമതി ആവശ്യമാണ്.</string>
     <string name="permission_accept">സ്വീകരിക്കുക</string>
     <string name="permission_decline">വേണ്ട, നന്ദി</string>
+    <string name="notification_due_at">സമയം: %1$s</string>
+    <string name="notification_action_complete">പൂർത്തിയാക്കുക</string>
+    <string name="notification_action_snooze">സ്‌നൂസ് +%1$d മിനിറ്റ്</string>
 </resources>

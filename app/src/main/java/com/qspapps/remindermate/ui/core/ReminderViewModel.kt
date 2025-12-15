@@ -2,12 +2,14 @@ package com.qspapps.remindermate.ui.core
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.ReminderAction
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.notifications.NotificationService
 import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
+import com.qspapps.remindermate.ui.navigation.AppScreen
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
@@ -87,13 +89,15 @@ abstract class ReminderViewModel(
         }
     }
 
-    fun getReminderActions(onUpdate: (Long) -> Unit): ReminderActions {
+    fun getReminderActions(navController: NavController): ReminderActions {
         return ReminderActions(
             onCompletedChange = ::toggleCompleted,
             onSnooze = ::snoozeReminder,
             onDeleteInstance = ::deleteReminderInstance,
             onDeleteReminder = ::deleteReminder,
-            onUpdate = onUpdate
+            onUpdate = {  reminderId ->
+                navController.navigate(AppScreen.AddEditReminder.createRoute(reminderId))
+            }
         )
     }
 }

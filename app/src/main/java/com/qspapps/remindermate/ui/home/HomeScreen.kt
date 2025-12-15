@@ -24,7 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,13 +35,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.ui.core.ReminderInstanceItem
 import com.qspapps.remindermate.ui.navigation.AppScreen
-import kotlinx.coroutines.delay
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,15 +53,7 @@ fun HomeScreen(
     var showDatePicker by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    var currentTime by remember { mutableStateOf(LocalDateTime.now()) }
-
-    // This is required to check whether a reminder is overdue or not.
-    LaunchedEffect(Unit) {
-        while (true) {
-            currentTime = LocalDateTime.now()
-            delay(60_000L)
-        }
-    }
+    val currentTime by viewModel.currentTime.collectAsStateWithLifecycle()
 
     val title = if (uiState.selectedDate.isEqual(LocalDate.now())) {
         stringResource(id = R.string.today_reminders)
@@ -157,9 +147,7 @@ fun HomeScreen(
                                 currentTime.isAfter(reminderInstance.displayTime)
                         ReminderInstanceItem(
                             reminderInstance = reminderInstance,
-                            actions = viewModel.getReminderActions {  reminderId ->
-                                navController.navigate(AppScreen.AddEditReminder.createRoute(reminderId))
-                            },
+                            actions = viewModel.getReminderActions(navController),
                             showDate = false,
                             isOverDue
                         )

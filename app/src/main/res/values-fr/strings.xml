@@ -128,4 +128,7 @@
     <string name="notification_permission_rationale">Pour garantir la réception des rappels en temps voulu, cette application nécessite l\'autorisation d\'envoyer des notifications.</string>
     <string name="permission_accept">Accepter</string>
     <string name="permission_decline">Non merci</string>
+    <string name="notification_due_at">Échéance : %1$s</string>
+    <string name="notification_action_complete">Terminer</string>
+    <string name="notification_action_snooze">Reporter +%1$d min</string>
 </resources>

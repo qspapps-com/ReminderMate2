@@ -128,4 +128,7 @@
     <string name="notification_permission_rationale">சரியான நேரத்தில் நினைவூட்டல்களைப் பெறுவதை உறுதிசெய்ய, அறிவிப்புகளை வெளியிட இந்தச் செயலிக்கு அனுமதி தேவை.</string>
     <string name="permission_accept">ஏற்கிறேன்</string>
     <string name="permission_decline">இல்லை, நன்றி</string>
+    <string name="notification_due_at">நேரம்: %1$s</string>
+    <string name="notification_action_complete">முடி</string>
+    <string name="notification_action_snooze">ஒத்திவை +%1$d நிமி</string>
 </resources>

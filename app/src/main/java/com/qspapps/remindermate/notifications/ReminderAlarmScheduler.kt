@@ -39,12 +39,9 @@ class ReminderAlarmScheduler @Inject constructor(
             putExtra(NotificationService.EXTRA_TRIGGER_TIME, instance.displayTime) // LocalDateTime is serializable
         }
 
-        // Using reminderId as request code to ensure there is only one alarm per reminder.
-        val requestCode = instance.reminderId.toInt()
-
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            requestCode,
+            instance.reminderId.toInt(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

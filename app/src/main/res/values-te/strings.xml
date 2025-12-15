@@ -128,4 +128,7 @@
     <string name="notification_permission_rationale">మీరు సమయానుకూల రిమైండర్‌లను స్వీకరిస్తారని నిర్ధారించుకోవడానికి, నోటిఫికేషన్‌లను పోస్ట్ చేయడానికి ఈ యాప్‌కి అనుమతి అవసరం.</string>
     <string name="permission_accept">అంగీకరించండి</string>
     <string name="permission_decline">వద్దు, ధన్యవాదాలు</string>
+    <string name="notification_due_at">సమయం: %1$s</string>
+    <string name="notification_action_complete">పూర్తి చేయండి</string>
+    <string name="notification_action_snooze">స్నూజ్ +%1$d నిమి</string>
 </resources>

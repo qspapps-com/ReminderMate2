@@ -128,4 +128,7 @@
     <string name="notification_permission_rationale">আপনি যাতে সময়মতো রিমাইন্ডার পান তা নিশ্চিত করতে, এই অ্যাপটির নোটিফিকেশন পাঠানোর অনুমতি প্রয়োজন।</string>
     <string name="permission_accept">গ্রহণ করুন</string>
     <string name="permission_decline">না, ধন্যবাদ</string>
+    <string name="notification_due_at">সময়: %1$s</string>
+    <string name="notification_action_complete">সম্পন্ন</string>
+    <string name="notification_action_snooze">স্নুজ +%1$d মিনিট</string>
 </resources>

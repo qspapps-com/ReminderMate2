@@ -128,4 +128,7 @@
     <string name="notification_permission_rationale">તમને સમયસર રિમાઇન્ડર્સ મળે તે સુનિશ્ચિત કરવા માટે, આ એપ્લિકેશનને સૂચનાઓ પોસ્ટ કરવા માટે પરવાનગીની જરૂર છે.</string>
     <string name="permission_accept">સ્વીકારો</string>
     <string name="permission_decline">ના આભાર</string>
+    <string name="notification_due_at">સમય: %1$s</string>
+    <string name="notification_action_complete">પૂર્ણ કરો</string>
+    <string name="notification_action_snooze">સ્નૂઝ +%1$d મિનિટ</string>
 </resources>

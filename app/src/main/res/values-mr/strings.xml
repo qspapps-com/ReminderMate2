@@ -128,4 +128,7 @@
     <string name="notification_permission_rationale">तुम्हाला वेळेवर रिमाइंडर मिळतील याची खात्री करण्यासाठी, या ॲपला सूचना पाठवण्याची परवानगी आवश्यक आहे.</string>
     <string name="permission_accept">स्वीकारा</string>
     <string name="permission_decline">नको, धन्यवाद</string>
+    <string name="notification_due_at">वेळ: %1$s</string>
+    <string name="notification_action_complete">पूर्ण करा</string>
+    <string name="notification_action_snooze">स्नूझ +%1$d मिनिटे</string>
 </resources>

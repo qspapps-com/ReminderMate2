@@ -129,4 +129,7 @@
     <string name="notification_permission_rationale">यह सुनिश्चित करने के लिए कि आपको समय पर रिमाइंडर मिलें, इस ऐप को सूचनाएं भेजने की अनुमति की आवश्यकता है।</string>
     <string name="permission_accept">स्वीकार करें</string>
     <string name="permission_decline">जी नहीं, धन्यवाद</string>
+    <string name="notification_due_at">नियत समय: %1$s</string>
+    <string name="notification_action_complete">पूरा करें</string>
+    <string name="notification_action_snooze">स्नूज़ +%1$d मिनट</string>
 </resources>

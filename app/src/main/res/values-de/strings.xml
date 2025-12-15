@@ -129,4 +129,7 @@
     <string name="notification_permission_rationale">Um sicherzustellen, dass Sie rechtzeitige Erinnerungen erhalten, benötigt diese App die Berechtigung zum Senden von Benachrichtigungen.</string>
     <string name="permission_accept">Akzeptieren</string>
     <string name="permission_decline">Nein danke</string>
+    <string name="notification_due_at">Fällig um %1$s</string>
+    <string name="notification_action_complete">Erledigen</string>
+    <string name="notification_action_snooze">Schlummern +%1$d Min.</string>
 </resources>

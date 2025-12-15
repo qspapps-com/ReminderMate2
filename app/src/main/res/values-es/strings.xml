@@ -129,4 +129,7 @@
     <string name="notification_permission_rationale">Para asegurar que reciba recordatorios oportunos, esta aplicación requiere permiso para enviar notificaciones.</string>
     <string name="permission_accept">Aceptar</string>
     <string name="permission_decline">No, gracias</string>
+    <string name="notification_due_at">Vence: %1$s</string>
+    <string name="notification_action_complete">Completar</string>
+    <string name="notification_action_snooze">Posponer +%1$d min</string>
 </resources>

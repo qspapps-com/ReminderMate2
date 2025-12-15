@@ -49,9 +49,7 @@ fun OverdueRemindersScreen(
             items(uiState.overdueReminders) { reminderInstance ->
                 ReminderInstanceItem(
                     reminderInstance = reminderInstance,
-                    actions = viewModel.getReminderActions {  reminderId ->
-                        navController.navigate(AppScreen.AddEditReminder.createRoute(reminderId))
-                    },
+                    actions = viewModel.getReminderActions(navController),
                     showDate = true,
                     isOverdue = true
                 )

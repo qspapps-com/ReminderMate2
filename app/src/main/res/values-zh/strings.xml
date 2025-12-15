@@ -122,4 +122,7 @@
     <string name="notification_permission_rationale">为确保您及时收到提醒，此应用需要发送通知的权限。</string>
     <string name="permission_accept">接受</string>
     <string name="permission_decline">不用了</string>
+    <string name="notification_due_at">截止时间：%1$s</string>
+    <string name="notification_action_complete">完成</string>
+    <string name="notification_action_snooze">延后 %1$d 分钟</string>
 </resources>

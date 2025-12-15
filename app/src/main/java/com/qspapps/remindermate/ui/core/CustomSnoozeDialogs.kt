@@ -82,6 +82,7 @@ fun CustomSnoozeDialogs(
     }
 
     if (showTimePicker) {
+        val pastSnoozeErrorText = stringResource(id = R.string.past_snooze_error)
         TimePickerDialog(
             onDismissRequest = {
                 showTimePicker = false
@@ -98,7 +99,7 @@ fun CustomSnoozeDialogs(
                             if (newDateTime.isBefore(LocalDateTime.now())) {
                                 Toast.makeText(
                                     context,
-                                    context.getString(R.string.past_snooze_error),
+                                    pastSnoozeErrorText,
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {

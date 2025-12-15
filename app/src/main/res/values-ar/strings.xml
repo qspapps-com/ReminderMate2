@@ -157,4 +157,7 @@
     <string name="notification_permission_rationale">لضمان تلقي التذكيرات في الوقت المناسب، يحتاج هذا التطبيق إلى إذن لنشر الإشعارات.</string>
     <string name="permission_accept">قبول</string>
     <string name="permission_decline">لا، شكراً</string>
+    <string name="notification_due_at">مستحق في %1$s</string>
+    <string name="notification_action_complete">إكمال</string>
+    <string name="notification_action_snooze">غفوة +%1$d دقائق</string>
 </resources>

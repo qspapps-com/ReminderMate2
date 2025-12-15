@@ -122,4 +122,7 @@
     <string name="notification_permission_rationale">タイムリーにリマインダーを受け取るために、このアプリには通知を送信する権限が必要です。</string>
     <string name="permission_accept">許可</string>
     <string name="permission_decline">いいえ</string>
+    <string name="notification_due_at">期限: %1$s</string>
+    <string name="notification_action_complete">完了</string>
+    <string name="notification_action_snooze">スヌーズ +%1$d分</string>
 </resources>

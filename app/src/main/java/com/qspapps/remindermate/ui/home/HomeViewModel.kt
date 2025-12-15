@@ -8,15 +8,18 @@ import com.qspapps.remindermate.notifications.NotificationService
 import com.qspapps.remindermate.ui.core.ReminderViewModel
 import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 data class HomeUiState(
@@ -36,8 +39,19 @@ class HomeViewModel @Inject constructor(
 
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     private val _showCompleted = MutableStateFlow(true)
+    private val _currentTime = MutableStateFlow(LocalDateTime.now())
+    val currentTime: StateFlow<LocalDateTime> = _currentTime.asStateFlow()
 
     init {
+        // 1. Launch the long-running live-time update coroutine
+        viewModelScope.launch {
+            while (true) {
+                _currentTime.value = LocalDateTime.now()
+                delay(60_000L) // Delay for a minute
+            }
+        }
+
+        // 2. Launch the one-time preference loading coroutine
         viewModelScope.launch {
             _showCompleted.value = !userPreferencesRepository.hideCompleted.first()
         }
