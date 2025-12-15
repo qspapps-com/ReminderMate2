@@ -77,6 +77,7 @@
     <string name="snooze_15_minutes_menu_item">ஸ்னூஸ் +15 நிமிடம்</string>
     <string name="snooze_1_day_menu_item">ஸ்னூஸ் 1 நாள்</string>
     <string name="custom_snooze_menu_item">விருப்பப்படி ஸ்னூஸ்</string>
+    <string name="past_snooze_error">கடந்த நேரத்திற்கு மீண்டும் ஒத்திவைக்க முடியாது</string>
     <string name="language_setting_title">மொழி</string>
     <string name="choose_language_dialog_title">மொழியைத் தேர்வுசெய்</string>
     <string name="language_english">ஆங்கிலம்</string>

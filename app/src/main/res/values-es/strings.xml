@@ -77,6 +77,7 @@
     <string name="snooze_15_minutes_menu_item">Posponer 15 minutos</string>
     <string name="snooze_1_day_menu_item">Posponer 1 día</string>
     <string name="custom_snooze_menu_item">Posponer personalizado</string>
+    <string name="past_snooze_error">No se puede posponer a una hora en el pasado</string>
     <string name="language_setting_title">Idioma</string>
     <string name="choose_language_dialog_title">Elige lengua</string>
     <string name="language_english">Inglés</string>

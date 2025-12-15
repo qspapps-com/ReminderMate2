@@ -77,6 +77,7 @@
     <string name="snooze_15_minutes_menu_item">غفوة +15 دقيقة</string>
     <string name="snooze_1_day_menu_item">غفوة يوم واحد</string>
     <string name="custom_snooze_menu_item">غفوة مخصصة</string>
+    <string name="past_snooze_error">لا يمكن تأجيل التنبيه إلى وقت في الماضي</string>
     <string name="language_setting_title">لغة</string>
     <string name="choose_language_dialog_title">اختار اللغة</string>
     <string name="language_english">إنجليزي</string>

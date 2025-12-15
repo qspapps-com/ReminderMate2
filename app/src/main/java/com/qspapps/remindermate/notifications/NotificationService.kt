@@ -4,13 +4,10 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import androidx.core.app.NotificationCompat
 import com.qspapps.remindermate.MainActivity
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.Reminder
-import com.qspapps.remindermate.utils.Constants
-import com.qspapps.remindermate.utils.DateTimeUtils
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -31,9 +28,9 @@ class NotificationService(private val context: Context) {
         )
 
         val completeIntent = Intent(context, NotificationReceiver::class.java).apply {
-            action = "ACTION_COMPLETE"
-            putExtra("REMINDER_ID", reminder.id)
-            putExtra("ORIGINAL_TIME", originalTime)
+            action = ACTION_COMPLETE
+            putExtra(EXTRA_REMINDER_ID, reminder.id)
+            putExtra(EXTRA_ORIGINAL_TIME, originalTime)
         }
 
         val completePendingIntent = PendingIntent.getBroadcast(
@@ -43,12 +40,11 @@ class NotificationService(private val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val snoozeTime = DateTimeUtils.minsFromNow(Constants.SNOOZE_MINUTES)
         val snoozeIntent = Intent(context, NotificationReceiver::class.java).apply {
-            action = "ACTION_SNOOZE"
-            putExtra("REMINDER_ID", reminder.id)
-            putExtra("ORIGINAL_TIME", originalTime)
-            putExtra("SNOOZED_TIME", snoozeTime)
+            action = ACTION_SNOOZE
+            putExtra(EXTRA_REMINDER_ID, reminder.id)
+            putExtra(EXTRA_ORIGINAL_TIME, originalTime)
+            putExtra(EXTRA_SNOOZE_MINS, SNOOZE_MINUTES)
         }
 
         val snoozePendingIntent = PendingIntent.getBroadcast(
@@ -65,7 +61,7 @@ class NotificationService(private val context: Context) {
             .setContentIntent(activityPendingIntent)
             .setAutoCancel(true)
             .addAction(0, "Complete", completePendingIntent)
-            .addAction(0, "Snooze ${Constants.SNOOZE_MINUTES} mins", snoozePendingIntent)
+            .addAction(0, "Snooze +${SNOOZE_MINUTES} mins", snoozePendingIntent)
             .build()
 
         notificationManager.notify(reminder.id.toInt(), notification)
@@ -74,7 +70,16 @@ class NotificationService(private val context: Context) {
     fun cancelNotification(notificationId: Int) {
         notificationManager.cancel(notificationId)
     }
+
     companion object {
+        const val SNOOZE_MINUTES = 15L // Define snooze duration in one place
+        const val ACTION_COMPLETE = "ACTION_COMPLETE"
+        const val ACTION_SNOOZE = "ACTION_SNOOZE"
+        const val ACTION_TRIGGER_REMINDER = "ACTION_TRIGGER_REMINDER"
+        const val EXTRA_REMINDER_ID = "REMINDER_ID"
+        const val EXTRA_ORIGINAL_TIME = "ORIGINAL_TIME"
+        const val EXTRA_TRIGGER_TIME = "TRIGGER_TIME"
+        const val EXTRA_SNOOZE_MINS = "SNOOZE_MINS"
         const val REMINDER_CHANNEL_ID = "REMINDER_CHANNEL_ID"
     }
 }

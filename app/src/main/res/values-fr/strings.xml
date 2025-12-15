@@ -77,6 +77,7 @@
     <string name="snooze_15_minutes_menu_item">Rappel +15 min</string>
     <string name="snooze_1_day_menu_item">Rappel 1 jour</string>
     <string name="custom_snooze_menu_item">Rappel personnalisé</string>
+    <string name="past_snooze_error">Impossible de reporter à une heure passée</string>
     <string name="language_setting_title">Langue</string>
     <string name="choose_language_dialog_title">Choisir la langue</string>
     <string name="language_english">Anglais</string>

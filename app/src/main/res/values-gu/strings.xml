@@ -77,6 +77,7 @@
     <string name="snooze_15_minutes_menu_item">સ્નૂઝ +15 મિનિટ</string>
     <string name="snooze_1_day_menu_item">સ્નૂઝ 1 દિવસ</string>
     <string name="custom_snooze_menu_item">કસ્ટમ સ્નૂઝ</string>
+    <string name="past_snooze_error">ભૂતકાળના સમય માટે સ્નૂઝ કરી શકાશે નહીં</string>
     <string name="language_setting_title">ભાષા</string>
     <string name="choose_language_dialog_title">ભાષા પસંદ કરો</string>
     <string name="language_english">અંગ્રેજી</string>

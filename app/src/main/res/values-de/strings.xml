@@ -77,6 +77,7 @@
     <string name="snooze_15_minutes_menu_item">15 Minuten schlummern</string>
     <string name="snooze_1_day_menu_item">1 Tag schlummern</string>
     <string name="custom_snooze_menu_item">Benutzerdefiniertes Schlummern</string>
+    <string name="past_snooze_error">Die Schlummerfunktion kann nicht auf eine Zeit in der Vergangenheit eingestellt werden</string>
     <string name="language_setting_title">Sprache</string>
     <string name="choose_language_dialog_title">Sprache auswählen</string>
     <string name="language_english">Englisch</string>

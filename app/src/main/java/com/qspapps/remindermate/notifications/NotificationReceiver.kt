@@ -1,6 +1,5 @@
 package com.qspapps.remindermate.notifications
 
-import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -10,7 +9,8 @@ import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.ReminderAction
 import com.qspapps.remindermate.di.ApplicationScope
-import com.qspapps.remindermate.utils.DateTimeUtils
+import com.qspapps.remindermate.notifications.NotificationService
+import com.qspapps.remindermate.utils.DateTimeUtils.minsFromNow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -38,10 +38,9 @@ class NotificationReceiver : BroadcastReceiver() {
     lateinit var applicationScope: CoroutineScope
 
     override fun onReceive(context: Context, intent: Intent) {
-        val reminderId = intent.getLongExtra("REMINDER_ID", -1)
+        val reminderId = intent.getLongExtra(NotificationService.EXTRA_REMINDER_ID, -1)
         if (reminderId == -1L) return
 
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val pendingResult = goAsync()
 
         applicationScope.launch { // Using created scope to launch a coroutine
@@ -49,35 +48,35 @@ class NotificationReceiver : BroadcastReceiver() {
                 val reminder = reminderDao.getById(reminderId)
                 if (reminder != null) {
                     when (intent.action) {
-                        "ACTION_TRIGGER_REMINDER" -> {
-                            val triggerTime = intent.getSerializableExtraCompatible<LocalDateTime>("TRIGGER_TIME") ?: return@launch
-                            val originalTime = intent.getSerializableExtraCompatible<LocalDateTime>("ORIGINAL_TIME") ?: return@launch
+                        NotificationService.ACTION_TRIGGER_REMINDER -> {
+                            val triggerTime = intent.getSerializableExtraCompatible<LocalDateTime>(NotificationService.EXTRA_TRIGGER_TIME) ?: return@launch
+                            val originalTime = intent.getSerializableExtraCompatible<LocalDateTime>(NotificationService.EXTRA_ORIGINAL_TIME) ?: return@launch
 
                             notificationService.showNotification(reminder, triggerTime, originalTime)
                             alarmScheduler.schedule(reminder, after = triggerTime)
                         }
-                        "ACTION_COMPLETE" -> {
-                            val originalTime = intent.getSerializableExtraCompatible<LocalDateTime>("ORIGINAL_TIME") ?: return@launch
+                        NotificationService.ACTION_COMPLETE -> {
+                            val originalTime = intent.getSerializableExtraCompatible<LocalDateTime>(NotificationService.EXTRA_ORIGINAL_TIME) ?: return@launch
                             val action = ReminderAction(
                                 reminderId = reminderId,
                                 originalScheduledTime = originalTime,
                                 type = ActionType.COMPLETED
                             )
                             reminderActionDao.insert(action)
-                            notificationManager.cancel(reminder.id.toInt())
+                            notificationService.cancelNotification(reminder.id.toInt())
                             alarmScheduler.schedule(reminder)
                         }
-                        "ACTION_SNOOZE" -> {
-                            val originalTime = intent.getSerializableExtraCompatible<LocalDateTime>("ORIGINAL_TIME") ?: return@launch
-                            val snoozedTime = intent.getSerializableExtraCompatible<LocalDateTime>("SNOOZED_TIME") ?: return@launch
+                        NotificationService.ACTION_SNOOZE -> {
+                            val originalTime = intent.getSerializableExtraCompatible<LocalDateTime>(NotificationService.EXTRA_ORIGINAL_TIME) ?: return@launch
+                            val snoozeMins = intent.getLongExtra(NotificationService.EXTRA_SNOOZE_MINS, 15)
                             val action = ReminderAction(
                                 reminderId = reminderId,
                                 originalScheduledTime = originalTime,
                                 type = ActionType.SNOOZED,
-                                rescheduledTime = snoozedTime
+                                rescheduledTime = minsFromNow(snoozeMins)
                             )
                             reminderActionDao.insert(action)
-                            notificationManager.cancel(reminder.id.toInt())
+                            notificationService.cancelNotification(reminder.id.toInt())
                             alarmScheduler.schedule(reminder)
                         }
                     }

@@ -77,6 +77,7 @@
     <string name="snooze_15_minutes_menu_item">15 मिनट के लिए स्नूज़ करें</string>
     <string name="snooze_1_day_menu_item">1 दिन के लिए स्नूज़ करें</string>
     <string name="custom_snooze_menu_item">कस्टम स्नूज़</string>
+    <string name="past_snooze_error">पिछ्ले समय के लिए स्नूज़ नहीं किया जा सकता</string>
     <string name="language_setting_title">भाषा</string>
     <string name="choose_language_dialog_title">भाषा चुनें</string>
     <string name="language_english">अंग्रेज़ी</string>

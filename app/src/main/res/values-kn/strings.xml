@@ -77,6 +77,7 @@
     <string name="snooze_15_minutes_menu_item">ನಿದ್ರಾವಸ್ಥೆ +15 ನಿಮಿಷ</string>
     <string name="snooze_1_day_menu_item">ನಿದ್ರಾವಸ್ಥೆ 1 ದಿನ</string>
     <string name="custom_snooze_menu_item">ಕಸ್ಟಮ್ ನಿದ್ರಾವಸ್ಥೆ</string>
+    <string name="past_snooze_error">ಹಿಂದಿನ ಸಮಯಕ್ಕೆ ಸ್ನೂಜ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ</string>
     <string name="language_setting_title">ಭಾಷೆ</string>
     <string name="choose_language_dialog_title">ಭಾಷೆ ಆರಿಸಿ</string>
     <string name="language_english">ಇಂಗ್ಲೀಷ್</string>

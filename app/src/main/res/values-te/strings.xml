@@ -77,6 +77,7 @@
     <string name="snooze_15_minutes_menu_item">స్నూజ్ +15 నిమిషాలు</string>
     <string name="snooze_1_day_menu_item">స్నూజ్ 1 రోజు</string>
     <string name="custom_snooze_menu_item">కస్టమ్ స్నూజ్</string>
+    <string name="past_snooze_error">గతంలో ఉన్న సమయానికి స్నూజ్ చేయలేరు</string>
     <string name="language_setting_title">భాష</string>
     <string name="choose_language_dialog_title">భాషను ఎంచుకోండి</string>
     <string name="language_english">ఇంగ్లీష్</string>

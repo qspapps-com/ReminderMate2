@@ -8,6 +8,7 @@ import android.os.Build
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.notifications.NotificationService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -33,10 +34,10 @@ class ReminderAlarmScheduler @Inject constructor(
 
     fun scheduleInstance(instance: ReminderInstance) {
         val intent = Intent(context, NotificationReceiver::class.java).apply {
-            action = "ACTION_TRIGGER_REMINDER"
-            putExtra("REMINDER_ID", instance.reminderId)
-            putExtra("ORIGINAL_TIME", instance.originalTime)
-            putExtra("TRIGGER_TIME", instance.displayTime) // LocalDateTime is serializable
+            action = NotificationService.ACTION_TRIGGER_REMINDER
+            putExtra(NotificationService.EXTRA_REMINDER_ID, instance.reminderId)
+            putExtra(NotificationService.EXTRA_ORIGINAL_TIME, instance.originalTime)
+            putExtra(NotificationService.EXTRA_TRIGGER_TIME, instance.displayTime) // LocalDateTime is serializable
         }
 
         // Using reminderId as request code to ensure there is only one alarm per reminder.
@@ -76,8 +77,8 @@ class ReminderAlarmScheduler @Inject constructor(
 
     fun cancel(reminder: Reminder) {
         val intent = Intent(context, NotificationReceiver::class.java).apply {
-            action = "ACTION_TRIGGER_REMINDER"
-            putExtra("REMINDER_ID", reminder.id)
+            action = NotificationService.ACTION_TRIGGER_REMINDER
+            putExtra(NotificationService.EXTRA_REMINDER_ID, reminder.id)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(

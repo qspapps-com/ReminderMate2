@@ -77,6 +77,7 @@
     <string name="snooze_15_minutes_menu_item">സ്നൂസ് +15 മിനിറ്റ്</string>
     <string name="snooze_1_day_menu_item">സ്നൂസ് 1 ദിവസം</string>
     <string name="custom_snooze_menu_item">കസ്റ്റം സ്നൂസ്</string>
+    <string name="past_snooze_error">കഴിഞ്ഞ ഒരു സമയത്തേക്ക് സ്നൂസ് ചെയ്യാൻ കഴിയില്ല</string>
     <string name="language_setting_title">ഭാഷ</string>
     <string name="choose_language_dialog_title">ഭാഷ തിരഞ്ഞെടുക്കുക</string>
     <string name="language_english">ഇംഗ്ലീഷ്</string>
