@@ -96,7 +96,7 @@ fun AboutScreen(
             // --- Key Features ---
             FeaturesGrid()
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
@@ -106,8 +106,6 @@ fun AboutScreen(
             DeveloperInfoSection(
                 onWebsiteClick = { uriHandler.openUri("https://www.qspapps.com/") }
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
@@ -252,7 +250,7 @@ fun DeveloperInfoSection(onWebsiteClick: () -> Unit) {
                 .padding(4.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         Text(
             text = "© 2025 qspapps.com. Made In India.",
