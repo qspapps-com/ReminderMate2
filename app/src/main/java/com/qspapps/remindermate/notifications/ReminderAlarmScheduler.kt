@@ -8,14 +8,13 @@ import android.os.Build
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.data.repository.ReminderRepository
-import com.qspapps.remindermate.notifications.NotificationService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDateTime
 import java.time.ZoneId
 import javax.inject.Inject
 
 class ReminderAlarmScheduler @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val reminderRepository: ReminderRepository
 ) {
 
