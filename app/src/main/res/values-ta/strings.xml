@@ -131,4 +131,5 @@
     <string name="notification_due_at">நேரம்: %1$s</string>
     <string name="notification_action_complete">முடி</string>
     <string name="notification_action_snooze">ஒத்திவை +%1$d நிமி</string>
+    <string name="about">பற்றி</string>
 </resources>

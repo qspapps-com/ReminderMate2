@@ -103,6 +103,7 @@
     <string name="notification_due_at">Due at %1$s</string>
     <string name="notification_action_complete">Complete</string>
     <string name="notification_action_snooze">Snooze +%1$d mins</string>
+    <string name="about">About</string>
     <plurals name="recurrence_minute">
         <item quantity="one">every minute</item>
         <item quantity="other">every %d minutes</item>

@@ -138,4 +138,5 @@
     <string name="notification_due_at">ಸಮಯ: %1$s</string>
     <string name="notification_action_complete">ಪೂರ್ಣಗೊಳಿಸಿ</string>
     <string name="notification_action_snooze">ಸ್ನೂಜ್ +%1$d ನಿಮಿಷಗಳು</string>
+    <string name="about">ಬಗ್ಗೆ</string>
 </resources>

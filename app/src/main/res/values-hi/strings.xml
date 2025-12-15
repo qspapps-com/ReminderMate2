@@ -132,4 +132,5 @@
     <string name="notification_due_at">नियत समय: %1$s</string>
     <string name="notification_action_complete">पूरा करें</string>
     <string name="notification_action_snooze">स्नूज़ +%1$d मिनट</string>
+    <string name="about">बारे में</string>
 </resources>

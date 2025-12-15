@@ -2,10 +2,10 @@ package com.qspapps.remindermate.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import com.qspapps.remindermate.R
 
 sealed class AppScreen(
@@ -15,6 +15,7 @@ sealed class AppScreen(
 ) {
     object Home : AppScreen("home")
     object Settings : AppScreen("settings", R.string.settings_title, Icons.Default.Settings)
+    object About : AppScreen("about", R.string.about, Icons.Default.Info)
     object AllReminders : AppScreen("all_reminders", R.string.all_reminders_title,
         Icons.AutoMirrored.Filled.List
     )

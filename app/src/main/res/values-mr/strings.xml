@@ -131,4 +131,5 @@
     <string name="notification_due_at">वेळ: %1$s</string>
     <string name="notification_action_complete">पूर्ण करा</string>
     <string name="notification_action_snooze">स्नूझ +%1$d मिनिटे</string>
+    <string name="about">अ‍ॅपबद्दल</string>
 </resources>

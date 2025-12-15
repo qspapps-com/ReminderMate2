@@ -64,7 +64,8 @@ fun HomeScreen(
     val menuItems = listOf(
         AppScreen.AllReminders,
         AppScreen.OverdueReminders,
-        AppScreen.Settings
+        AppScreen.Settings,
+        AppScreen.About
     )
 
     Scaffold(

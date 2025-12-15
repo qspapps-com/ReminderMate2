@@ -132,4 +132,5 @@
     <string name="notification_due_at">Vence: %1$s</string>
     <string name="notification_action_complete">Completar</string>
     <string name="notification_action_snooze">Posponer +%1$d min</string>
+    <string name="about">Acerca de</string>
 </resources>

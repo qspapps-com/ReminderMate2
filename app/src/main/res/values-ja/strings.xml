@@ -125,4 +125,5 @@
     <string name="notification_due_at">期限: %1$s</string>
     <string name="notification_action_complete">完了</string>
     <string name="notification_action_snooze">スヌーズ +%1$d分</string>
+    <string name="about">アプリについて</string>
 </resources>

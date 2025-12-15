@@ -131,4 +131,5 @@
     <string name="notification_due_at">Échéance : %1$s</string>
     <string name="notification_action_complete">Terminer</string>
     <string name="notification_action_snooze">Reporter +%1$d min</string>
+    <string name="about">À propos</string>
 </resources>
