@@ -23,7 +23,6 @@ import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -45,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.qspapps.remindermate.BuildConfig
 import com.qspapps.remindermate.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -142,7 +142,7 @@ fun AppHeaderSection() {
         )
 
         Text(
-            text = "Version 2.0.4",
+            text = "Version ${BuildConfig.VERSION_NAME}",
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
         )
