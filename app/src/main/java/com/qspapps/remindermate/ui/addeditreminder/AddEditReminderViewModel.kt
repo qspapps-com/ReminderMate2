@@ -19,7 +19,7 @@ import javax.inject.Inject
 data class AddEditReminderUiState(
     val title: String = "",
     val description: String = "",
-    val startDateTime: LocalDateTime = DateTimeUtils.minsFromNow(5),
+    val startDateTime: LocalDateTime = DateTimeUtils.minsFromNow(15),
     val recurrence: RecurrenceRule? = null,
     val isNewReminder: Boolean = true,
     val isLoading: Boolean = false,
