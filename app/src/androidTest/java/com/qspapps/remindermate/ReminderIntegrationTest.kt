@@ -1,12 +1,19 @@
 package com.qspapps.remindermate
 
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import com.qspapps.remindermate.data.model.Reminder
+import com.qspapps.remindermate.data.repository.ReminderRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDateTime
+import javax.inject.Inject
 
 @HiltAndroidTest
 class ReminderIntegrationTest {
@@ -16,6 +23,9 @@ class ReminderIntegrationTest {
 
     @get:Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
+
+    @Inject
+    lateinit var repository: ReminderRepository
 
     @Before
     fun init() {
@@ -64,6 +74,81 @@ class ReminderIntegrationTest {
         // Verify updated title exists
         composeTestRule.onNodeWithText(updatedTitle).assertIsDisplayed()
         composeTestRule.onNodeWithText(title).assertDoesNotExist()
+    }
+
+    @Test
+    fun createReminderAndMarkCompletedTest() {
+        val title = "Complete Me"
+
+        // 1. Create a new reminder
+        composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.add_reminder))
+            .performClick()
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.title_label))
+            .performTextInput(title)
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.save_button))
+            .performClick()
+
+        // 2. Mark as completed using the checkbox in the list item
+        // Find the checkbox within the reminder item with our title
+        composeTestRule.onNodeWithTag("reminder_item_$title")
+            .onChildren()
+            .filterToOne(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Checkbox))
+            .performClick()
+
+        // 3. Verify it's marked as completed (Checkbox should be checked)
+        composeTestRule.onNodeWithTag("reminder_item_$title")
+            .onChildren()
+            .filterToOne(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Checkbox))
+            .assertIsOn()
+    }
+
+    @Test
+    fun createReminderAndCheckInAllRemindersTest() {
+        val title = "All Reminders Test"
+        
+        // 1. Create a new reminder
+        composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.add_reminder))
+            .performClick()
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.title_label))
+            .performTextInput(title)
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.save_button))
+            .performClick()
+
+        // 2. Navigate to All Reminders
+        openNavigationMenu()
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.all_reminders_title))
+            .performClick()
+
+        // 3. Verify it exists on All Reminders screen
+        composeTestRule.onNodeWithText(title).assertIsDisplayed()
+    }
+
+    @Test
+    fun checkOverdueReminderTest() {
+        val overdueTitle = "Overdue Task"
+        
+        // 1. Insert an overdue reminder directly into the repository
+        runBlocking {
+            repository.insert(
+                Reminder(
+                    title = overdueTitle,
+                    description = "Should be in overdue screen",
+                    startDateTime = LocalDateTime.now().minusDays(1)
+                )
+            )
+        }
+
+        // 2. Navigate to Overdue Reminders
+        openNavigationMenu()
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.overdue_reminders_title))
+            .performClick()
+
+        // 3. Verify it exists on Overdue Reminders screen
+        composeTestRule.onNodeWithText(overdueTitle).assertIsDisplayed()
     }
 
     @Test
