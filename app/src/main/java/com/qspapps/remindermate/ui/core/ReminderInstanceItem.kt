@@ -19,6 +19,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import com.qspapps.remindermate.R
@@ -64,6 +66,7 @@ fun ReminderInstanceItem(
         MaterialTheme.typography.bodyLarge
     }
     ListItem(
+        modifier = Modifier.testTag("reminder_item_${reminderInstance.title}"),
         leadingContent = {
             Checkbox(
                 checked = reminderInstance.isCompleted,
