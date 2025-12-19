@@ -8,6 +8,7 @@ import androidx.core.app.NotificationCompat
 import com.qspapps.remindermate.MainActivity
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.Reminder
+import com.qspapps.remindermate.utils.DateTimeUtils
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -57,7 +58,8 @@ class NotificationService(private val context: Context) {
         val notification = NotificationCompat.Builder(context, REMINDER_CHANNEL_ID)
             .setSmallIcon(R.drawable.outline_alarm_on_24)
             .setContentTitle(reminder.title)
-            .setContentText(reminder.description ?: context.getString(R.string.notification_due_at, triggerTime.format(DateTimeFormatter.ofPattern("HH:mm"))))
+            .setContentText(reminder.description ?: context.getString(R.string.notification_due_at,
+                DateTimeUtils.formatTime(triggerTime)))
             .setContentIntent(activityPendingIntent)
             .setAutoCancel(true)
             .addAction(0, context.getString(R.string.notification_action_complete), completePendingIntent)

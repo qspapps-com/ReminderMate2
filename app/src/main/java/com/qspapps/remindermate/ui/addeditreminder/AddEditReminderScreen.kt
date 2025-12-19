@@ -46,8 +46,8 @@ import androidx.navigation.NavController
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.data.model.RecurrenceRule
+import com.qspapps.remindermate.utils.DateTimeUtils
 import java.time.DayOfWeek
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Calendar
 import java.util.Locale
@@ -117,10 +117,10 @@ fun AddEditReminderScreen(
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Button(onClick = { showDatePicker = true }) {
-                        Text(text = uiState.startDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE))
+                        Text(text = DateTimeUtils.formatDate(uiState.startDateTime))
                     }
                     Button(onClick = { showTimePicker = true }) {
-                        Text(text = uiState.startDateTime.format(DateTimeFormatter.ofPattern("HH:mm")))
+                        Text(text = DateTimeUtils.formatTime(uiState.startDateTime))
                     }
                 }
 
