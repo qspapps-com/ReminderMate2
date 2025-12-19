@@ -17,10 +17,6 @@ object DateTimeUtils {
         return localDateTime.format(formatter)
     }
 
-    fun isDue(localDateTime: LocalDateTime): Boolean {
-        return localDateTime.isBefore(LocalDateTime.now())
-    }
-
     fun minsFromNow(minutes: Long): LocalDateTime {
         return LocalDateTime.now().plusMinutes(minutes).truncatedTo(ChronoUnit.MINUTES)
     }

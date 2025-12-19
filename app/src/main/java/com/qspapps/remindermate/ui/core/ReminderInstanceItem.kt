@@ -26,7 +26,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.utils.DateTimeUtils
-import com.qspapps.remindermate.utils.DateTimeUtils.formatDate
 import com.qspapps.remindermate.utils.DateTimeUtils.formatDateTime
 import com.qspapps.remindermate.utils.DateTimeUtils.formatTime
 

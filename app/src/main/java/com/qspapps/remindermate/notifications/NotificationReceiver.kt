@@ -9,7 +9,6 @@ import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.ReminderAction
 import com.qspapps.remindermate.di.ApplicationScope
-import com.qspapps.remindermate.notifications.NotificationService
 import com.qspapps.remindermate.utils.DateTimeUtils.minsFromNow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope

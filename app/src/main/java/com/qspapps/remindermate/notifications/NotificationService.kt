@@ -10,7 +10,6 @@ import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.utils.DateTimeUtils
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class NotificationService(private val context: Context) {
 
