@@ -136,6 +136,8 @@ class ReminderIntegrationTest {
     fun createWeeklyRecurringReminderAndVerifyStorageTest() {
         val title = "Weekly Task"
         val description = "Every week on this day"
+        val interval = "2"
+        val count = "5"
 
         // 1. Create a new weekly reminder
         composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.add_reminder))
@@ -154,6 +156,14 @@ class ReminderIntegrationTest {
         // Select Weekly
         composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.repeat_option_weekly))
             .performClick()
+
+        // Set Interval
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.every_label))
+            .performTextReplacement(interval)
+
+        // Set Count
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.number_of_times_label))
+            .performTextInput(count)
 
         composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.save_button))
             .performClick()
@@ -178,6 +188,8 @@ class ReminderIntegrationTest {
             assertEquals("Description mismatch", description, savedReminder?.description)
             assertNotNull(savedReminder?.recurrence)
             assertEquals(Frequency.WEEKLY, savedReminder?.recurrence?.frequency)
+            assertEquals("Interval mismatch", interval.toInt(), savedReminder?.recurrence?.interval)
+            assertEquals("Count mismatch", count.toInt(), savedReminder?.recurrence?.count)
             // Verify startDateTime is roughly now (ignoring seconds/nanos)
             val now = LocalDateTime.now()
             assertEquals("Start date mismatch", now.toLocalDate(), savedReminder?.startDateTime?.toLocalDate())
