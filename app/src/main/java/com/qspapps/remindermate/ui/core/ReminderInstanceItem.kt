@@ -138,12 +138,14 @@ fun ReminderInstanceItem(
 private fun getSupportingContent(rem: ReminderInstance):String? {
     val s1 = rem.description
     val s2 = if (rem.displayTime != rem.originalTime) {
-        if (rem.displayTime.toLocalDate() == rem.originalTime.toLocalDate()) {
-            "⏰Snoozed (Orig: ${formatTime(rem.originalTime)})"
+        val timeLabel = if (rem.displayTime.toLocalDate() == rem.originalTime.toLocalDate()) {
+            formatTime(rem.originalTime)
         } else {
-            "⏰Snoozed (Orig: ${formatDateTime(rem.originalTime, " ")})"
+            formatDateTime(rem.originalTime, " ")
         }
+        "⏰Snoozed (Orig: $timeLabel)"
     } else null
+
     return when {
         s1 != null && s2 != null -> "$s1\n$s2"
         s1 != null -> s1 // s2 must be null here
