@@ -4,11 +4,18 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.test.rule.GrantPermissionRule
+import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.utils.DateTimeUtils
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -21,7 +28,13 @@ class ReminderIntegrationTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
+    // Add this rule to automatically grant notification permission
     @get:Rule(order = 1)
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
+        android.Manifest.permission.POST_NOTIFICATIONS
+    )
+
+    @get:Rule(order = 2)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     @Inject
@@ -30,6 +43,10 @@ class ReminderIntegrationTest {
     @Before
     fun init() {
         hiltRule.inject()
+        // Clear database before each test to prevent state leakage
+        runBlocking {
+            repository.deleteAllReminders()
+        }
     }
 
     @Test
@@ -77,6 +94,97 @@ class ReminderIntegrationTest {
     }
 
     @Test
+    fun createReminderAndSnoozeTest() {
+        val title = "Snooze Test"
+        val moreOptions = composeTestRule.activity.getString(R.string.more_options)
+
+        // 1. Create a new reminder
+        composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.add_reminder))
+            .performClick()
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.title_label))
+            .performTextInput(title)
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.save_button))
+            .performClick()
+
+        // 2. Snooze for 15 mins
+        composeTestRule.onNodeWithTag("reminder_item_$title")
+            .onChildren()
+            .filterToOne(hasContentDescription(moreOptions))
+            .performClick()
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.snooze_15_minutes_menu_item))
+            .performClick()
+
+        // 3. Verify that the displayed time is updated
+        // Wait for potential UI updates and verify the snoozed time
+        val snoozedTime = LocalDateTime.now().plusMinutes(15)
+        val expectedTime = DateTimeUtils.formatTime(snoozedTime)
+
+        composeTestRule.waitUntil {
+            composeTestRule.onAllNodesWithTag("reminder_item_$title")
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+
+        // Example of an alternative that usually works on merged trees:
+        composeTestRule.onNodeWithTag("reminder_item_$title")
+            .assertTextContains(expectedTime)
+    }
+
+    @Test
+    fun createWeeklyRecurringReminderAndVerifyStorageTest() {
+        val title = "Weekly Task"
+        val description = "Every week on this day"
+
+        // 1. Create a new weekly reminder
+        composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.add_reminder))
+            .performClick()
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.title_label))
+            .performTextInput(title)
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.description_label))
+            .performTextInput(description)
+
+        // Open Repeats dropdown
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.repeats_label))
+            .performClick()
+
+        // Select Weekly
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.repeat_option_weekly))
+            .performClick()
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.save_button))
+            .performClick()
+
+        // 2. Verify it appears today
+        composeTestRule.onNodeWithText(title).assertIsDisplayed()
+
+        // 3. Swipe to tomorrow
+        composeTestRule.onNode(hasScrollAction()).performTouchInput {
+            swipeLeft()
+        }
+
+        // 4. Verify it does NOT appear tomorrow
+        composeTestRule.onNodeWithText(title).assertDoesNotExist()
+
+        // 5. Verify repository storage: Check all fields are populated correctly
+        runBlocking {
+            val allReminders = repository.getAllReminders().first()
+            val savedReminder = allReminders.find { it.title == title }
+            assertNotNull("Reminder should be saved in repository", savedReminder)
+            assertEquals("Title mismatch", title, savedReminder?.title)
+            assertEquals("Description mismatch", description, savedReminder?.description)
+            assertNotNull(savedReminder?.recurrence)
+            assertEquals(Frequency.WEEKLY, savedReminder?.recurrence?.frequency)
+            // Verify startDateTime is roughly now (ignoring seconds/nanos)
+            val now = LocalDateTime.now()
+            assertEquals("Start date mismatch", now.toLocalDate(), savedReminder?.startDateTime?.toLocalDate())
+        }
+    }
+
+    @Test
     fun createReminderAndMarkCompletedTest() {
         val title = "Complete Me"
 
@@ -91,13 +199,12 @@ class ReminderIntegrationTest {
             .performClick()
 
         // 2. Mark as completed using the checkbox in the list item
-        // Find the checkbox within the reminder item with our title
         composeTestRule.onNodeWithTag("reminder_item_$title")
             .onChildren()
             .filterToOne(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Checkbox))
             .performClick()
 
-        // 3. Verify it's marked as completed (Checkbox should be checked)
+        // 3. Verify it's marked as completed
         composeTestRule.onNodeWithTag("reminder_item_$title")
             .onChildren()
             .filterToOne(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Checkbox))
@@ -105,9 +212,43 @@ class ReminderIntegrationTest {
     }
 
     @Test
+    fun createDailyRecurringReminderTest() {
+        val title = "Daily Reminder"
+
+        // 1. Create a new daily reminder
+        composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.add_reminder))
+            .performClick()
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.title_label))
+            .performTextInput(title)
+
+        // Open Repeats dropdown
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.repeats_label))
+            .performClick()
+
+        // Select Daily
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.repeat_option_daily))
+            .performClick()
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.save_button))
+            .performClick()
+
+        // 2. Verify it appears today
+        composeTestRule.onNodeWithText(title).assertIsDisplayed()
+
+        // 3. Swipe to tomorrow
+        composeTestRule.onNode(hasScrollAction()).performTouchInput {
+            swipeLeft()
+        }
+
+        // 4. Verify it appears tomorrow
+        composeTestRule.onNodeWithText(title).assertIsDisplayed()
+    }
+
+    @Test
     fun createReminderAndCheckInAllRemindersTest() {
         val title = "All Reminders Test"
-        
+
         // 1. Create a new reminder
         composeTestRule.onNodeWithContentDescription(composeTestRule.activity.getString(R.string.add_reminder))
             .performClick()
@@ -130,7 +271,7 @@ class ReminderIntegrationTest {
     @Test
     fun checkOverdueReminderTest() {
         val overdueTitle = "Overdue Task"
-        
+
         // 1. Insert an overdue reminder directly into the repository
         runBlocking {
             repository.insert(
@@ -211,7 +352,7 @@ class ReminderIntegrationTest {
         composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.theme_dark))
             .performClick()
 
-        // Verify dialog is closed and theme text is updated (this assumes the UI updates immediately)
+        // Verify dialog is closed and theme text is updated
         composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.theme_dark))
             .assertIsDisplayed()
 

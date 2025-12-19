@@ -84,4 +84,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.appcompat)
     testImplementation(libs.mockk.android)
+    androidTestImplementation(libs.androidx.rules)
+
 }
