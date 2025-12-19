@@ -145,7 +145,7 @@ private fun getSupportingContent(rem: ReminderInstance):String? {
         } else {
             formatDateTime(rem.originalTime, " ")
         }
-        "⏰Snoozed (Orig: $timeLabel)"
+        "⏰Zzz (Orig: $timeLabel)"
     } else null
 
     return when {
