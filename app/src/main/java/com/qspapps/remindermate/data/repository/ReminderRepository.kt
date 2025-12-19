@@ -2,9 +2,12 @@ package com.qspapps.remindermate.data.repository
 
 import com.qspapps.remindermate.data.local.ReminderActionDao
 import com.qspapps.remindermate.data.local.ReminderDao
+import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.model.ReminderAction
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import java.time.LocalDateTime
 
 class ReminderRepository(private val reminderDao: ReminderDao, private val reminderActionDao: ReminderActionDao) {
 
@@ -44,5 +47,58 @@ class ReminderRepository(private val reminderDao: ReminderDao, private val remin
 
     suspend fun deleteAllActions() {
         reminderActionDao.deleteAll()
+    }
+
+    suspend fun cleanupOldReminders(threshold: LocalDateTime) {
+        val allReminders = reminderDao.getAll().first()
+        val allActions = reminderActionDao.getAllActions().first().groupBy { it.reminderId }
+
+        for (reminder in allReminders) {
+            val actions = allActions[reminder.id] ?: emptyList()
+            
+            if (reminder.recurrence == null) {
+                // One-off reminder: Delete if completed or deleted before threshold
+                val terminalAction = actions.find { it.type == ActionType.COMPLETED || it.type == ActionType.DELETED }
+                if (terminalAction != null && reminder.startDateTime.isBefore(threshold)) {
+                    deleteReminderById(reminder.id)
+                }
+            } else {
+                // Recurring reminder
+                // Find all occurrences from startDateTime up to threshold
+                val occurrencesBeforeThreshold = reminder.getOccurrences(
+                    reminder.startDateTime.toLocalDate(),
+                    threshold.toLocalDate()
+                ).filter { !it.isBefore(reminder.startDateTime) && it.isBefore(threshold) }
+
+                var firstRemainingTime: LocalDateTime? = null
+                
+                // Find the first instance that is NOT completed and NOT deleted before threshold
+                for (time in occurrencesBeforeThreshold) {
+                    val action = actions.find { it.originalScheduledTime == time }
+                    if (action?.type != ActionType.COMPLETED && action?.type != ActionType.DELETED) {
+                        firstRemainingTime = time
+                        break
+                    }
+                }
+
+                if (firstRemainingTime == null) {
+                    // All instances before threshold are completed/deleted.
+                    // Find the first raw occurrence at or after threshold (passing empty actions to get raw schedule)
+                    firstRemainingTime = reminder.getNextOccurrence(emptyList(), threshold.minusNanos(1))?.originalTime
+                }
+
+                if (firstRemainingTime != null) {
+                    if (firstRemainingTime != reminder.startDateTime) {
+                        update(reminder.copy(startDateTime = firstRemainingTime))
+                        // Clean up actions that are now before the new startDateTime
+                        actions.filter { it.originalScheduledTime.isBefore(firstRemainingTime!!) }
+                            .forEach { reminderActionDao.delete(it) }
+                    }
+                } else {
+                    // No more occurrences ever and all past ones are handled
+                    deleteReminderById(reminder.id)
+                }
+            }
+        }
     }
 }

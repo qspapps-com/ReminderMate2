@@ -126,4 +126,8 @@
     <string name="notification_action_complete">完了</string>
     <string name="notification_action_snooze">スヌーズ +%1$d分</string>
     <string name="about">アプリについて</string>
+    <string name="last_cleanup_setting_title">クリーンアップの状態</string>
+    <string name="last_cleanup_never">自動クリーンアップはまだ実行されていません。</string>
+    <string name="last_cleanup_status">最後のクリーンアップは %1$s に正常に完了しました。30日以上前の完了済みリマインダーはすべて削除されました。</string>
+    <string name="never">なし</string>
 </resources>

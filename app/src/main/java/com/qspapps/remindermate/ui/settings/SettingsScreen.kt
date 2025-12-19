@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.CleaningServices
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
@@ -44,7 +45,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.repository.Theme
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -165,6 +168,24 @@ fun SettingsScreen(
             item { HorizontalDivider() }
             item {
                 SettingsSectionTitle(stringResource(id = R.string.data_management_section_title))
+            }
+            item {
+                val lastCleanupText = if (uiState.lastCleanupTime == 0L) {
+                    stringResource(id = R.string.last_cleanup_never)
+                } else {
+                    val dateTime = LocalDateTime.ofInstant(
+                        Instant.ofEpochSecond(uiState.lastCleanupTime),
+                        ZoneId.systemDefault()
+                    )
+                    val formattedDate = dateTime.format(DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm"))
+                    stringResource(id = R.string.last_cleanup_status, formattedDate)
+                }
+                SettingsItem(
+                    icon = Icons.Default.CleaningServices,
+                    title = stringResource(id = R.string.last_cleanup_setting_title),
+                    subtitle = lastCleanupText,
+                    onClick = { /* No action needed */ }
+                )
             }
             item {
                 SettingsItem(

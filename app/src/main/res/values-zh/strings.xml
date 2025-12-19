@@ -126,4 +126,8 @@
     <string name="notification_action_complete">完成</string>
     <string name="notification_action_snooze">延后 %1$d 分钟</string>
     <string name="about">关于</string>
+    <string name="last_cleanup_setting_title">清理状态</string>
+    <string name="last_cleanup_never">自动清理尚未运行。</string>
+    <string name="last_cleanup_status">上次成功清理是在 %1$s。所有超过 30 天的已完成提醒均已删除。</string>
+    <string name="never">从未</string>
 </resources>

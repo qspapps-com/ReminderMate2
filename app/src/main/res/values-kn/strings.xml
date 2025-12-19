@@ -139,4 +139,8 @@
     <string name="notification_action_complete">ಪೂರ್ಣಗೊಳಿಸಿ</string>
     <string name="notification_action_snooze">ಸ್ನೂಜ್ +%1$d ನಿಮಿಷಗಳು</string>
     <string name="about">ಬಗ್ಗೆ</string>
+    <string name="last_cleanup_setting_title">ಶುಚಿಗೊಳಿಸುವ ಸ್ಥಿತಿ</string>
+    <string name="last_cleanup_never">ಸ್ವಯಂಚಾಲಿತ ಶುಚಿಗೊಳಿಸುವಿಕೆ ಇನ್ನೂ ನಡೆದಿಲ್ಲ.</string>
+    <string name="last_cleanup_status">ಕೊನೆಯ ಯಶಸ್ವಿ ಶುಚಿಗೊಳಿಸುವಿಕೆಯನ್ನು %1$s ರಂದು ಮಾಡಲಾಗಿದೆ. 30 ದಿನಗಳಿಗಿಂತ ಹಳೆಯದಾದ ಎಲ್ಲಾ ಪೂರ್ಣಗೊಂಡ ಜ್ಞಾಪನೆಗಳನ್ನು ಅಳಿಸಲಾಗಿದೆ.</string>
+    <string name="never">ಎಂದಿಗೂ ಇಲ್ಲ</string>
 </resources>

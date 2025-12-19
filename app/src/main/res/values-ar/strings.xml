@@ -161,4 +161,8 @@
     <string name="notification_action_complete">إكمال</string>
     <string name="notification_action_snooze">غفوة +%1$d دقائق</string>
     <string name="about">حول</string>
+    <string name="last_cleanup_setting_title">حالة التنظيف</string>
+    <string name="last_cleanup_never">لم يتم تشغيل التنظيف التلقائي بعد.</string>
+    <string name="last_cleanup_status">تم إجراء آخر تنظيف ناجح في %1$s. تم حذف جميع التذكيرات المكتملة التي مضى عليها أكثر من 30 يومًا.</string>
+    <string name="never">أبداً</string>
 </resources>

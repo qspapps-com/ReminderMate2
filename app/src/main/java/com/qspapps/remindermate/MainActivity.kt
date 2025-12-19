@@ -15,14 +15,29 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.data.repository.Theme
+import com.qspapps.remindermate.data.repository.UserPreferencesRepository
 import com.qspapps.remindermate.ui.navigation.AppNavigation
 import com.qspapps.remindermate.ui.settings.SettingsViewModel
 import com.qspapps.remindermate.ui.theme.ReminderMateTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var reminderRepository: ReminderRepository
+
+    @Inject
+    lateinit var userPreferencesRepository: UserPreferencesRepository
 
     private val viewModel: SettingsViewModel by viewModels()
 
@@ -38,6 +53,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         askNotificationPermission()
+        checkAndCleanupOldReminders()
         setContent {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val useDarkTheme = when (uiState.theme) {
@@ -47,6 +63,20 @@ class MainActivity : ComponentActivity() {
             }
             ReminderMateTheme(darkTheme = useDarkTheme) {
                 AppNavigation()
+            }
+        }
+    }
+
+    private fun checkAndCleanupOldReminders() {
+        lifecycleScope.launch {
+            val lastCleanup = userPreferencesRepository.lastCleanupTime.first()
+            val currentTime = Instant.now().epochSecond
+            val sevenDaysInSeconds = 7 * 24 * 60 * 60L
+
+            if (currentTime - lastCleanup > sevenDaysInSeconds) {
+                val threshold = LocalDateTime.now().minusDays(30)
+                reminderRepository.cleanupOldReminders(threshold)
+                userPreferencesRepository.setLastCleanupTime(currentTime)
             }
         }
     }

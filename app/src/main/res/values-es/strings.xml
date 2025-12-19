@@ -133,4 +133,8 @@
     <string name="notification_action_complete">Completar</string>
     <string name="notification_action_snooze">Posponer +%1$d min</string>
     <string name="about">Acerca de</string>
+    <string name="last_cleanup_setting_title">Estado de limpieza</string>
+    <string name="last_cleanup_never">La limpieza automática aún no se ha ejecutado.</string>
+    <string name="last_cleanup_status">La última limpieza exitosa se realizó el %1$s. Se eliminaron todos los recordatorios completados con más de 30 días de antigüedad.</string>
+    <string name="never">Nunca</string>
 </resources>

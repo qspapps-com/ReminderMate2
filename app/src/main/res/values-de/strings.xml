@@ -133,4 +133,8 @@
     <string name="notification_action_complete">Erledigen</string>
     <string name="notification_action_snooze">Schlummern +%1$d Min.</string>
     <string name="about">Über</string>
+    <string name="last_cleanup_setting_title">Bereinigungsstatus</string>
+    <string name="last_cleanup_never">Die automatische Bereinigung wurde noch nicht ausgeführt.</string>
+    <string name="last_cleanup_status">Die letzte erfolgreiche Bereinigung erfolgte am %1$s. Alle abgeschlossenen Erinnerungen, die älter als 30 Tage waren, wurden gelöscht.</string>
+    <string name="never">Nie</string>
 </resources>

@@ -132,4 +132,8 @@
     <string name="notification_action_complete">முடி</string>
     <string name="notification_action_snooze">ஒத்திவை +%1$d நிமி</string>
     <string name="about">பற்றி</string>
+    <string name="last_cleanup_setting_title">சுத்தப்படுத்தும் நிலை</string>
+    <string name="last_cleanup_never">தானியங்கி சுத்திகரிப்பு இன்னும் இயங்கவில்லை.</string>
+    <string name="last_cleanup_status">கடைசியாக வெற்றிகரமாக சுத்தப்படுத்தப்பட்டது %1$s அன்று. 30 நாட்களுக்கு மேலான அனைத்து முடிக்கப்பட்ட நினைவூட்டல்களும் நீக்கப்பட்டன.</string>
+    <string name="never">ஒருபோதும் இல்லை</string>
 </resources>

@@ -132,4 +132,8 @@
     <string name="notification_action_complete">പൂർത്തിയാക്കുക</string>
     <string name="notification_action_snooze">സ്‌നൂസ് +%1$d മിനിറ്റ്</string>
     <string name="about">കുറിച്ച്</string>
+    <string name="last_cleanup_setting_title">ക്ലീനപ്പ് നില</string>
+    <string name="last_cleanup_never">ഓട്ടോമാറ്റിക് ക്ലീനപ്പ് ഇതുവരെ നടന്നിട്ടില്ല.</string>
+    <string name="last_cleanup_status">അവസാനത്തെ വിജയകരമായ ക്ലീനപ്പ് %1$s-ന് നടന്നു. 30 ദിവസത്തിലധികം പഴക്കമുള്ള പൂർത്തിയാക്കിയ എല്ലാ റിമൈൻഡറുകളും ഇല്ലാതാക്കി.</string>
+    <string name="never">ഒരിക്കലുമില്ല</string>
 </resources>
