@@ -170,24 +170,6 @@ fun SettingsScreen(
                 SettingsSectionTitle(stringResource(id = R.string.data_management_section_title))
             }
             item {
-                val lastCleanupText = if (uiState.lastCleanupTime == 0L) {
-                    stringResource(id = R.string.last_cleanup_never)
-                } else {
-                    val dateTime = LocalDateTime.ofInstant(
-                        Instant.ofEpochSecond(uiState.lastCleanupTime),
-                        ZoneId.systemDefault()
-                    )
-                    val formattedDate = dateTime.format(DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm"))
-                    stringResource(id = R.string.last_cleanup_status, formattedDate)
-                }
-                SettingsItem(
-                    icon = Icons.Default.CleaningServices,
-                    title = stringResource(id = R.string.last_cleanup_setting_title),
-                    subtitle = lastCleanupText,
-                    onClick = { /* No action needed */ }
-                )
-            }
-            item {
                 SettingsItem(
                     icon = Icons.Default.Backup,
                     title = stringResource(id = R.string.backup_data_setting_title),
@@ -227,6 +209,24 @@ fun SettingsScreen(
                     title = stringResource(id = R.string.clear_all_reminders_setting_title),
                     subtitle = stringResource(id = R.string.clear_all_reminders_setting_subtitle),
                     onClick = { showClearAllDialog = true }
+                )
+            }
+            item {
+                val lastCleanupText = if (uiState.lastCleanupTime == 0L) {
+                    stringResource(id = R.string.last_cleanup_never)
+                } else {
+                    val dateTime = LocalDateTime.ofInstant(
+                        Instant.ofEpochSecond(uiState.lastCleanupTime),
+                        ZoneId.systemDefault()
+                    )
+                    val formattedDate = dateTime.format(DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm"))
+                    stringResource(id = R.string.last_cleanup_status, formattedDate)
+                }
+                SettingsItem(
+                    icon = Icons.Default.CleaningServices,
+                    title = stringResource(id = R.string.last_cleanup_setting_title),
+                    subtitle = lastCleanupText,
+                    onClick = { /* No action needed */ }
                 )
             }
         }
