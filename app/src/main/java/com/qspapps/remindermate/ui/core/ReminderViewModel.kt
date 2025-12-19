@@ -39,6 +39,8 @@ abstract class ReminderViewModel(
                 )
                 reminderRepository.insertAction(action)
                 notificationService.cancelNotification(reminderInstance.reminderId.toInt())
+                // Cancel existing one from reminderAlarmScheduler
+                reminderAlarmScheduler.cancel(reminder)
                 // Schedule next one if recurring
                 reminderAlarmScheduler.schedule(reminder, after = reminderInstance.displayTime)
             }
