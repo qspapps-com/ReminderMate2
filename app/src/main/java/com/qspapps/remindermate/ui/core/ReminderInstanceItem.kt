@@ -25,6 +25,7 @@ import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.utils.DateTimeUtils
 import com.qspapps.remindermate.utils.DateTimeUtils.formatDate
+import com.qspapps.remindermate.utils.DateTimeUtils.formatDateTime
 import com.qspapps.remindermate.utils.DateTimeUtils.formatTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,11 +71,11 @@ fun ReminderInstanceItem(
             )
         },
         headlineContent = { Text(reminderInstance.title, style = textStyle) },
-        supportingContent = { getSupportingContent(reminderInstance, showDate)?.let { Text(it) } },
+        supportingContent = { getSupportingContent(reminderInstance)?.let { Text(it) } },
         trailingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    formatTime(reminderInstance.displayTime),
+                    if (showDate) formatDateTime(reminderInstance.displayTime, "\n") else formatTime(reminderInstance.displayTime),
                     color = if (isOverdue) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                 )
 
@@ -134,9 +135,15 @@ fun ReminderInstanceItem(
     )
 }
 
-fun getSupportingContent(reminderInstance: ReminderInstance, showDate: Boolean):String? {
-    val s1 = reminderInstance.description
-    val s2 = if (showDate) formatDate(reminderInstance.displayTime) else null
+private fun getSupportingContent(rem: ReminderInstance):String? {
+    val s1 = rem.description
+    val s2 = if (rem.displayTime != rem.originalTime) {
+        if (rem.displayTime.toLocalDate() == rem.originalTime.toLocalDate()) {
+            "⏰Snoozed (Orig: ${formatTime(rem.originalTime)})"
+        } else {
+            "⏰Snoozed (Orig: ${formatDateTime(rem.originalTime, " ")})"
+        }
+    } else null
     return when {
         s1 != null && s2 != null -> "$s1\n$s2"
         s1 != null -> s1 // s2 must be null here

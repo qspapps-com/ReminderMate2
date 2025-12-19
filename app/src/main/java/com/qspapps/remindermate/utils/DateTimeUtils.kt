@@ -6,6 +6,8 @@ import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 object DateTimeUtils {
+    fun formatDateTime(dateTime: LocalDateTime, separator: String = "-"): String =
+        "${formatDate(dateTime)}$separator${formatTime(dateTime)}"
     fun formatTime(localDateTime: LocalDateTime): String {
         val formatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.getDefault())
         return localDateTime.format(formatter)
