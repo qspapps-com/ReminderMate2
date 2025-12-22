@@ -80,56 +80,57 @@ fun ReminderInstanceItem(
                     if (showDate) formatDateTime(reminderInstance.displayTime, "\n") else formatTime(reminderInstance.displayTime),
                     color = if (isOverdue) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                 )
-
-                Box {
-                    IconButton(onClick = { showMenu = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_options))
-                    }
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(id = R.string.snooze_15_minutes_menu_item)) },
-                            onClick = {
-                                actions.onSnooze(
-                                    reminderInstance,
-                                    DateTimeUtils.minsFromNow(15)
-                                )
-                                showMenu = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(id = R.string.snooze_1_day_menu_item)) },
-                            onClick = {
-                                actions.onSnooze(
-                                    reminderInstance,
-                                    reminderInstance.displayTime.plusDays(1)
-                                )
-                                showMenu = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(id = R.string.custom_snooze_menu_item)) },
-                            onClick = {
-                                showMenu = false
-                                showCustomSnoozeDialog = true
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(id = R.string.update_menu_item)) },
-                            onClick = {
-                                actions.onUpdate(reminderInstance.reminderId)
-                                showMenu = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(id = R.string.delete_menu_item)) },
-                            onClick = {
-                                showDeleteConfirmation = reminderInstance
-                                showMenu = false
-                            }
-                        )
+                if (!reminderInstance.isCompleted) {
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_options))
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(id = R.string.snooze_15_minutes_menu_item)) },
+                                onClick = {
+                                    actions.onSnooze(
+                                        reminderInstance,
+                                        DateTimeUtils.minsFromNow(15)
+                                    )
+                                    showMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(id = R.string.snooze_1_day_menu_item)) },
+                                onClick = {
+                                    actions.onSnooze(
+                                        reminderInstance,
+                                        reminderInstance.displayTime.plusDays(1)
+                                    )
+                                    showMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(id = R.string.custom_snooze_menu_item)) },
+                                onClick = {
+                                    showMenu = false
+                                    showCustomSnoozeDialog = true
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(id = R.string.update_menu_item)) },
+                                onClick = {
+                                    actions.onUpdate(reminderInstance.reminderId)
+                                    showMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(id = R.string.delete_menu_item)) },
+                                onClick = {
+                                    showDeleteConfirmation = reminderInstance
+                                    showMenu = false
+                                }
+                            )
+                        }
                     }
                 }
             }
