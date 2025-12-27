@@ -226,31 +226,18 @@ fun SettingsScreen(
                         ZoneId.systemDefault()
                     ).format(DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm:ss"))
 
-                    ListItem(
-                        headlineContent = {
-                            Text("Last System Error", color = MaterialTheme.colorScheme.error)
-                        },
-                        supportingContent = {
-                            Column {
-                                Text(message)
-                                Text(
-                                    text = "Occurred: $dateString",
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                            }
-                        },
-                        leadingContent = {
-                            Icon(
-                                imageVector = Icons.Default.BugReport,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                        }
+                    SettingsItem(
+                        icon = Icons.Default.BugReport,
+                        title = "Last System Error",
+                        subtitle = "$message\nOccurred: $dateString",
+                        onClick = { }
                     )
                 } else {
-                    ListItem(
-                        headlineContent = { Text("No errors reported") },
-                        leadingContent = { Icon(Icons.Default.CheckCircle, contentDescription = null) }
+                    SettingsItem(
+                        icon = Icons.Default.CheckCircle,
+                        title = "System Status",
+                        subtitle = "No errors reported",
+                        onClick = { }
                     )
                 }
             }
