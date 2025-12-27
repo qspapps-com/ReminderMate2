@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CleaningServices
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
@@ -210,6 +212,47 @@ fun SettingsScreen(
                     subtitle = stringResource(id = R.string.clear_all_reminders_setting_subtitle),
                     onClick = { showClearAllDialog = true }
                 )
+            }
+            item { HorizontalDivider() }
+            item {
+                SettingsSectionTitle("Debug")
+            }
+            item {
+                val errorData = uiState.lastError
+                if (errorData != null) {
+                    val (message, timestamp) = errorData
+                    val dateString = LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(timestamp),
+                        ZoneId.systemDefault()
+                    ).format(DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm:ss"))
+
+                    ListItem(
+                        headlineContent = {
+                            Text("Last System Error", color = MaterialTheme.colorScheme.error)
+                        },
+                        supportingContent = {
+                            Column {
+                                Text(message)
+                                Text(
+                                    text = "Occurred: $dateString",
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        },
+                        leadingContent = {
+                            Icon(
+                                imageVector = Icons.Default.BugReport,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    )
+                } else {
+                    ListItem(
+                        headlineContent = { Text("No errors reported") },
+                        leadingContent = { Icon(Icons.Default.CheckCircle, contentDescription = null) }
+                    )
+                }
             }
         }
     }

@@ -8,6 +8,7 @@ import com.qspapps.remindermate.data.local.ReminderActionDao
 import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.ReminderAction
+import com.qspapps.remindermate.data.repository.UserPreferencesRepository
 import com.qspapps.remindermate.di.ApplicationScope
 import com.qspapps.remindermate.utils.DateTimeUtils.minsFromNow
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,6 +33,8 @@ class NotificationReceiver : BroadcastReceiver() {
     @Inject
     lateinit var alarmScheduler: ReminderAlarmScheduler
 
+    @Inject
+    lateinit var userPreferencesRepository: UserPreferencesRepository
     @Inject
     @ApplicationScope
     lateinit var applicationScope: CoroutineScope
@@ -80,6 +83,9 @@ class NotificationReceiver : BroadcastReceiver() {
                         }
                     }
                 }
+            } catch (e: Exception) {
+                // Log the error to DataStore so it appears in Settings
+                userPreferencesRepository.saveError("Notification Error: ${e.localizedMessage}")
             } finally {
                 pendingResult.finish() // Ensure finish() is called to end the broadcast
             }

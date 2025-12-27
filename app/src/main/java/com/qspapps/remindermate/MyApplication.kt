@@ -9,10 +9,12 @@ import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.qspapps.remindermate.data.repository.UserPreferencesRepository
 import com.qspapps.remindermate.notifications.NotificationService
 import com.qspapps.remindermate.workers.CleanupWorker
 import com.qspapps.remindermate.workers.OverdueWorker
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
@@ -23,6 +25,7 @@ class MyApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
+    @Inject lateinit var userPrefs: UserPreferencesRepository
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
@@ -30,6 +33,14 @@ class MyApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            // We use runBlocking because we are about to exit the process
+            runBlocking {
+                userPrefs.saveError("App Crash: ${throwable.localizedMessage}")
+            }
+            defaultHandler?.uncaughtException(thread, throwable)
+        }
         createNotificationChannel()
         scheduleTasks()
     }

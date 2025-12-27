@@ -26,6 +26,7 @@ import javax.inject.Inject
 data class SettingsUiState(
     val theme: Theme = Theme.SYSTEM,
     val hideCompleted: Boolean = false,
+    val lastError: Pair<String, Long>? = null
 )
 
 @HiltViewModel
@@ -39,9 +40,10 @@ class SettingsViewModel @Inject constructor(
 
     val uiState: StateFlow<SettingsUiState> = combine(
         userPreferencesRepository.theme,
-        userPreferencesRepository.hideCompleted
-    ) { theme, hideCompleted ->
-        SettingsUiState(theme, hideCompleted)
+        userPreferencesRepository.hideCompleted,
+        userPreferencesRepository.lastError
+    ) { theme, hideCompleted, lastError ->
+        SettingsUiState(theme, hideCompleted, lastError)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
