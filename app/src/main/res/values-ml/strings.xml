@@ -136,4 +136,5 @@
     <string name="last_cleanup_never">ഓട്ടോമാറ്റിക് ക്ലീനപ്പ് ഇതുവരെ നടന്നിട്ടില്ല.</string>
     <string name="last_cleanup_status">അവസാനത്തെ വിജയകരമായ ക്ലീനപ്പ് %1$s-ന് നടന്നു. 30 ദിവസത്തിലധികം പഴക്കമുള്ള പൂർത്തിയാക്കിയ എല്ലാ റിമൈൻഡറുകളും ഇല്ലാതാക്കി.</string>
     <string name="never">ഒരിക്കലുമില്ല</string>
+    <string name="overdue_reminders_message">നിങ്ങൾക്ക് %d കാലാവധി കഴിഞ്ഞ ഓർമ്മപ്പെടുത്തലുകൾ ഉണ്ട്. അവ കാണാൻ ടാപ്പ് ചെയ്യുക.</string>
 </resources>

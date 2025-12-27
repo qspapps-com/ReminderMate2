@@ -130,4 +130,5 @@
     <string name="last_cleanup_never">自動クリーンアップはまだ実行されていません。</string>
     <string name="last_cleanup_status">最後のクリーンアップは %1$s に正常に完了しました。30日以上前の完了済みリマインダーはすべて削除されました。</string>
     <string name="never">なし</string>
+    <string name="overdue_reminders_message">%d 件の期限切れリマインダーがあります。タップして表示します。</string>
 </resources>

@@ -137,4 +137,5 @@
     <string name="last_cleanup_never">La limpieza automática aún no se ha ejecutado.</string>
     <string name="last_cleanup_status">La última limpieza exitosa se realizó el %1$s. Se eliminaron todos los recordatorios completados con más de 30 días de antigüedad.</string>
     <string name="never">Nunca</string>
+    <string name="overdue_reminders_message">Tienes %d recordatorios vencidos. Toca para verlos.</string>
 </resources>

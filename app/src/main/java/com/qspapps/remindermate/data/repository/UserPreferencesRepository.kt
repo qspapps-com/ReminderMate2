@@ -28,6 +28,7 @@ class UserPreferencesRepository @Inject constructor(@param:ApplicationContext pr
         val THEME = stringPreferencesKey("theme")
         val HIDE_COMPLETED = booleanPreferencesKey("hide_completed")
         val LAST_CLEANUP_TIME = longPreferencesKey("last_cleanup_time")
+        val LAST_OVERDUE_CHECK_TIME = longPreferencesKey("last_overdue_check_time")
     }
 
     val theme = context.dataStore.data
@@ -45,6 +46,11 @@ class UserPreferencesRepository @Inject constructor(@param:ApplicationContext pr
             preferences[PreferencesKeys.LAST_CLEANUP_TIME] ?: 0L
         }
 
+    val lastOverdueCheckTime = context.dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.LAST_OVERDUE_CHECK_TIME] ?: 0L
+        }
+
     suspend fun setTheme(theme: Theme) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.THEME] = theme.name
@@ -60,6 +66,12 @@ class UserPreferencesRepository @Inject constructor(@param:ApplicationContext pr
     suspend fun setLastCleanupTime(time: Long) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.LAST_CLEANUP_TIME] = time
+        }
+    }
+
+    suspend fun setLastOverdueCheckTime(time: Long) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LAST_OVERDUE_CHECK_TIME] = time
         }
     }
 }

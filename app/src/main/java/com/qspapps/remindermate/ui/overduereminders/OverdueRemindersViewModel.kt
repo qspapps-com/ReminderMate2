@@ -30,11 +30,13 @@ class OverdueRemindersViewModel @Inject constructor(
         reminderRepository.getAllReminders(),
         reminderRepository.getAllActions()
     ) { reminders, actions ->
-        val now = LocalDateTime.now()
-        val overdue = ReminderInstance.getReminderInstances(reminders, actions, LocalDateTime.MIN, now)
-            .filter { !it.isCompleted && it.displayTime.isBefore(now) }
+        val overdue = ReminderInstance.getOverdueReminders(
+            reminders = reminders,
+            actions = actions,
+            currentTime = LocalDateTime.now()
+        )
 
-        OverdueRemindersUiState(overdueReminders = overdue)
+        OverdueRemindersUiState(overdueReminders = overdue, isLoading = false)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),

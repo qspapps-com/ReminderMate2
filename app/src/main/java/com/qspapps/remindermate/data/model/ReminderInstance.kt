@@ -24,6 +24,26 @@ data class ReminderInstance(
             return getReminderInstances(reminders, actions, startOfDay, endOfDay)
         }
 
+        /**
+         * Filters and returns instances that are past their scheduled time and not completed.
+         */
+        fun getOverdueReminders(
+            reminders: List<Reminder>,
+            actions: List<ReminderAction>,
+            currentTime: LocalDateTime
+        ): List<ReminderInstance> {
+            // We define a window from a far past date up to the current time
+            val from = currentTime.minusYears(1) // Or any reasonable threshold for "old" reminders
+            val to = currentTime
+
+            // Reuse the existing getReminderInstances logic to get all occurrences up to now
+            val allPastInstances = getReminderInstances(reminders, actions, from, to)
+
+            return allPastInstances.filter { instance ->
+                !instance.isCompleted && instance.displayTime.isBefore(currentTime)
+            }
+        }
+
         fun getReminderInstances(
             reminders: List<Reminder>,
             actions: List<ReminderAction>,

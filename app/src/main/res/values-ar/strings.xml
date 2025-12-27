@@ -165,4 +165,5 @@
     <string name="last_cleanup_never">لم يتم تشغيل التنظيف التلقائي بعد.</string>
     <string name="last_cleanup_status">تم إجراء آخر تنظيف ناجح في %1$s. تم حذف جميع التذكيرات المكتملة التي مضى عليها أكثر من 30 يومًا.</string>
     <string name="never">أبداً</string>
+    <string name="overdue_reminders_message">لديك %d تذكيرات متأخرة. انقر لعرضها.</string>
 </resources>

@@ -67,6 +67,32 @@ class NotificationService(private val context: Context) {
 
         notificationManager.notify(reminder.id.toInt(), notification)
     }
+    fun showOverdueSummaryNotification(count: Int) {
+        val activityIntent = Intent(context, MainActivity::class.java).apply {
+            // You might want to add an extra here to navigate specifically to Overdue screen
+            putExtra("TARGET_SCREEN", "overdue")
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            99, // Unique request code for summary
+            activityIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(context, REMINDER_CHANNEL_ID)
+            .setSmallIcon(R.drawable.outline_alarm_on_24)
+            .setContentTitle(context.getString(R.string.overdue_reminders_title))
+            .setContentText(context.getString(R.string.overdue_reminders_message, count))
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+
+        notificationManager.notify(NOTIFICATION_ID_OVERDUE_SUMMARY, notification)
+    }
+
 
     fun cancelNotification(notificationId: Int) {
         notificationManager.cancel(notificationId)
@@ -82,5 +108,6 @@ class NotificationService(private val context: Context) {
         const val EXTRA_TRIGGER_TIME = "TRIGGER_TIME"
         const val EXTRA_SNOOZE_MINS = "SNOOZE_MINS"
         const val REMINDER_CHANNEL_ID = "REMINDER_CHANNEL_ID"
+        const val NOTIFICATION_ID_OVERDUE_SUMMARY = 1001
     }
 }

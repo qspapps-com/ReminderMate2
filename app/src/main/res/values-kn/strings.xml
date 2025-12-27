@@ -143,4 +143,5 @@
     <string name="last_cleanup_never">ಸ್ವಯಂಚಾಲಿತ ಶುಚಿಗೊಳಿಸುವಿಕೆ ಇನ್ನೂ ನಡೆದಿಲ್ಲ.</string>
     <string name="last_cleanup_status">ಕೊನೆಯ ಯಶಸ್ವಿ ಶುಚಿಗೊಳಿಸುವಿಕೆಯನ್ನು %1$s ರಂದು ಮಾಡಲಾಗಿದೆ. 30 ದಿನಗಳಿಗಿಂತ ಹಳೆಯದಾದ ಎಲ್ಲಾ ಪೂರ್ಣಗೊಂಡ ಜ್ಞಾಪನೆಗಳನ್ನು ಅಳಿಸಲಾಗಿದೆ.</string>
     <string name="never">ಎಂದಿಗೂ ಇಲ್ಲ</string>
+    <string name="overdue_reminders_message">ನಿಮ್ಮಲ್ಲಿ %d ಗಡುವು ಮೀರಿದ ಜ್ಞಾಪನೆಗಳಿವೆ. ಅವುಗಳನ್ನು ವೀಕ್ಷಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ.</string>
 </resources>

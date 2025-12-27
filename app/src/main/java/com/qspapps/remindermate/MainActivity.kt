@@ -2,6 +2,7 @@ package com.qspapps.remindermate
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -12,13 +13,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.data.repository.Theme
 import com.qspapps.remindermate.data.repository.UserPreferencesRepository
+import com.qspapps.remindermate.notifications.NotificationService
 import com.qspapps.remindermate.ui.navigation.AppNavigation
 import com.qspapps.remindermate.ui.settings.SettingsViewModel
 import com.qspapps.remindermate.ui.theme.ReminderMateTheme
@@ -38,8 +43,10 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
+    @Inject lateinit var notificationService: NotificationService
     private val viewModel: SettingsViewModel by viewModels()
 
+    private var pendingNavigation = mutableStateOf<String?>(null)
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -47,12 +54,21 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(this, getString(R.string.notifications_disabled_toast), Toast.LENGTH_LONG).show()
         }
     }
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent) // Update the intent
+        pendingNavigation.value = intent.getStringExtra("TARGET_SCREEN")
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        pendingNavigation.value = intent.getStringExtra("TARGET_SCREEN")
+
         askNotificationPermission()
         checkAndCleanupOldReminders()
+        checkAndNotifyOverdueReminders()
         setContent {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val useDarkTheme = when (uiState.theme) {
@@ -61,7 +77,10 @@ class MainActivity : ComponentActivity() {
                 Theme.SYSTEM -> isSystemInDarkTheme()
             }
             ReminderMateTheme(darkTheme = useDarkTheme) {
-                AppNavigation()
+                AppNavigation(startScreen = pendingNavigation.value)
+                LaunchedEffect(pendingNavigation.value) {
+                    pendingNavigation.value = null
+                }
             }
         }
     }
@@ -76,6 +95,33 @@ class MainActivity : ComponentActivity() {
                 val threshold = LocalDateTime.now().minusDays(30)
                 reminderRepository.cleanupOldReminders(threshold)
                 userPreferencesRepository.setLastCleanupTime(currentTime)
+            }
+        }
+    }
+
+    private fun checkAndNotifyOverdueReminders() {
+        lifecycleScope.launch {
+            val lastCheck = userPreferencesRepository.lastOverdueCheckTime.first()
+            val currentTimeSeconds = Instant.now().epochSecond
+            val oneDayInSeconds = 24 * 60 * 60L
+
+            if (currentTimeSeconds - lastCheck > oneDayInSeconds) {
+                // Get data from repositories
+                val reminders = reminderRepository.getAllReminders().first()
+                val actions = reminderRepository.getAllActions().first()
+
+                val overdueList = ReminderInstance.getOverdueReminders(
+                    reminders = reminders,
+                    actions = actions,
+                    currentTime = LocalDateTime.now()
+                )
+
+                if (overdueList.isNotEmpty()) {
+                    notificationService.showOverdueSummaryNotification(overdueList.size)
+                }
+
+                // Update the last check time regardless of whether we found any
+                userPreferencesRepository.setLastOverdueCheckTime(currentTimeSeconds)
             }
         }
     }

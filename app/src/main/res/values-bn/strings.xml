@@ -136,4 +136,5 @@
     <string name="last_cleanup_never">স্বয়ংক্রিয় পরিষ্কার এখনও চালানো হয়নি।</string>
     <string name="last_cleanup_status">সর্বশেষ সফল পরিষ্কার %1$s এ করা হয়েছিল। ৩০ দিনের বেশি পুরানো সমস্ত সম্পন্ন অনুস্মারক মুছে ফেলা হয়েছে।</string>
     <string name="never">কখনও না</string>
+    <string name="overdue_reminders_message">আপনার %dটি মেয়াদোত্তীর্ণ রিমাইন্ডার আছে। সেগুলি দেখতে ট্যাপ করুন।</string>
 </resources>

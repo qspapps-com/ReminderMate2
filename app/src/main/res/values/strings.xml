@@ -17,7 +17,6 @@
     <string name="home_date_format">MMM dd, yyyy</string>
     <string name="settings_title">Settings</string>
     <string name="all_reminders_title">All Reminders</string>
-    <string name="overdue_reminders_title">Overdue Reminders</string>
     <string name="add_reminder_title">Add Reminder</string>
     <string name="edit_reminder_title">Edit Reminder</string>
     <string name="cancel_button">Cancel</string>
@@ -108,6 +107,8 @@
     <string name="last_cleanup_status">Last successful cleanup was done on %1$s. All completed reminders older than 30 days were deleted.</string>
     <string name="never">Never</string>
     <string name="about">About</string>
+    <string name="overdue_reminders_title">Overdue Reminders</string>
+    <string name="overdue_reminders_message">You have %d overdue reminders. Tap to view them.</string>
     <plurals name="recurrence_minute">
         <item quantity="one">every minute</item>
         <item quantity="other">every %d minutes</item>
