@@ -76,7 +76,7 @@ class NotificationService(private val context: Context) {
 
         val pendingIntent = PendingIntent.getActivity(
             context,
-            99, // Unique request code for summary
+            REQUEST_CODE_OVERDUE_SUMMARY, // Unique request code for summary
             activityIntent,
             PendingIntent.FLAG_IMMUTABLE
         )
@@ -108,6 +108,7 @@ class NotificationService(private val context: Context) {
         const val EXTRA_TRIGGER_TIME = "TRIGGER_TIME"
         const val EXTRA_SNOOZE_MINS = "SNOOZE_MINS"
         const val REMINDER_CHANNEL_ID = "REMINDER_CHANNEL_ID"
-        const val NOTIFICATION_ID_OVERDUE_SUMMARY = 1001
+        const val NOTIFICATION_ID_OVERDUE_SUMMARY = 1000001
+        const val REQUEST_CODE_OVERDUE_SUMMARY = -100
     }
 }

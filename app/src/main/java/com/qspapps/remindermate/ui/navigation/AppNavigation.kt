@@ -18,13 +18,14 @@ import com.qspapps.remindermate.ui.settings.SettingsScreen
 fun AppNavigation(startScreen: String? = null) {
     val navController = rememberNavController()
     // Handle deep link/intent navigation
-    LaunchedEffect(startScreen) {if (startScreen == "overdue") {
-        navController.navigate(AppScreen.OverdueReminders.route) {
-            // Ensure we don't have multiple copies of home on the stack
-            popUpTo(AppScreen.Home.route) { saveState = true }
-            launchSingleTop = true
+    LaunchedEffect(startScreen) {
+        if (startScreen == "overdue") {
+            navController.navigate(AppScreen.OverdueReminders.route) {
+                // Ensure we don't have multiple copies of home on the stack
+                popUpTo(AppScreen.Home.route) { saveState = true }
+                launchSingleTop = true
+            }
         }
-    }
     }
     NavHost(navController = navController, startDestination = AppScreen.Home.route) {
         composable(AppScreen.Home.route) {

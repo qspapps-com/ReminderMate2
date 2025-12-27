@@ -68,7 +68,9 @@ class MainActivity : ComponentActivity() {
 
         askNotificationPermission()
         checkAndCleanupOldReminders()
-        checkAndNotifyOverdueReminders()
+        if (pendingNavigation.value != "overdue") {
+            checkAndNotifyOverdueReminders()
+        }
         setContent {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val useDarkTheme = when (uiState.theme) {
