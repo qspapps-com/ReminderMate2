@@ -36,6 +36,9 @@ This project is a native Android application written in Kotlin, using the Jetpac
     *   **UI & Theming:**
         *   `Compose Material 3`: The primary design system for UI components.
         *   `Coil` : Coil for loading images from the network asynchronously.
+    *   **Background Tasks:**
+        *   `WorkManager`: For deferrable, guaranteed background execution (cleanup and daily checks).
+        *   `Hilt Work`: For dependency injection into Worker classes.
 
 *   **Networking:**
     *   `Retrofit`: For making type-safe HTTP requests to our REST API.
@@ -68,6 +71,7 @@ com.qspapps.remindermate/
 │       ├── HomeScreen.kt  # The main Composable function for the screen
 │       └── HomeViewModel.kt # The ViewModel for the screen
 |──utils/                  # Utility functions and extensions
+|──workers/                # All periodic and app related background tasks
 │── MyApplication.kt       # Simple wrapper for Hilt entry point
 └── MainActivity.kt        # The main entry point of the app
 ```
@@ -78,6 +82,8 @@ com.qspapps.remindermate/
 *   **ViewModel:** Resides alongside its screen composable. It contains the business logic for the screen, exposes UI state via a `StateFlow<UiState>`, and is injected with repositories or use cases. All asynchronous work is launched in `viewModelScope`.
 *   **Repository:** The single source of truth for data. It fetches data from remote (network) or local (database) sources and abstracts the data source from the ViewModel.
 *   **Dependency Injection:** Hilt is used to provide dependencies. ViewModels are injected using `@HiltViewModel`, and dependencies like repositories are provided in Hilt Modules (`@Module`, `@Provides`).
+*   **Background Maintenance:** All periodic tasks (cleaning old data, 6 AM overdue checks) must be implemented using `WorkManager`. Do not put this logic in `MainActivity`.
+*   **Worker Initialization:** WorkManager uses custom initialization via `Configuration.Provider` in `MyApplication` to support Hilt injection.
 
 ## 4. Coding Style & Conventions
 

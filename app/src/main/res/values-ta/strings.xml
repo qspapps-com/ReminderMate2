@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">நினைவூட்டல்மேட்</string>
     <string name="add_reminder">நினைவூட்டலைச் சேர்</string>
@@ -132,9 +133,6 @@
     <string name="notification_action_complete">முடி</string>
     <string name="notification_action_snooze">ஒத்திவை +%1$d நிமி</string>
     <string name="about">பற்றி</string>
-    <string name="last_cleanup_setting_title">சுத்தப்படுத்தும் நிலை</string>
-    <string name="last_cleanup_never">தானியங்கி சுத்திகரிப்பு இன்னும் இயங்கவில்லை.</string>
-    <string name="last_cleanup_status">கடைசியாக வெற்றிகரமாக சுத்தப்படுத்தப்பட்டது %1$s அன்று. 30 நாட்களுக்கு மேலான அனைத்து முடிக்கப்பட்ட நினைவூட்டல்களும் நீக்கப்பட்டன.</string>
     <string name="never">ஒருபோதும் இல்லை</string>
     <string name="overdue_reminders_message">உங்களிடம் %d காலாவதியான நினைவூட்டல்கள் உள்ளன. அவற்றைப் பார்க்க தட்டவும்.</string>
 </resources>

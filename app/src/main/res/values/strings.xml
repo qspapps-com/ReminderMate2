@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">ReminderMate</string>
     <string name="add_reminder">Add Reminder</string>
@@ -102,9 +103,6 @@
     <string name="notification_due_at">Due at %1$s</string>
     <string name="notification_action_complete">Complete</string>
     <string name="notification_action_snooze">Snooze +%1$d mins</string>
-    <string name="last_cleanup_setting_title">Cleanup Status</string>
-    <string name="last_cleanup_never">Automatic cleanup has not run yet.</string>
-    <string name="last_cleanup_status">Last successful cleanup was done on %1$s. All completed reminders older than 30 days were deleted.</string>
     <string name="never">Never</string>
     <string name="about">About</string>
     <string name="overdue_reminders_title">Overdue Reminders</string>

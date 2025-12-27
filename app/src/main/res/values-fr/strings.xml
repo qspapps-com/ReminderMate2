@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">RappelMate</string>
     <string name="add_reminder">Ajouter un rappel</string>
@@ -132,9 +133,6 @@
     <string name="notification_action_complete">Terminer</string>
     <string name="notification_action_snooze">Reporter +%1$d min</string>
     <string name="about">À propos</string>
-    <string name="last_cleanup_setting_title">État du nettoyage</string>
-    <string name="last_cleanup_never">Le nettoyage automatique n\'a pas encore été lancé.</string>
-    <string name="last_cleanup_status">Le dernier nettoyage réussi a eu lieu le %1$s. Tous les rappels terminés de plus de 30 jours ont été supprimés.</string>
     <string name="never">Jamais</string>
     <string name="overdue_reminders_message">Vous avez %d rappels en retard. Appuyez pour les voir.</string>
 </resources>

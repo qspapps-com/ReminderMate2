@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">ರಿಮೈಂಡರ್‌ಮೇಟ್</string>
     <string name="add_reminder">ಜ್ಞಾಪನೆ ಸೇರಿಸಿ</string>
@@ -96,37 +97,37 @@
     <string name="language_bengali">ಬೆಂಗಾಲಿ</string>
     <string name="language_marathi">ಮರಾಠಿ</string>
     <plurals name="recurrence_minute">
-        <!-- Changed from "ಪ್ರತಿ ನಿಮಿಷ" to "ಪ್ರತಿ %d ನಿಮಿಷ" to include %d -->
+        
         <item quantity="one">ಪ್ರತಿ %d ನಿಮಿಷ</item>
         <item quantity="other">ಪ್ರತಿ %d ನಿಮಿಷಗಳು</item>
     </plurals>
     <plurals name="recurrence_hour">
-        <!-- Changed from "ಪ್ರತಿ ಗಂಟೆ" to "ಪ್ರತಿ %d ಗಂಟೆ" to include %d -->
+        
         <item quantity="one">ಪ್ರತಿ %d ಗಂಟೆ</item>
         <item quantity="other">ಪ್ರತಿ %d ಗಂಟೆಗಳು</item>
     </plurals>
     <plurals name="recurrence_day">
-        <!-- Changed from "ಪ್ರತಿ ದಿನ" to "ಪ್ರತಿ %d ದಿನ" to include %d -->
+        
         <item quantity="one">ಪ್ರತಿ %d ದಿನ</item>
         <item quantity="other">ಪ್ರತಿ %d ದಿನಗಳು</item>
     </plurals>
     <plurals name="recurrence_week">
-        <!-- Changed from "ಪ್ರತಿ ವಾರ" to "ಪ್ರತಿ %d ವಾರ" to include %d -->
+        
         <item quantity="one">ಪ್ರತಿ %d ವಾರ</item>
         <item quantity="other">ಪ್ರತಿ %d ವಾರಗಳು</item>
     </plurals>
     <plurals name="recurrence_month">
-        <!-- Changed from "ಪ್ರತಿ ತಿಂಗಳು" to "ಪ್ರತಿ %d ತಿಂಗಳು" to include %d -->
+        
         <item quantity="one">ಪ್ರತಿ %d ತಿಂಗಳು</item>
         <item quantity="other">ಪ್ರತಿ %d ತಿಂಗಳುಗಳು</item>
     </plurals>
     <plurals name="recurrence_year">
-        <!-- Changed from "ಪ್ರತಿ ವರ್ಷ" to "ಪ್ರತಿ %d ವರ್ಷ" to include %d -->
+        
         <item quantity="one">ಪ್ರತಿ %d ವರ್ಷ</item>
         <item quantity="other">ಪ್ರತಿ %d ವರ್ಷಗಳು</item>
     </plurals>
     <plurals name="recurrence_for_times">
-        <!-- Changed from " 1 ಬಾರಿಗಾಗಿ" to " %d ಬಾರಿಗಾಗಿ" to include %d -->
+        
         <item quantity="one"> %d ಬಾರಿಗಾಗಿ</item>
         <item quantity="other"> %d ಬಾರಿಗಳಿಗಾಗಿ</item>
     </plurals>
@@ -139,9 +140,6 @@
     <string name="notification_action_complete">ಪೂರ್ಣಗೊಳಿಸಿ</string>
     <string name="notification_action_snooze">ಸ್ನೂಜ್ +%1$d ನಿಮಿಷಗಳು</string>
     <string name="about">ಬಗ್ಗೆ</string>
-    <string name="last_cleanup_setting_title">ಶುಚಿಗೊಳಿಸುವ ಸ್ಥಿತಿ</string>
-    <string name="last_cleanup_never">ಸ್ವಯಂಚಾಲಿತ ಶುಚಿಗೊಳಿಸುವಿಕೆ ಇನ್ನೂ ನಡೆದಿಲ್ಲ.</string>
-    <string name="last_cleanup_status">ಕೊನೆಯ ಯಶಸ್ವಿ ಶುಚಿಗೊಳಿಸುವಿಕೆಯನ್ನು %1$s ರಂದು ಮಾಡಲಾಗಿದೆ. 30 ದಿನಗಳಿಗಿಂತ ಹಳೆಯದಾದ ಎಲ್ಲಾ ಪೂರ್ಣಗೊಂಡ ಜ್ಞಾಪನೆಗಳನ್ನು ಅಳಿಸಲಾಗಿದೆ.</string>
     <string name="never">ಎಂದಿಗೂ ಇಲ್ಲ</string>
     <string name="overdue_reminders_message">ನಿಮ್ಮಲ್ಲಿ %d ಗಡುವು ಮೀರಿದ ಜ್ಞಾಪನೆಗಳಿವೆ. ಅವುಗಳನ್ನು ವೀಕ್ಷಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ.</string>
 </resources>

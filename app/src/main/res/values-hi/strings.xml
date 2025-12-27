@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">रिमाइंडरमेट</string>
     <string name="add_reminder">रिमाइंडर जोड़ें</string>
@@ -133,9 +134,6 @@
     <string name="notification_action_complete">पूरा करें</string>
     <string name="notification_action_snooze">स्नूज़ +%1$d मिनट</string>
     <string name="about">बारे में</string>
-    <string name="last_cleanup_setting_title">सफाई की स्थिति</string>
-    <string name="last_cleanup_never">स्वचालित सफाई अभी तक नहीं चली है।</string>
-    <string name="last_cleanup_status">अंतिम सफल सफाई %1$s को की गई थी। 30 दिनों से पुराने सभी पूर्ण किए गए रिमाइंडर हटा दिए गए थे।</string>
     <string name="never">कभी नहीं</string>
     <string name="overdue_reminders_message">आपके पास %d विलंबित रिमाइंडर हैं। उन्हें देखने के लिए टैप करें।</string>
 </resources>

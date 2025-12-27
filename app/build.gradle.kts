@@ -85,5 +85,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     testImplementation(libs.mockk.android)
     androidTestImplementation(libs.androidx.rules)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
 
 }

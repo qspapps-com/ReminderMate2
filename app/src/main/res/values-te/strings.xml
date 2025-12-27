@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">రిమైండర్‌మేట్</string>
     <string name="add_reminder">రిమైండర్ జోడించండి</string>
@@ -132,9 +133,6 @@
     <string name="notification_action_complete">పూర్తి చేయండి</string>
     <string name="notification_action_snooze">స్నూజ్ +%1$d నిమి</string>
     <string name="about">గురించి</string>
-    <string name="last_cleanup_setting_title">శుభ్రపరిచే స్థితి</string>
-    <string name="last_cleanup_never">ఆటోమేటిక్ క్లీనప్ ఇంకా అమలు కాలేదు.</string>
-    <string name="last_cleanup_status">చివరి విజయవంతమైన క్లీనప్ %1$sన జరిగింది. 30 రోజుల కంటే పాతవైన పూర్తయిన రిమైండర్‌లన్నీ తొలగించబడ్డాయి.</string>
     <string name="never">ఎప్పుడూ వద్దు</string>
     <string name="overdue_reminders_message">మీకు %d గడువు ముగిసిన రిమైండర్‌లు ఉన్నాయి. వాటిని వీక్షించడానికి నొక్కండి.</string>
 </resources>

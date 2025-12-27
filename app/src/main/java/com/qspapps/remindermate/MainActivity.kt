@@ -18,30 +18,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import com.qspapps.remindermate.data.model.ReminderInstance
-import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.data.repository.Theme
-import com.qspapps.remindermate.data.repository.UserPreferencesRepository
 import com.qspapps.remindermate.notifications.NotificationService
 import com.qspapps.remindermate.ui.navigation.AppNavigation
 import com.qspapps.remindermate.ui.settings.SettingsViewModel
 import com.qspapps.remindermate.ui.theme.ReminderMateTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var reminderRepository: ReminderRepository
-
-    @Inject
-    lateinit var userPreferencesRepository: UserPreferencesRepository
 
     @Inject lateinit var notificationService: NotificationService
     private val viewModel: SettingsViewModel by viewModels()
@@ -67,10 +53,6 @@ class MainActivity : ComponentActivity() {
         pendingNavigation.value = intent.getStringExtra("TARGET_SCREEN")
 
         askNotificationPermission()
-        checkAndCleanupOldReminders()
-        if (pendingNavigation.value != "overdue") {
-            checkAndNotifyOverdueReminders()
-        }
         setContent {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val useDarkTheme = when (uiState.theme) {
@@ -83,47 +65,6 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(pendingNavigation.value) {
                     pendingNavigation.value = null
                 }
-            }
-        }
-    }
-
-    private fun checkAndCleanupOldReminders() {
-        lifecycleScope.launch {
-            val lastCleanup = userPreferencesRepository.lastCleanupTime.first()
-            val currentTime = Instant.now().epochSecond
-            val sevenDaysInSeconds = 7 * 24 * 60 * 60L
-
-            if (currentTime - lastCleanup > sevenDaysInSeconds) {
-                val threshold = LocalDateTime.now().minusDays(30)
-                reminderRepository.cleanupOldReminders(threshold)
-                userPreferencesRepository.setLastCleanupTime(currentTime)
-            }
-        }
-    }
-
-    private fun checkAndNotifyOverdueReminders() {
-        lifecycleScope.launch {
-            val lastCheck = userPreferencesRepository.lastOverdueCheckTime.first()
-            val currentTimeSeconds = Instant.now().epochSecond
-            val oneDayInSeconds = 24 * 60 * 60L
-
-            if (currentTimeSeconds - lastCheck > oneDayInSeconds) {
-                // Get data from repositories
-                val reminders = reminderRepository.getAllReminders().first()
-                val actions = reminderRepository.getAllActions().first()
-
-                val overdueList = ReminderInstance.getOverdueReminders(
-                    reminders = reminders,
-                    actions = actions,
-                    currentTime = LocalDateTime.now()
-                )
-
-                if (overdueList.isNotEmpty()) {
-                    notificationService.showOverdueSummaryNotification(overdueList.size)
-                }
-
-                // Update the last check time regardless of whether we found any
-                userPreferencesRepository.setLastOverdueCheckTime(currentTimeSeconds)
             }
         }
     }

@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">রিমাইন্ডারমেট</string>
     <string name="add_reminder">অনুস্মারক যোগ করুন</string>
@@ -132,9 +133,6 @@
     <string name="notification_action_complete">সম্পন্ন</string>
     <string name="notification_action_snooze">স্নুজ +%1$d মিনিট</string>
     <string name="about">সম্পর্কে</string>
-    <string name="last_cleanup_setting_title">পরিষ্কার করার স্থিতি</string>
-    <string name="last_cleanup_never">স্বয়ংক্রিয় পরিষ্কার এখনও চালানো হয়নি।</string>
-    <string name="last_cleanup_status">সর্বশেষ সফল পরিষ্কার %1$s এ করা হয়েছিল। ৩০ দিনের বেশি পুরানো সমস্ত সম্পন্ন অনুস্মারক মুছে ফেলা হয়েছে।</string>
     <string name="never">কখনও না</string>
     <string name="overdue_reminders_message">আপনার %dটি মেয়াদোত্তীর্ণ রিমাইন্ডার আছে। সেগুলি দেখতে ট্যাপ করুন।</string>
 </resources>
