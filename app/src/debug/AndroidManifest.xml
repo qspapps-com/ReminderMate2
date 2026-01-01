@@ -1,0 +1,12 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application>
+        <!-- Disable BootReceiver in debug/test builds to prevent race conditions
+             unless you are specifically testing boot logic -->
+        <receiver
+            android:name=".utils.BootReceiver"
+            android:enabled="false"
+            tools:replace="android:enabled" />
+    </application>
+</manifest>

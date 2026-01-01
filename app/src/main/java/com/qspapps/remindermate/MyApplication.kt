@@ -23,12 +23,13 @@ import javax.inject.Inject
 @HiltAndroidApp
 class MyApplication : Application(), Configuration.Provider {
 
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
+    @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var userPrefs: UserPreferencesRepository
+
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
+            .setMinimumLoggingLevel(android.util.Log.INFO)
             .build()
 
     override fun onCreate() {
@@ -48,24 +49,26 @@ class MyApplication : Application(), Configuration.Provider {
         val workManager = WorkManager.getInstance(this)
 
         // 1. Weekly Cleanup
-        val cleanupRequest = PeriodicWorkRequestBuilder<CleanupWorker>(7, TimeUnit.DAYS)
+        val cleanupRequest = PeriodicWorkRequestBuilder<CleanupWorker>(CleanupWorker.REPEAT_INTERVAL_DAYS,
+            TimeUnit.DAYS)
             .setConstraints(Constraints.Builder().setRequiresBatteryNotLow(true).build())
             .build()
 
         workManager.enqueueUniquePeriodicWork(
-            "CleanupWork",
+            CleanupWorker.WORK_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
             cleanupRequest
         )
 
         // 2. Daily Overdue Check (Targeting 6 AM)
         val delay = calculateDelayUntilSixAM()
-        val overdueRequest = PeriodicWorkRequestBuilder<OverdueWorker>(24, TimeUnit.HOURS)
+        val overdueRequest = PeriodicWorkRequestBuilder<OverdueWorker>(OverdueWorker.REPEAT_INTERVAL_HOURS,
+            TimeUnit.HOURS)
             .setInitialDelay(delay, TimeUnit.MILLISECONDS)
             .build()
 
         workManager.enqueueUniquePeriodicWork(
-            "OverdueWork",
+            OverdueWorker.WORK_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
             overdueRequest
         )

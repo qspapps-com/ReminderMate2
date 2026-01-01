@@ -46,6 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.repository.Theme
+import com.qspapps.remindermate.workers.WorkerStatusUtils
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -218,7 +219,9 @@ fun SettingsScreen(
             }
             item {
                 val errorData = uiState.lastError
-                if (errorData != null) {
+                val sevenDaysAgo = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000L)
+
+                if (errorData != null && errorData.second > sevenDaysAgo) {
                     val (message, timestamp) = errorData
                     val dateString = LocalDateTime.ofInstant(
                         Instant.ofEpochMilli(timestamp),
@@ -232,12 +235,23 @@ fun SettingsScreen(
                         onClick = { }
                     )
                 } else {
-                    SettingsItem(
-                        icon = Icons.Default.CheckCircle,
-                        title = "System Status",
-                        subtitle = "No errors reported",
-                        onClick = { }
-                    )
+                    val statusMessages = WorkerStatusUtils.getWorkerStatusMessages(uiState.workerRunHistory)
+
+                    if (statusMessages.isEmpty()) {
+                        SettingsItem(
+                            icon = Icons.Default.CheckCircle,
+                            title = "System Status",
+                            subtitle = "All workers healthy and running within intervals.",
+                            onClick = { }
+                        )
+                    } else {
+                        SettingsItem(
+                            icon = Icons.Default.History,
+                            title = "Worker Status",
+                            subtitle = statusMessages.joinToString("\n"),
+                            onClick = { }
+                        )
+                    }
                 }
             }
         }

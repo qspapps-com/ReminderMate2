@@ -11,6 +11,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,6 +31,7 @@ class UserPreferencesRepository @Inject constructor(@param:ApplicationContext pr
         val HIDE_COMPLETED = booleanPreferencesKey("hide_completed")
         val LAST_ERROR_MESSAGE = stringPreferencesKey("last_error_message")
         val LAST_ERROR_TIME = longPreferencesKey("last_error_time")
+        val WORKER_RUN_HISTORY = stringPreferencesKey("worker_run_history")
     }
 
     val theme = context.dataStore.data
@@ -48,6 +50,15 @@ class UserPreferencesRepository @Inject constructor(@param:ApplicationContext pr
             val time = preferences[PreferencesKeys.LAST_ERROR_TIME] ?: 0L
             if (message != null) message to time else null
         }
+    val workerRunHistory: Flow<Map<String, Long>> = context.dataStore.data
+        .map { preferences ->
+            val json = preferences[PreferencesKeys.WORKER_RUN_HISTORY] ?: "{}"
+            try {
+                Json.decodeFromString<Map<String, Long>>(json)
+            } catch (e: Exception) {
+                emptyMap()
+            }
+        }
 
     suspend fun setTheme(theme: Theme) {
         context.dataStore.edit { preferences ->
@@ -64,6 +75,19 @@ class UserPreferencesRepository @Inject constructor(@param:ApplicationContext pr
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.LAST_ERROR_MESSAGE] = message
             preferences[PreferencesKeys.LAST_ERROR_TIME] = System.currentTimeMillis()
+        }
+    }
+    suspend fun updateWorkerRunTime(workerName: String) {
+        context.dataStore.edit { preferences ->
+            val currentJson = preferences[PreferencesKeys.WORKER_RUN_HISTORY] ?: "{}"
+            val currentMap = try {
+                Json.decodeFromString<Map<String, Long>>(currentJson).toMutableMap()
+            } catch (e: Exception) {
+                mutableMapOf()
+            }
+
+            currentMap[workerName] = System.currentTimeMillis()
+            preferences[PreferencesKeys.WORKER_RUN_HISTORY] = Json.encodeToString(currentMap)
         }
     }
 }
