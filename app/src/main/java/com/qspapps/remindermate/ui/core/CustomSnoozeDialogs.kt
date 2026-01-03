@@ -32,10 +32,14 @@ fun CustomSnoozeDialogs(
     var showDatePicker by remember { mutableStateOf(true) }
     var showTimePicker by remember { mutableStateOf(false) }
     val now = LocalDateTime.now()
+    val snoozeTime = now.plusMinutes(30)
     val context = LocalContext.current
 
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = Instant.now().toEpochMilli(),
+        initialSelectedDateMillis = snoozeTime
+            .atZone(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli(),
         selectableDates = object : SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long): Boolean {
                 val selectedDate = Instant.ofEpochMilli(utcTimeMillis)
@@ -45,9 +49,10 @@ fun CustomSnoozeDialogs(
             }
         }
     )
+
     val timePickerState = rememberTimePickerState(
-        initialHour = now.hour,
-        initialMinute = (now.minute + 30) % 60
+        initialHour = snoozeTime.hour,
+        initialMinute = snoozeTime.minute
     )
 
     if (showDatePicker) {
