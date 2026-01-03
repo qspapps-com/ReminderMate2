@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -51,6 +52,7 @@ import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Calendar
 import java.util.Locale
+
 
 private sealed class RepeatOption(val displayName: Int) {
     data object None : RepeatOption(R.string.repeat_option_none)
@@ -104,14 +106,16 @@ fun AddEditReminderScreen(
                     value = uiState.title,
                     onValueChange = { viewModel.updateTitle(it) },
                     label = { Text(stringResource(id = R.string.title_label)) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = uiState.description,
                     onValueChange = { viewModel.updateDescription(it) },
                     label = { Text(stringResource(id = R.string.description_label)) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -148,7 +152,9 @@ fun AddEditReminderScreen(
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = isFrequencyDropdownExpanded)
                         },
-                        modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable).fillMaxWidth()
+                        modifier = Modifier
+                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                            .fillMaxWidth()
                     )
                     ExposedDropdownMenu(
                         expanded = isFrequencyDropdownExpanded,
