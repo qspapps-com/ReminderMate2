@@ -10,6 +10,7 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import java.time.DayOfWeek
+import java.time.LocalDateTime
 
 class RecurrenceRuleTest {
 
@@ -33,7 +34,6 @@ class RecurrenceRuleTest {
     @Test
     fun `toString with interval and daysOfWeek`() {
         val rule = RecurrenceRule(Frequency.WEEKLY, 2, setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY))
-        // Note: Set order might matter for joinToString, but usually it's stable (LinkedHashSet)
         val expected = "WEEKLY;2;MONDAY,WEDNESDAY;"
         assertEquals(expected, rule.toString())
     }
@@ -113,5 +113,138 @@ class RecurrenceRuleTest {
     @Test
     fun `fromString returns null for invalid count`() {
         assertNull(RecurrenceRule.fromString("DAILY;1;;abc"))
+    }
+
+    @Test
+    fun `getNextOccurrence MINUTE with interval 1`() {
+        val rule = RecurrenceRule(Frequency.MINUTE, 1)
+        val from = LocalDateTime.of(2023, 1, 1, 10, 0)
+        val expected = LocalDateTime.of(2023, 1, 1, 10, 1)
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence HOURLY with interval 2`() {
+        val rule = RecurrenceRule(Frequency.HOURLY, 2)
+        val from = LocalDateTime.of(2023, 1, 1, 10, 0)
+        val expected = LocalDateTime.of(2023, 1, 1, 12, 0)
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence DAILY with interval 1`() {
+        val rule = RecurrenceRule(Frequency.DAILY, 1)
+        val from = LocalDateTime.of(2023, 1, 1, 10, 0)
+        val expected = LocalDateTime.of(2023, 1, 2, 10, 0)
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence DAILY with interval 3`() {
+        val rule = RecurrenceRule(Frequency.DAILY, 3)
+        val from = LocalDateTime.of(2023, 1, 1, 10, 0)
+        val expected = LocalDateTime.of(2023, 1, 4, 10, 0)
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence WEEKLY no daysOfWeek`() {
+        val rule = RecurrenceRule(Frequency.WEEKLY, 1)
+        val from = LocalDateTime.of(2023, 1, 1, 10, 0) // Sunday
+        val expected = LocalDateTime.of(2023, 1, 8, 10, 0)
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence WEEKLY with daysOfWeek same week`() {
+        val rule = RecurrenceRule(Frequency.WEEKLY, 1, setOf(DayOfWeek.MONDAY, DayOfWeek.FRIDAY))
+        val from = LocalDateTime.of(2023, 1, 2, 10, 0) // Monday
+        val expected = LocalDateTime.of(2023, 1, 6, 10, 0) // Friday
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence WEEKLY with daysOfWeek next week`() {
+        val rule = RecurrenceRule(Frequency.WEEKLY, 1, setOf(DayOfWeek.MONDAY, DayOfWeek.FRIDAY))
+        val from = LocalDateTime.of(2023, 1, 6, 10, 0) // Friday
+        val expected = LocalDateTime.of(2023, 1, 9, 10, 0) // Monday
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence WEEKLY with daysOfWeek and interval 2 same week`() {
+        val rule = RecurrenceRule(Frequency.WEEKLY, 2, setOf(DayOfWeek.MONDAY, DayOfWeek.FRIDAY))
+        val from = LocalDateTime.of(2023, 1, 2, 10, 0) // Monday, Jan 2
+        val expected = LocalDateTime.of(2023, 1, 6, 10, 0) // Friday, Jan 6
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence WEEKLY with daysOfWeek and interval 2 skip week`() {
+        val rule = RecurrenceRule(Frequency.WEEKLY, 2, setOf(DayOfWeek.MONDAY, DayOfWeek.FRIDAY))
+        val from = LocalDateTime.of(2023, 1, 6, 10, 0) // Friday, Jan 6
+        // Next Monday is Jan 9. Start of week for Jan 6 is Jan 2 (Monday). 
+        // Start of week for Jan 9 is Jan 9 (Monday).
+        // Weeks between Jan 2 and Jan 9 is 1. 1 % 2 != 0.
+        // So it skips to next interval: 1 + (2 - 1) = 2 weeks skip from Jan 2.
+        // Expected: Monday, Jan 16
+        val expected = LocalDateTime.of(2023, 1, 16, 10, 0) // Monday, Jan 16
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence WEEKLY with daysOfWeek including Sunday`() {
+        val rule = RecurrenceRule(Frequency.WEEKLY, 1, setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY))
+        val from = LocalDateTime.of(2023, 1, 1, 10, 0) // Sunday, Jan 1
+        val expected = LocalDateTime.of(2023, 1, 7, 10, 0) // Saturday, Jan 7
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence MONTHLY with interval 1`() {
+        val rule = RecurrenceRule(Frequency.MONTHLY, 1)
+        val from = LocalDateTime.of(2023, 1, 1, 10, 0)
+        val expected = LocalDateTime.of(2023, 2, 1, 10, 0)
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence MONTHLY with interval 2`() {
+        val rule = RecurrenceRule(Frequency.MONTHLY, 2)
+        val from = LocalDateTime.of(2023, 1, 1, 10, 0)
+        val expected = LocalDateTime.of(2023, 3, 1, 10, 0)
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence MONTHLY on Jan 31st with interval 1`() {
+        val rule = RecurrenceRule(Frequency.MONTHLY, 1)
+        val from = LocalDateTime.of(2023, 1, 31, 10, 0)
+        val expected = LocalDateTime.of(2023, 2, 28, 10, 0) // Feb 28 in 2023
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence MONTHLY on Jan 31st with interval 1 in leap year`() {
+        val rule = RecurrenceRule(Frequency.MONTHLY, 1)
+        val from = LocalDateTime.of(2024, 1, 31, 10, 0)
+        val expected = LocalDateTime.of(2024, 2, 29, 10, 0) // Feb 29 in 2024
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence YEARLY with interval 1`() {
+        val rule = RecurrenceRule(Frequency.YEARLY, 1)
+        val from = LocalDateTime.of(2023, 1, 1, 10, 0)
+        val expected = LocalDateTime.of(2024, 1, 1, 10, 0)
+        assertEquals(expected, rule.getNextOccurrence(from))
+    }
+
+    @Test
+    fun `getNextOccurrence YEARLY with interval 2`() {
+        val rule = RecurrenceRule(Frequency.YEARLY, 2)
+        val from = LocalDateTime.of(2023, 1, 1, 10, 0)
+        val expected = LocalDateTime.of(2025, 1, 1, 10, 0)
+        assertEquals(expected, rule.getNextOccurrence(from))
     }
 }

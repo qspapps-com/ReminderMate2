@@ -11,9 +11,6 @@
       <SelectionState runConfigName="createReminderAndSnoozeTest()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="createDailyRecurringReminderTest()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="createWeeklyRecurringReminderAndVerifyStorageTest()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>

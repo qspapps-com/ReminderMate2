@@ -3,6 +3,8 @@ package com.qspapps.remindermate.data.model
 import android.util.Log
 import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 private const val TAG = "RecurrenceRule"
 
@@ -15,11 +17,64 @@ data class RecurrenceRule(
     val daysOfWeek: Set<DayOfWeek>? = null,
     val count: Int? = null // The number of times the reminder should recur
 ) {
+    init {
+        // Validation to ensure interval is always positive
+        require(interval > 0) { "Interval must be a positive integer. Provided: $interval" }
+    }
     override fun toString(): String {
         val daysOfWeekString = daysOfWeek?.joinToString(",") { it.name } ?: ""
         val countString = count?.toString() ?: ""
         return "${frequency.name};$interval;$daysOfWeekString;$countString"
     }
+
+    fun getNextOccurrence(fromDateTime: LocalDateTime): LocalDateTime {
+        return when (frequency) {
+            Frequency.MINUTE -> fromDateTime.plusMinutes(interval.toLong())
+
+            Frequency.HOURLY -> fromDateTime.plusHours(interval.toLong())
+
+            Frequency.DAILY -> fromDateTime.plusDays(interval.toLong())
+
+            Frequency.WEEKLY -> {
+                if (daysOfWeek.isNullOrEmpty()) {
+                    fromDateTime.plusWeeks(interval.toLong())
+                } else {
+                    var candidate = fromDateTime.plusDays(1)
+                    // Search forward for the next day of the week that is in the allowed set.
+                    // This handles cases like "Every Monday and Friday"
+                    while (!daysOfWeek.contains(candidate.dayOfWeek)) {
+                        candidate = candidate.plusDays(1)
+                    }
+
+                    if (interval > 1) {
+                        // Find the start of the week for both dates (Monday)
+                        val fromStartOfWeek = fromDateTime.toLocalDate()
+                            .with(java.time.temporal.TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                        val candidateStartOfWeek = candidate.toLocalDate()
+                            .with(java.time.temporal.TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+
+                        // Calculate weeks between the start of fromDateTime's week and candidate's week
+                        val weeksBetween = ChronoUnit.WEEKS.between(fromStartOfWeek, candidateStartOfWeek)
+
+                        // If the candidate is in a future week, check if it respects the interval
+                        // A week is "valid" if weeksBetween is a multiple of interval.
+                        // If it's not (e.g. from Friday, candidate is next Monday, interval 2),
+                        // we need to add the remaining weeks.
+                        if (weeksBetween > 0 && weeksBetween % interval != 0L) {
+                            val weeksToAdd = interval - (weeksBetween % interval)
+                            candidate = candidate.plusWeeks(weeksToAdd)
+                        }
+                    }
+                    candidate
+                }
+            }
+
+            Frequency.MONTHLY -> fromDateTime.plusMonths(interval.toLong())
+
+            Frequency.YEARLY -> fromDateTime.plusYears(interval.toLong())
+        }
+    }
+
 
     companion object {
         fun fromString(ruleString: String): RecurrenceRule? {
