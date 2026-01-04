@@ -8,6 +8,7 @@ import com.qspapps.remindermate.data.local.ReminderActionDao
 import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.ReminderAction
+import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.data.repository.UserPreferencesRepository
 import com.qspapps.remindermate.di.ApplicationScope
 import com.qspapps.remindermate.utils.DateTimeUtils.minsFromNow
@@ -22,10 +23,7 @@ import javax.inject.Inject
 class NotificationReceiver : BroadcastReceiver() {
 
     @Inject
-    lateinit var reminderDao: ReminderDao
-
-    @Inject
-    lateinit var reminderActionDao: ReminderActionDao
+    lateinit var reminderRepository: ReminderRepository
 
     @Inject
     lateinit var notificationService: NotificationService
@@ -47,7 +45,7 @@ class NotificationReceiver : BroadcastReceiver() {
 
         applicationScope.launch { // Using created scope to launch a coroutine
             try {
-                val reminder = reminderDao.getById(reminderId)
+                val reminder = reminderRepository.getReminderById(reminderId)
                 if (reminder != null) {
                     when (intent.action) {
                         NotificationService.ACTION_TRIGGER_REMINDER -> {
@@ -64,7 +62,7 @@ class NotificationReceiver : BroadcastReceiver() {
                                 originalScheduledTime = originalTime,
                                 type = ActionType.COMPLETED
                             )
-                            reminderActionDao.insert(action)
+                            reminderRepository.insertAction(action)
                             notificationService.cancelNotification(reminder.id.toInt())
                             alarmScheduler.schedule(reminder)
                         }
@@ -77,7 +75,7 @@ class NotificationReceiver : BroadcastReceiver() {
                                 type = ActionType.SNOOZED,
                                 rescheduledTime = minsFromNow(snoozeMins)
                             )
-                            reminderActionDao.insert(action)
+                            reminderRepository.insertAction(action)
                             notificationService.cancelNotification(reminder.id.toInt())
                             alarmScheduler.schedule(reminder)
                         }
