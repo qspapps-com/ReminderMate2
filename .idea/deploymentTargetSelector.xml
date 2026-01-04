@@ -8,9 +8,6 @@
       <SelectionState runConfigName="ReminderIntegrationTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="createReminderAndMarkCompletedTest()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="createReminderAndSnoozeTest()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>

@@ -203,11 +203,9 @@ data class Reminder(
                                 val weeksPassed = weeksBetween
 
                                 val occurrencesFromFullCycles = (weeksPassed / rule.interval) * daysInRecurrence
-                                println("occurrencesFromFullCycles:$occurrencesFromFullCycles")
                                 // The index of the day within the current week block
                                 val currentWeekDayIndex = requiredDays.count { d ->
                                     weeklyValues.getOrDefault(d, 0) <= weeklyValues.getOrDefault(targetDay.dayOfWeek, 0) }
-                                println("currentWeekdayIndex: $currentWeekDayIndex")
                                 val occurrenceIndex = occurrencesFromFullCycles + currentWeekDayIndex
 
                                 if (occurrenceIndex <= rule.count) {
