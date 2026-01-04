@@ -12,6 +12,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,7 +34,9 @@ class UserPreferencesRepository @Inject constructor(@param:ApplicationContext pr
         val LAST_ERROR_MESSAGE = stringPreferencesKey("last_error_message")
         val LAST_ERROR_TIME = longPreferencesKey("last_error_time")
         val WORKER_RUN_HISTORY = stringPreferencesKey("worker_run_history")
+        val DEFAULT_REMINDER_TIMES = stringPreferencesKey("default_reminder_times")
     }
+    private val timeFormatter = DateTimeFormatter.ISO_LOCAL_TIME
 
     val theme = context.dataStore.data
         .map { preferences ->
@@ -60,6 +64,21 @@ class UserPreferencesRepository @Inject constructor(@param:ApplicationContext pr
             }
         }
 
+    val defaultReminderTimes: Flow<List<LocalTime>> = context.dataStore.data
+        .map { preferences ->
+            val json = preferences[PreferencesKeys.DEFAULT_REMINDER_TIMES]
+            if (json == null) {
+                listOf(LocalTime.of(9, 0)) // Default time
+            } else {
+                try {
+                    Json.decodeFromString<List<String>>(json).map {
+                        LocalTime.parse(it, timeFormatter)
+                    }
+                } catch (e: Exception) {
+                    listOf(LocalTime.of(9, 0))
+                }
+            }
+        }
     suspend fun setTheme(theme: Theme) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.THEME] = theme.name
@@ -88,6 +107,12 @@ class UserPreferencesRepository @Inject constructor(@param:ApplicationContext pr
 
             currentMap[workerName] = System.currentTimeMillis()
             preferences[PreferencesKeys.WORKER_RUN_HISTORY] = Json.encodeToString(currentMap)
+        }
+    }
+    suspend fun updateDefaultReminderTimes(times: List<LocalTime>) {
+        context.dataStore.edit { preferences ->
+            val serializedTimes = times.map { it.format(timeFormatter) }
+            preferences[PreferencesKeys.DEFAULT_REMINDER_TIMES] = Json.encodeToString(serializedTimes)
         }
     }
 }

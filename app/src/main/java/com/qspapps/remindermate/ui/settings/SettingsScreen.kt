@@ -51,6 +51,11 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
+import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,6 +66,7 @@ fun SettingsScreen(
     var showRestoreDialog by remember { mutableStateOf<Uri?>(null) }
     var showThemeDialog by remember { mutableStateOf(false) }
     var showClearAllDialog by remember { mutableStateOf(false) }
+    var showTimePickerDialog by remember { mutableStateOf(false) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val backupLauncher = rememberLauncherForActivityResult(
@@ -125,6 +131,24 @@ fun SettingsScreen(
             currentTheme = uiState.theme,
             onThemeSelected = { viewModel.updateTheme(it) },
             onDismiss = { showThemeDialog = false }
+        )
+    }
+    if (showTimePickerDialog) {
+        val timePickerState = rememberTimePickerState()
+        AlertDialog(
+            onDismissRequest = { showTimePickerDialog = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    val newTime = LocalTime.of(timePickerState.hour, timePickerState.minute)
+                    val newList = (uiState.defaultReminderTimes + newTime).sorted()
+                    viewModel.updateDefaultReminderTimes(newList)
+                    showTimePickerDialog = false
+                }) { Text("Add") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTimePickerDialog = false }) { Text("Cancel") }
+            },
+            text = { TimePicker(state = timePickerState) }
         )
     }
 
@@ -211,6 +235,29 @@ fun SettingsScreen(
                     title = stringResource(id = R.string.clear_all_reminders_setting_title),
                     subtitle = stringResource(id = R.string.clear_all_reminders_setting_subtitle),
                     onClick = { showClearAllDialog = true }
+                )
+            }
+            item { HorizontalDivider() }
+            item { SettingsSectionTitle("Reminders") }
+            uiState.defaultReminderTimes.forEach { time ->
+                item(key = time.toString()) {
+                    SettingsItem(
+                        icon = Icons.Default.AccessTime,
+                        title = time.format(DateTimeFormatter.ofPattern("hh:mm a")),
+                        subtitle = "Click to remove",
+                        onClick = {
+                            val newList = uiState.defaultReminderTimes.filter { it != time }
+                            viewModel.updateDefaultReminderTimes(newList)
+                        }
+                    )
+                }
+            }
+            item {
+                SettingsItem(
+                    icon = Icons.Default.Add,
+                    title = "Add Default Time",
+                    subtitle = "Times suggested when creating a reminder",
+                    onClick = { showTimePickerDialog = true }
                 )
             }
             item { HorizontalDivider() }

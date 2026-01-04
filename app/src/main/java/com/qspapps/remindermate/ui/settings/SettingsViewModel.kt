@@ -27,7 +27,8 @@ data class SettingsUiState(
     val theme: Theme = Theme.SYSTEM,
     val hideCompleted: Boolean = false,
     val lastError: Pair<String, Long>? = null,
-    val workerRunHistory: Map<String, Long> = emptyMap()
+    val workerRunHistory: Map<String, Long> = emptyMap(),
+    val defaultReminderTimes: List<java.time.LocalTime> = emptyList()
 )
 
 @HiltViewModel
@@ -43,9 +44,10 @@ class SettingsViewModel @Inject constructor(
         userPreferencesRepository.theme,
         userPreferencesRepository.hideCompleted,
         userPreferencesRepository.lastError,
-        userPreferencesRepository.workerRunHistory
-    ) { theme, hideCompleted, lastError, workerRunHistory ->
-        SettingsUiState(theme, hideCompleted, lastError, workerRunHistory)
+        userPreferencesRepository.workerRunHistory,
+        userPreferencesRepository.defaultReminderTimes
+    ) { theme, hideCompleted, lastError, workerRunHistory, defaultTimes ->
+        SettingsUiState(theme, hideCompleted, lastError, workerRunHistory,defaultTimes)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -61,6 +63,12 @@ class SettingsViewModel @Inject constructor(
     fun updateHideCompleted(hide: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.setHideCompleted(hide)
+        }
+    }
+
+    fun updateDefaultReminderTimes(times: List<java.time.LocalTime>) {
+        viewModelScope.launch {
+            userPreferencesRepository.updateDefaultReminderTimes(times)
         }
     }
 
