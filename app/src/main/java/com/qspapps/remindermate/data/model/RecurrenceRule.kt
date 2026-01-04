@@ -53,15 +53,9 @@ data class RecurrenceRule(
                         val candidateStartOfWeek = candidate.toLocalDate()
                             .with(java.time.temporal.TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 
-                        // Calculate weeks between the start of fromDateTime's week and candidate's week
-                        val weeksBetween = ChronoUnit.WEEKS.between(fromStartOfWeek, candidateStartOfWeek)
-
-                        // If the candidate is in a future week, check if it respects the interval
-                        // A week is "valid" if weeksBetween is a multiple of interval.
-                        // If it's not (e.g. from Friday, candidate is next Monday, interval 2),
-                        // we need to add the remaining weeks.
-                        if (weeksBetween > 0 && weeksBetween % interval != 0L) {
-                            val weeksToAdd = interval - (weeksBetween % interval)
+                        // If candidate falls in next week, we should skip by interval weeks - 1
+                        if (fromStartOfWeek != candidateStartOfWeek) {
+                            val weeksToAdd = interval - 1L
                             candidate = candidate.plusWeeks(weeksToAdd)
                         }
                     }
