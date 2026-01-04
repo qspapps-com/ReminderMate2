@@ -6,30 +6,35 @@ import androidx.lifecycle.viewModelScope
 import com.qspapps.remindermate.data.model.RecurrenceRule
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
+import com.qspapps.remindermate.data.repository.UserPreferencesRepository
 import com.qspapps.remindermate.utils.DateTimeUtils
 import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.time.LocalTime
 import javax.inject.Inject
 
 data class AddEditReminderUiState(
     val title: String = "",
     val description: String = "",
-    val startDateTime: LocalDateTime = DateTimeUtils.minsFromNow(15),
+    val startDateTime: LocalDateTime = DateTimeUtils.minsFromNow(60),
     val recurrence: RecurrenceRule? = null,
     val isNewReminder: Boolean = true,
     val isLoading: Boolean = false,
-    val showDateTimeError: Boolean = false
+    val showDateTimeError: Boolean = false,
+    val defaultTimes: List<LocalTime> = emptyList()
 )
 
 @HiltViewModel
 class AddEditReminderViewModel @Inject constructor(
     private val reminderRepository: ReminderRepository,
     private val alarmScheduler: ReminderAlarmScheduler,
+    private val userPreferencesRepository: UserPreferencesRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -40,10 +45,29 @@ class AddEditReminderViewModel @Inject constructor(
 
     init {
         reminderId = savedStateHandle.get<Long>("reminderId")
-        if (reminderId != null && reminderId != 0L) {
-            loadReminder(reminderId!!)
-        } else {
-            _uiState.update { it.copy(isNewReminder = true) }
+        viewModelScope.launch {
+            if (reminderId != null && reminderId != 0L) {
+                loadReminder(reminderId!!)
+            } else {
+                // Logic for New Reminders
+                val defaults = userPreferencesRepository.defaultReminderTimes.first()
+                val now = LocalDateTime.now()
+
+                // Find first default time that is after 'now' today
+                val suggestedDateTime = defaults
+                    .map { now.with(it) }
+                    .filter { it.isAfter(now) }
+                    .minByOrNull { it }
+                    ?: now.plusHours(1) // Fallback if no future default time today
+
+                _uiState.update {
+                    it.copy(
+                        isNewReminder = true,
+                        startDateTime = suggestedDateTime,
+                        defaultTimes = defaults
+                    )
+                }
+            }
         }
     }
 
