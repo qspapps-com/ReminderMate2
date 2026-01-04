@@ -136,4 +136,5 @@
     <string name="about">Acerca de</string>
     <string name="never">Nunca</string>
     <string name="overdue_reminders_message">Tienes %d recordatorios vencidos. Toca para verlos.</string>
+    <string name="snooze_until_menu_item">Posponer hasta %1$s</string>
 </resources>

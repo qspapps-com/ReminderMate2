@@ -135,4 +135,5 @@
     <string name="about">കുറിച്ച്</string>
     <string name="never">ഒരിക്കലുമില്ല</string>
     <string name="overdue_reminders_message">നിങ്ങൾക്ക് %d കാലാവധി കഴിഞ്ഞ ഓർമ്മപ്പെടുത്തലുകൾ ഉണ്ട്. അവ കാണാൻ ടാപ്പ് ചെയ്യുക.</string>
+    <string name="snooze_until_menu_item">%1$s വരെ സ്‌നൂസ് ചെയ്യുക</string>
 </resources>

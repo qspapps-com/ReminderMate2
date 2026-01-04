@@ -135,4 +135,5 @@
     <string name="about">గురించి</string>
     <string name="never">ఎప్పుడూ వద్దు</string>
     <string name="overdue_reminders_message">మీకు %d గడువు ముగిసిన రిమైండర్‌లు ఉన్నాయి. వాటిని వీక్షించడానికి నొక్కండి.</string>
+    <string name="snooze_until_menu_item">%1$s వరకు స్నూజ్ చేయండి</string>
 </resources>

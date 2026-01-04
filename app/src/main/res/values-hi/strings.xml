@@ -136,4 +136,5 @@
     <string name="about">बारे में</string>
     <string name="never">कभी नहीं</string>
     <string name="overdue_reminders_message">आपके पास %d विलंबित रिमाइंडर हैं। उन्हें देखने के लिए टैप करें।</string>
+    <string name="snooze_until_menu_item">%1$s तक स्नूज़ करें</string>
 </resources>

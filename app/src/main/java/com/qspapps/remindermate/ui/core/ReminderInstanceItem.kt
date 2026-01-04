@@ -111,7 +111,8 @@ fun ReminderInstanceItem(
 
                             if (nextDefaultTime != null) {
                                 DropdownMenuItem(
-                                    text = { Text("Snooze until ${formatTime(nextDefaultTime)}") },
+                                    text = { Text(stringResource(id = R.string.snooze_until_menu_item,
+                                        formatTime(nextDefaultTime))) },
                                     onClick = {
                                         actions.onSnooze(reminderInstance, nextDefaultTime)
                                         showMenu = false

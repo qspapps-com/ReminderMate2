@@ -142,4 +142,5 @@
     <string name="about">ಬಗ್ಗೆ</string>
     <string name="never">ಎಂದಿಗೂ ಇಲ್ಲ</string>
     <string name="overdue_reminders_message">ನಿಮ್ಮಲ್ಲಿ %d ಗಡುವು ಮೀರಿದ ಜ್ಞಾಪನೆಗಳಿವೆ. ಅವುಗಳನ್ನು ವೀಕ್ಷಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ.</string>
+    <string name="snooze_until_menu_item">%1$s ವರೆಗೆ ಸ್ನೂಜ್ ಮಾಡಿ</string>
 </resources>

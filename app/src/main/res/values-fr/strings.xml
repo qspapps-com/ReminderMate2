@@ -135,4 +135,5 @@
     <string name="about">À propos</string>
     <string name="never">Jamais</string>
     <string name="overdue_reminders_message">Vous avez %d rappels en retard. Appuyez pour les voir.</string>
+    <string name="snooze_until_menu_item">Reporter jusqu\'à %1$s</string>
 </resources>
