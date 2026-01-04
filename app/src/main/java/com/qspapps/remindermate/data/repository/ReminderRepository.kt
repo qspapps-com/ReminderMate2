@@ -1,5 +1,7 @@
 package com.qspapps.remindermate.data.repository
 
+import androidx.compose.animation.core.copy
+import androidx.compose.foundation.gestures.forEach
 import com.qspapps.remindermate.data.local.ReminderActionDao
 import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.model.ActionType
@@ -100,5 +102,29 @@ class ReminderRepository(private val reminderDao: ReminderDao, private val remin
                 }
             }
         }
+    }
+
+    suspend fun restoreBackupData(reminders: List<Reminder>, actions: List<ReminderAction>): List<Reminder> {
+        val idMap = mutableMapOf<Long, Long>()
+        val newReminders = mutableListOf<Reminder>()
+
+        // 1. Insert Reminders and store the new IDs
+        reminders.forEach { reminder ->
+            val oldId = reminder.id
+            // Insert with id = 0 to let Room generate a new auto-increment ID
+            val newId = insert(reminder.copy(id = 0))
+            idMap[oldId] = newId
+            newReminders.add(reminder.copy(id = newId))
+        }
+
+        // 2. Insert Actions using the mapped Reminder IDs
+        actions.forEach { action ->
+            val newReminderId = idMap[action.reminderId]
+            if (newReminderId != null) {
+                insertAction(action.copy(reminderId = newReminderId))
+            }
+        }
+
+        return newReminders
     }
 }

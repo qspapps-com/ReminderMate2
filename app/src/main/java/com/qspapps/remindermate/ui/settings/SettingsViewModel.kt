@@ -84,39 +84,18 @@ class SettingsViewModel @Inject constructor(
                 context.contentResolver.openInputStream(uri)?.use {
                     it.readBytes()
                 }
-            }
-
-            if (data == null) {
-                return@launch
-            }
+            }?: return@launch
 
             if (clearExisting) {
-                val allReminders = reminderRepository.getAllReminders().first()
-                allReminders.forEach { reminder ->
-                    reminderAlarmScheduler.cancel(reminder)
-                }
-                clearDatabase()
+                performFullCleanup()
             }
 
             val backupData = backupAndRestore.restore(data)
-            val idMap = mutableMapOf<Long, Long>()
-            val newReminders = mutableListOf<Reminder>()
 
-            backupData.reminders.forEach { reminder ->
-                val oldId = reminder.id
-                val newId = reminderRepository.insert(reminder.copy(id = 0))
-                idMap[oldId] = newId
-                newReminders.add(reminder.copy(id = newId))
-            }
+            val restoredReminders = reminderRepository.restoreBackupData(
+                backupData.reminders, backupData.actions)
 
-            backupData.actions.forEach { action ->
-                val newReminderId = idMap[action.reminderId]
-                if (newReminderId != null) {
-                    reminderRepository.insertAction(action.copy(reminderId = newReminderId))
-                }
-            }
-
-            newReminders.forEach { reminder ->
+            restoredReminders.forEach { reminder ->
                 reminderAlarmScheduler.schedule(reminder)
             }
         }
@@ -124,15 +103,15 @@ class SettingsViewModel @Inject constructor(
 
     fun clearAllReminders() {
         viewModelScope.launch {
-            val allReminders = reminderRepository.getAllReminders().first()
-            allReminders.forEach { reminder ->
-                reminderAlarmScheduler.cancel(reminder)
-            }
-            clearDatabase()
+            performFullCleanup()
         }
     }
 
-    private suspend fun clearDatabase() {
+    private suspend fun performFullCleanup() {
+        val allReminders = reminderRepository.getAllReminders().first()
+        allReminders.forEach { reminder ->
+            reminderAlarmScheduler.cancel(reminder)
+        }
         reminderRepository.deleteAllActions()
         reminderRepository.deleteAllReminders()
     }
