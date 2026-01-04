@@ -1,5 +1,6 @@
 package com.qspapps.remindermate.ui.core
 
+import androidx.compose.animation.with
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
@@ -28,6 +29,8 @@ import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.utils.DateTimeUtils
 import com.qspapps.remindermate.utils.DateTimeUtils.formatDateTime
 import com.qspapps.remindermate.utils.DateTimeUtils.formatTime
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +38,8 @@ fun ReminderInstanceItem(
     reminderInstance: ReminderInstance,
     actions: ReminderActions,
     showDate: Boolean,
-    isOverdue: Boolean
+    isOverdue: Boolean,
+    defaultTimes: List<LocalTime> = emptyList()
 ) {
     var showMenu by remember { mutableStateOf(false) }
     var showCustomSnoozeDialog by remember { mutableStateOf(false) }
@@ -99,16 +103,33 @@ fun ReminderInstanceItem(
                                     showMenu = false
                                 }
                             )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(id = R.string.snooze_1_day_menu_item)) },
-                                onClick = {
-                                    actions.onSnooze(
-                                        reminderInstance,
-                                        reminderInstance.displayTime.plusDays(1)
-                                    )
-                                    showMenu = false
-                                }
-                            )
+                            val now = LocalDateTime.now()
+                            val nextDefaultTime = defaultTimes
+                                .map { now.with(it) }
+                                .filter { it.isAfter(now) }
+                                .minByOrNull { it }
+
+                            if (nextDefaultTime != null) {
+                                DropdownMenuItem(
+                                    text = { Text("Snooze until ${formatTime(nextDefaultTime)}") },
+                                    onClick = {
+                                        actions.onSnooze(reminderInstance, nextDefaultTime)
+                                        showMenu = false
+                                    }
+                                )
+                            } else {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(id = R.string.snooze_1_day_menu_item)) },
+                                    onClick = {
+                                        actions.onSnooze(
+                                            reminderInstance,
+                                            reminderInstance.displayTime.plusDays(1)
+                                        )
+                                        showMenu = false
+                                    }
+                                )
+                            }
+
                             DropdownMenuItem(
                                 text = { Text(stringResource(id = R.string.custom_snooze_menu_item)) },
                                 onClick = {

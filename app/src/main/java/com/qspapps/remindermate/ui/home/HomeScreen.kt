@@ -186,7 +186,8 @@ fun HomeScreen(
                             reminderInstance = reminderInstance,
                             actions = viewModel.getReminderActions(navController),
                             showDate = false,
-                            isOverDue
+                            isOverDue,
+                            defaultTimes = uiState.defaultTimes
                         )
                     }
                 }

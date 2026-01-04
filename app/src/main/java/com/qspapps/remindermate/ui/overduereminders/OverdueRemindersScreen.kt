@@ -50,7 +50,8 @@ fun OverdueRemindersScreen(
                     reminderInstance = reminderInstance,
                     actions = viewModel.getReminderActions(navController),
                     showDate = true,
-                    isOverdue = true
+                    isOverdue = true,
+                    defaultTimes = uiState.defaultTimes
                 )
             }
         }

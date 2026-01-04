@@ -68,14 +68,14 @@ class UserPreferencesRepository @Inject constructor(@param:ApplicationContext pr
         .map { preferences ->
             val json = preferences[PreferencesKeys.DEFAULT_REMINDER_TIMES]
             if (json == null) {
-                listOf(LocalTime.of(9, 0)) // Default time
+                emptyList()
             } else {
                 try {
                     Json.decodeFromString<List<String>>(json).map {
                         LocalTime.parse(it, timeFormatter)
                     }
                 } catch (e: Exception) {
-                    listOf(LocalTime.of(9, 0))
+                    emptyList()
                 }
             }
         }

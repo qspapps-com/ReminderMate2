@@ -20,13 +20,15 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import javax.inject.Inject
 
 data class HomeUiState(
     val selectedDate: LocalDate = LocalDate.now(),
     val reminders: List<ReminderInstance> = emptyList(),
     val isLoading: Boolean = false,
-    val showCompleted: Boolean = true
+    val showCompleted: Boolean = true,
+    val defaultTimes: List<LocalTime> = emptyList()
 )
 
 @HiltViewModel
@@ -61,8 +63,9 @@ class HomeViewModel @Inject constructor(
         reminderRepository.getAllReminders(),
         reminderRepository.getAllActions(),
         _selectedDate,
-        _showCompleted
-    ) { reminders, actions, date, showCompleted ->
+        _showCompleted,
+        userPreferencesRepository.defaultReminderTimes
+    ) { reminders, actions, date, showCompleted, defaultTimes ->
         val instances = ReminderInstance.getRemindersForDay(date, reminders, actions)
         val filteredInstances = if (showCompleted) {
             instances
@@ -73,7 +76,8 @@ class HomeViewModel @Inject constructor(
             selectedDate = date,
             reminders = filteredInstances,
             isLoading = false,
-            showCompleted = showCompleted
+            showCompleted = showCompleted,
+            defaultTimes
         )
     }.stateIn(
         scope = viewModelScope,
