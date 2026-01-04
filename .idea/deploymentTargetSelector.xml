@@ -8,10 +8,10 @@
       <SelectionState runConfigName="ReminderIntegrationTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="createReminderAndSnoozeTest()">
+      <SelectionState runConfigName="createWeeklyRecurringReminderAndVerifyStorageTest()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="createWeeklyRecurringReminderAndVerifyStorageTest()">
+      <SelectionState runConfigName="createAndEditReminderTest()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

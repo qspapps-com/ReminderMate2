@@ -148,4 +148,62 @@ class ReminderInstanceTest {
         assertEquals(1, instances[1].reminderId)
         assertEquals(2, instances[2].reminderId)
     }
+
+    @Test
+    fun getOverdueReminders_returnsOnlyPendingPastReminders() {
+        val now = LocalDateTime.of(2024, 7, 10, 12, 0)
+        
+        // 1. A past reminder that is not completed (Overdue)
+        val overdueReminder = createReminder(1, now.minusHours(2))
+        
+        // 2. A past reminder that is completed (Not Overdue)
+        val completedReminder = createReminder(2, now.minusHours(5))
+        val completedAction = createAction(2, ActionType.COMPLETED, now.minusHours(5))
+        
+        // 3. A future reminder (Not Overdue)
+        val futureReminder = createReminder(3, now.plusHours(2))
+        
+        // 4. A snoozed reminder that is still in the past (Overdue)
+        val snoozedOverdueReminder = createReminder(4, now.minusHours(10))
+        val snoozedAction = createAction(4, ActionType.SNOOZED, now.minusHours(10), now.minusMinutes(30))
+        
+        // 5. A snoozed reminder that is now in the future (Not Overdue)
+        val snoozedFutureReminder = createReminder(5, now.minusHours(10))
+        val snoozedFutureAction = createAction(5, ActionType.SNOOZED, now.minusHours(10), now.plusHours(1))
+
+        val reminders = listOf(overdueReminder, completedReminder, futureReminder, snoozedOverdueReminder, snoozedFutureReminder)
+        val actions = listOf(completedAction, snoozedAction, snoozedFutureAction)
+
+        val overdue = ReminderInstance.getOverdueReminders(reminders, actions, now)
+
+        assertEquals(2, overdue.size)
+        assertTrue(overdue.any { it.reminderId == 1L })
+        assertTrue(overdue.any { it.reminderId == 4L })
+        assertFalse(overdue.any { it.reminderId == 2L })
+        assertFalse(overdue.any { it.reminderId == 3L })
+        assertFalse(overdue.any { it.reminderId == 5L })
+    }
+
+    @Test
+    fun getOverdueReminders_recurringReminders() {
+        val now = LocalDateTime.of(2024, 7, 10, 12, 0)
+        
+        // Daily reminder starting 3 days ago at 10 AM.
+        // Occurrences: 7/7 10:00, 7/8 10:00, 7/9 10:00, 7/10 10:00 (All past)
+        val start = now.minusDays(3).withHour(10).withMinute(0)
+        val recurringReminder = createReminder(1, start, RecurrenceRule(Frequency.DAILY))
+        
+        // Action: Complete the very first one
+        val actions = listOf(createAction(1, ActionType.COMPLETED, start))
+
+        val overdue = ReminderInstance.getOverdueReminders(listOf(recurringReminder), actions, now)
+
+        // Expected overdue: 7/8 10:00, 7/9 10:00, 7/10 10:00
+        assertEquals(3, overdue.size)
+        overdue.forEach { 
+            assertEquals(1L, it.reminderId)
+            assertFalse(it.isCompleted)
+            assertTrue(it.displayTime.isBefore(now))
+        }
+    }
 }

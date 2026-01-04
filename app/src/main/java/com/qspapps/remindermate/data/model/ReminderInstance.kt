@@ -44,7 +44,7 @@ data class ReminderInstance(
             }
         }
 
-        fun getReminderInstances(
+        private fun getReminderInstances(
             reminders: List<Reminder>,
             actions: List<ReminderAction>,
             from: LocalDateTime,
