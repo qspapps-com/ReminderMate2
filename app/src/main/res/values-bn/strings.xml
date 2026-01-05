@@ -136,4 +136,5 @@
     <string name="never">কখনও না</string>
     <string name="overdue_reminders_message">আপনার %dটি মেয়াদোত্তীর্ণ রিমাইন্ডার আছে। সেগুলি দেখতে ট্যাপ করুন।</string>
     <string name="snooze_until_menu_item">%1$s পর্যন্ত স্নুজ করুন</string>
+    <string name="today">आज</string>
 </resources>

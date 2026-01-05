@@ -108,6 +108,7 @@
     <string name="overdue_reminders_title">Overdue Reminders</string>
     <string name="overdue_reminders_message">You have %d overdue reminders. Tap to view them.</string>
     <string name="snooze_until_menu_item">Snooze until %1$s</string>
+    <string name="today">Today</string>
     <plurals name="recurrence_minute">
         <item quantity="one">every minute</item>
         <item quantity="other">every %d minutes</item>

@@ -136,4 +136,5 @@
     <string name="never">ક્યારેય નહીં</string>
     <string name="overdue_reminders_message">તમારી પાસે %d મુદતવીતી ગયેલા રિમાઇન્ડર્સ છે. તેમને જોવા માટે ટેપ કરો.</string>
     <string name="snooze_until_menu_item">%1$s સુધી સ્નૂઝ કરો</string>
+    <string name="today">આજે</string>
 </resources>

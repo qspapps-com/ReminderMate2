@@ -137,4 +137,5 @@
     <string name="never">Nunca</string>
     <string name="overdue_reminders_message">Tienes %d recordatorios vencidos. Toca para verlos.</string>
     <string name="snooze_until_menu_item">Posponer hasta %1$s</string>
+    <string name="today">Hoy</string>
 </resources>

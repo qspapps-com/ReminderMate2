@@ -130,4 +130,5 @@
     <string name="never">从未</string>
     <string name="overdue_reminders_message">您有 %d 个过期提醒。点击查看。</string>
     <string name="snooze_until_menu_item">推迟到 %1$s</string>
+    <string name="today">今天</string>
 </resources>

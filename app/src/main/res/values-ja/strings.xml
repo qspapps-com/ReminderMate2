@@ -130,4 +130,5 @@
     <string name="never">なし</string>
     <string name="overdue_reminders_message">%d 件の期限切れリマインダーがあります。タップして表示します。</string>
     <string name="snooze_until_menu_item">%1$sまでスヌーズ</string>
+    <string name="today">今日</string>
 </resources>

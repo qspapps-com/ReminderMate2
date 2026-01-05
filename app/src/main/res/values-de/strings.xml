@@ -137,4 +137,5 @@
     <string name="never">Nie</string>
     <string name="overdue_reminders_message">Sie haben %d überfällige Erinnerungen. Tippen Sie zum Anzeigen.</string>
     <string name="snooze_until_menu_item">Schlummern bis %1$s</string>
+    <string name="today">Heute</string>
 </resources>
