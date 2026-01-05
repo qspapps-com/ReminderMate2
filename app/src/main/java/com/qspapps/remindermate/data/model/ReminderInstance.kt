@@ -56,7 +56,7 @@ data class ReminderInstance(
                 val actionPerTime = reminderActions.associateBy { it.originalScheduledTime }
 
                 // 1. Process occurrences whose original scheduled time is in the date range.
-                val occurrences = reminder.getOccurrences(from.toLocalDate(), to.toLocalDate())
+                val occurrences = reminder.getOccurrences(from, to)
                 val processedOriginalTimes = mutableSetOf<LocalDateTime>()
 
                 for (originalTime in occurrences) {

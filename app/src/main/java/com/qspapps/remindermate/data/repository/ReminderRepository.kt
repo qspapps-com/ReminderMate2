@@ -67,10 +67,7 @@ class ReminderRepository(private val reminderDao: ReminderDao, private val remin
             } else {
                 // Recurring reminder
                 // Find all occurrences from startDateTime up to threshold
-                val occurrencesBeforeThreshold = reminder.getOccurrences(
-                    reminder.startDateTime.toLocalDate(),
-                    threshold.toLocalDate()
-                ).filter { !it.isBefore(reminder.startDateTime) && it.isBefore(threshold) }
+                val occurrencesBeforeThreshold = reminder.getOccurrences(reminder.startDateTime, threshold)
 
                 var firstRemainingTime: LocalDateTime? = null
                 

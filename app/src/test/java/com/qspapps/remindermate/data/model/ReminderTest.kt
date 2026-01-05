@@ -18,22 +18,22 @@ class ReminderTest {
 
         // Occurrence 1: 2024
         var targetDay = LocalDate.of(2024, 6, 15)
-        var result = reminder.getOccurrences(targetDay, targetDay)
+        var result = reminder.getOccurrences(targetDay.atStartOfDay(), targetDay.plusDays(1).atStartOfDay())
         assertEquals(1, result.size)
 
         // Skip 2025
         targetDay = LocalDate.of(2025, 6, 15)
-        result = reminder.getOccurrences(targetDay, targetDay)
+        result = reminder.getOccurrences(targetDay.atStartOfDay(), targetDay.plusDays(1).atStartOfDay())
         assertEquals(0, result.size)
 
         // Occurrence 2: 2026
         targetDay = LocalDate.of(2026, 6, 15)
-        result = reminder.getOccurrences(targetDay, targetDay)
+        result = reminder.getOccurrences(targetDay.atStartOfDay(), targetDay.plusDays(1).atStartOfDay())
         assertEquals(1, result.size)
 
         // Occurrence 3: 2028 -> Should occur
         targetDay = LocalDate.of(2028, 6, 15)
-        result = reminder.getOccurrences(targetDay, targetDay)
+        result = reminder.getOccurrences(targetDay.atStartOfDay(), targetDay.plusDays(1).atStartOfDay())
         assertEquals(1, result.size)
     }
 
@@ -47,7 +47,7 @@ class ReminderTest {
         val reminder = Reminder(1, "Test", null, startDateTime, rule)
         val targetDay = startDateTime.toLocalDate()
 
-        val result = reminder.getOccurrences(targetDay, targetDay)
+        val result = reminder.getOccurrences(targetDay.atStartOfDay(), targetDay.plusDays(1).atStartOfDay())
 
         // Expected times: 08:30, 10:30, 12:30, 14:30, 16:30, 18:30, 20:30, 22:30
         assertEquals(8, result.size)
@@ -65,7 +65,7 @@ class ReminderTest {
         // Target Day: June 16th
         val targetDay = LocalDate.of(2024, 6, 16)
 
-        val result = reminder.getOccurrences(targetDay, targetDay)
+        val result = reminder.getOccurrences(targetDay.atStartOfDay(), targetDay.plusDays(1).atStartOfDay())
 
         // Start (23:00 on 6/15). Next occurrence is 02:00 on 6/16.
         // Expected times on 6/16: 02:00, 05:00, 08:00, 11:00, 14:00, 17:00, 20:00, 23:00
@@ -84,13 +84,15 @@ class ReminderTest {
         // Expected: 20:00 (1), 22:00 (2), 00:00 on 6/16 (3).
 
         // Target Day 1: June 15th
-        var result = reminder.getOccurrences(LocalDate.of(2024, 6, 15), LocalDate.of(2024, 6, 15))
+        var targetDay = LocalDate.of(2024, 6,15)
+        var result = reminder.getOccurrences(targetDay.atStartOfDay(), targetDay.plusDays(1).atStartOfDay())
         assertEquals(2, result.size)
         assertEquals(LocalTime.of(20, 0), result[0].toLocalTime())
         assertEquals(LocalTime.of(22, 0), result[1].toLocalTime())
 
         // Target Day 2: June 16th
-        result = reminder.getOccurrences(LocalDate.of(2024, 6, 16), LocalDate.of(2024, 6, 16))
+        targetDay = LocalDate.of(2024, 6,16)
+        result = reminder.getOccurrences(targetDay.atStartOfDay(), targetDay.plusDays(1).atStartOfDay())
         // The 00:00 occurrence should be the last one (index 3). Nothing should occur after.
         assertEquals(1, result.size)
         assertEquals(LocalTime.of(0, 0), result.first().toLocalTime())
@@ -106,7 +108,7 @@ class ReminderTest {
         val reminder = Reminder(1, "Test", null, startDateTime, rule)
         val targetDay = startDateTime.toLocalDate()
 
-        val result = reminder.getOccurrences(targetDay, targetDay)
+        val result = reminder.getOccurrences(targetDay.atStartOfDay(), targetDay.plusDays(1).atStartOfDay())
 
         // Expected times: 10:30, 10:45, 11:00, 11:15...
         // The test is complex to check all, just check the first and last occurrence for the day
@@ -128,19 +130,22 @@ class ReminderTest {
         // Expected: 23:58 (1), 00:00 on 6/16 (2), 00:02 on 6/16 (3).
 
         // Target Day 1: June 15th
-        var result = reminder.getOccurrences(LocalDate.of(2024, 6, 15), LocalDate.of(2024, 6, 15))
+        var targetDay = LocalDate.of(2024, 6,15)
+        var result = reminder.getOccurrences(targetDay.atStartOfDay(), targetDay.plusDays(1).atStartOfDay())
         assertEquals(1, result.size)
         assertEquals(LocalTime.of(23, 58), result.first().toLocalTime())
 
         // Target Day 2: June 16th
-        result = reminder.getOccurrences(LocalDate.of(2024, 6, 16), LocalDate.of(2024, 6, 16))
+        targetDay = LocalDate.of(2024, 6,16)
+        result = reminder.getOccurrences(targetDay.atStartOfDay(), targetDay.plusDays(1).atStartOfDay())
         // Occurrences at 00:00 (index 2) and 00:02 (index 3)
         assertEquals(2, result.size)
         assertEquals(LocalTime.of(0, 0), result[0].toLocalTime())
         assertEquals(LocalTime.of(0, 2), result[1].toLocalTime())
 
         // Target Day 3: June 17th -> Should not occur
-        result = reminder.getOccurrences(LocalDate.of(2024, 6, 17), LocalDate.of(2024, 6, 17))
+        targetDay = LocalDate.of(2024, 6,17)
+        result = reminder.getOccurrences(targetDay.atStartOfDay(), targetDay.plusDays(1).atStartOfDay())
         assertEquals(0, result.size)
     }
 

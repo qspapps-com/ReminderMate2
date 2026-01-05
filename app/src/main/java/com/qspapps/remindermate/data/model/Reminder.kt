@@ -28,10 +28,10 @@ data class Reminder(
         }
     }
 
-    fun getOccurrences(from: LocalDate, to: LocalDate): List<LocalDateTime> {
+    fun getOccurrences(from: LocalDateTime, to: LocalDateTime): List<LocalDateTime> {
         return getAllOccurrencesSequence()
-            .dropWhile { it.toLocalDate().isBefore(from) }
-            .takeWhile { !it.toLocalDate().isAfter(to) }
+            .dropWhile { it.isBefore(from) }
+            .takeWhile { it.isBefore(to) }
             .toList()
     }
 
