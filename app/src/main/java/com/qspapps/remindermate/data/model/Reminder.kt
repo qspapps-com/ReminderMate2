@@ -19,77 +19,59 @@ data class Reminder(
     val startDateTime: LocalDateTime,
     val recurrence: RecurrenceRule? = null
 ) {
+    private fun getAllOccurrencesSequence(): Sequence<LocalDateTime> {
+        return generateSequence(startDateTime) { current ->
+            recurrence?.getNextOccurrence(current)
+        }.let { sequence ->
+            val count = recurrence?.count
+            if (count != null) sequence.take(count) else sequence
+        }
+    }
+
     fun getOccurrences(from: LocalDate, to: LocalDate): List<LocalDateTime> {
-        val occurrences = mutableListOf<LocalDateTime>()
-
-        // Start from the very first scheduled time
-        var current = startDateTime
-        var countSoFar = 1
-
-        // 1. Skip occurrences that happen before the 'from' date
-        while (current.toLocalDate().isBefore(from)) {
-            val next = recurrence?.getNextOccurrence(current) ?: break
-
-            current = next
-            countSoFar++
-        }
-
-        // 2. Collect occurrences within the [from, to] range
-        while (!current.toLocalDate().isAfter(to)) {
-            // Check if we've exceeded the maximum allowed occurrences
-            if (recurrence?.count != null && countSoFar > recurrence.count) {
-                break
-            }
-
-            // If it falls within our target window, add it
-            if (!current.toLocalDate().isBefore(from)) {
-                occurrences.add(current)
-            }
-
-            val next = recurrence?.getNextOccurrence(current) ?: break
-
-            current = next
-            countSoFar++
-        }
-
-        return occurrences
+        return getAllOccurrencesSequence()
+            .dropWhile { it.toLocalDate().isBefore(from) }
+            .takeWhile { !it.toLocalDate().isAfter(to) }
+            .toList()
     }
 
     fun getNextOccurrence(actions: List<ReminderAction>, after: LocalDateTime? = null): ReminderInstance? {
-        val ignoredTimes = actions.filter { it.type == ActionType.COMPLETED || it.type == ActionType.DELETED }
+        val ignoredTimes = actions
+            .filter { it.type == ActionType.COMPLETED || it.type == ActionType.DELETED }
             .map { it.originalScheduledTime }
             .toSet()
 
         val searchFrom = after ?: startDateTime.minusNanos(1)
 
-        // Find the first occurrence after searchFrom that isn't ignored
-        var currentOriginal = startDateTime
-        var currentCount = 1
+        return getAllOccurrencesSequence()
+            // 1. Safety limit to prevent infinite loops on poorly defined rules
+            .takeWhile { it.isBefore(startDateTime.plusYears(10)) }
+            // 2. Map to instances so we can see the 'displayTime' (snooze logic)
+            .map { originalTime ->
+                val snoozeAction = actions.find {
+                    it.originalScheduledTime == originalTime && it.type == ActionType.SNOOZED
+                }
+                val displayTime = snoozeAction?.rescheduledTime ?: originalTime
 
-        while (true) {
-            val isIgnored = ignoredTimes.contains(currentOriginal)
-            val snoozeAction = actions.find { it.originalScheduledTime == currentOriginal && it.type == ActionType.SNOOZED }
-            val displayTime = snoozeAction?.rescheduledTime ?: currentOriginal
-
-            if (!isIgnored && displayTime.isAfter(searchFrom)) {
-                return ReminderInstance(
-                    reminderId = id, title = title, description = description,
-                    displayTime = displayTime, originalTime = currentOriginal,
-                    isCompleted = false, isSnoozed = snoozeAction != null,
+                ReminderInstance(
+                    reminderId = id,
+                    title = title,
+                    description = description,
+                    displayTime = displayTime,
+                    originalTime = originalTime,
+                    isCompleted = false,
+                    isSnoozed = snoozeAction != null,
                     isRecurring = recurrence != null
                 )
             }
-
-            // Move to next iteration
-            if (recurrence == null) break
-            currentOriginal = recurrence.getNextOccurrence(currentOriginal)
-            currentCount++
-
-            // Terminate if count exceeded or if we've searched too far (10 years)
-            if (recurrence.count != null && currentCount > recurrence.count) break
-            if (currentOriginal.isAfter(startDateTime.plusYears(10))) break
-        }
-
-        return null
+            // 3. Filter out items that are finished/deleted
+            .filter { !ignoredTimes.contains(it.originalTime) }
+            // 4. IMPORTANT: Filter for things happening AFTER our search point first
+            // We use a buffer of original occurrences to find potential "next" candidates
+            .filter { it.displayTime.isAfter(searchFrom) }
+            // 5. Take a small window of candidates to check for chronological "swaps"
+            // (e.g. if r1 was snoozed past r2)
+            .take(5)
+            .toList().minByOrNull { it.displayTime }
     }
 }
