@@ -11,7 +11,7 @@ data class ReminderInstance(
     val originalTime: LocalDateTime, // The original scheduled time
     val isCompleted: Boolean,
     val isSnoozed: Boolean,
-    val isRecurring: Boolean // New field
+    val isRecurring: Boolean
 ) {
     companion object {
         fun getRemindersForDay(
@@ -33,15 +33,13 @@ data class ReminderInstance(
             currentTime: LocalDateTime
         ): List<ReminderInstance> {
             // We define a window from a far past date up to the current time
-            val from = currentTime.minusYears(1) // Or any reasonable threshold for "old" reminders
+            val from = currentTime.minusYears(1) // Threshold for overdue reminders
             val to = currentTime
 
-            // Reuse the existing getReminderInstances logic to get all occurrences up to now
+            // getReminderInstances returns all occurrences with displayTime in [from, to)
             val allPastInstances = getReminderInstances(reminders, actions, from, to)
 
-            return allPastInstances.filter { instance ->
-                !instance.isCompleted && instance.displayTime.isBefore(currentTime)
-            }
+            return allPastInstances.filter { !it.isCompleted }
         }
 
         private fun getReminderInstances(
@@ -55,43 +53,55 @@ data class ReminderInstance(
 
             for (reminder in reminders) {
                 val reminderActions = actionsMap[reminder.id] ?: emptyList()
+                val actionPerTime = reminderActions.associateBy { it.originalScheduledTime }
+
+                // 1. Process occurrences whose original scheduled time is in the date range.
                 val occurrences = reminder.getOccurrences(from.toLocalDate(), to.toLocalDate())
+                val processedOriginalTimes = mutableSetOf<LocalDateTime>()
 
                 for (originalTime in occurrences) {
-                    if (originalTime.isAfter(to) || originalTime.isBefore(from)) continue
+                    processedOriginalTimes.add(originalTime)
+                    val action = actionPerTime[originalTime]
+                    if (action?.type == ActionType.DELETED) continue
 
-                    val action = reminderActions.find { it.originalScheduledTime == originalTime }
+                    val displayTime = if (action?.type == ActionType.SNOOZED) {
+                        action.rescheduledTime ?: originalTime
+                    } else {
+                        originalTime
+                    }
 
-                    when (action?.type) {
-                        ActionType.COMPLETED -> {
-                            instances.add(createInstance(reminder, originalTime, isCompleted = true))
-                        }
-                        ActionType.SNOOZED -> {
-                            val newTime = action.rescheduledTime!!
-                            if (newTime.isBetween(from, to)) {
-                                instances.add(createInstance(reminder, originalTime, newTime, isSnoozed = true))
-                            }
-                        }
-                        ActionType.DELETED -> {
-                            // Do not add to the list
-                        }
-                        null -> {
-                            instances.add(createInstance(reminder, originalTime))
-                        }
+                    if (displayTime.isBetween(from, to)) {
+                        instances.add(
+                            createInstance(
+                                reminder,
+                                originalTime,
+                                displayTime,
+                                isCompleted = action?.type == ActionType.COMPLETED,
+                                isSnoozed = action?.type == ActionType.SNOOZED
+                            )
+                        )
                     }
                 }
 
+                // 2. Handle cases where original time was outside the range, but it was snoozed into the range.
                 val incomingSnoozes = reminderActions.filter {
                     it.type == ActionType.SNOOZED &&
                             it.rescheduledTime?.isBetween(from, to) == true &&
-                            !it.originalScheduledTime.isBetween(from, to)
+                            it.originalScheduledTime !in processedOriginalTimes
                 }
 
                 for (snooze in incomingSnoozes) {
-                    instances.add(createInstance(reminder, snooze.originalScheduledTime, snooze.rescheduledTime!!, isSnoozed = true))
+                    instances.add(
+                        createInstance(
+                            reminder,
+                            snooze.originalScheduledTime,
+                            snooze.rescheduledTime!!,
+                            isSnoozed = true
+                        )
+                    )
                 }
             }
-            return instances.sortedBy { it.displayTime }
+            return instances.distinctBy { it.reminderId to it.originalTime }.sortedBy { it.displayTime }
         }
 
         private fun createInstance(
@@ -109,11 +119,12 @@ data class ReminderInstance(
                 originalTime = originalTime,
                 isCompleted = isCompleted,
                 isSnoozed = isSnoozed,
-                isRecurring = reminder.recurrence != null // Set the new field
+                isRecurring = reminder.recurrence != null
             )
         }
 
         private fun LocalDateTime.isBetween(start: LocalDateTime, end: LocalDateTime): Boolean {
+            // Check if time is in [start, end)
             return !this.isBefore(start) && this.isBefore(end)
         }
     }

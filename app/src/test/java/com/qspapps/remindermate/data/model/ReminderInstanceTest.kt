@@ -49,6 +49,21 @@ class ReminderInstanceTest {
     }
 
     @Test
+    fun getRemindersForDay_multipleReminders_onlyReturnsForRequestedDay() {
+        val today = LocalDate.of(2024, 7, 10)
+        val tomorrow = today.plusDays(1)
+        
+        val reminderToday = createReminder(1, today.atTime(0, 0))
+        val reminderTomorrow = createReminder(2, tomorrow.atTime(0, 0))
+
+        val instances = ReminderInstance.getRemindersForDay(today, listOf(reminderToday, reminderTomorrow), emptyList())
+
+        assertEquals(1, instances.size)
+        assertEquals(1L, instances.first().reminderId)
+        assertEquals(today.atTime(0, 0), instances.first().displayTime)
+    }
+
+    @Test
     fun getRemindersForDay_oneTimeReminder_completed() {
         val day = LocalDate.of(2024, 7, 10)
         val reminderTime = day.atTime(9, 0)
