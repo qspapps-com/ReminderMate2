@@ -106,7 +106,7 @@ fun ReminderInstanceItem(
                             val now = LocalDateTime.now()
                             val nextDefaultTime = defaultTimes
                                 .map { now.with(it) }
-                                .filter { it.isAfter(now) }
+                                .filter { it.isAfter(reminderInstance.displayTime) }
                                 .minByOrNull { it }
 
                             if (nextDefaultTime != null) {
