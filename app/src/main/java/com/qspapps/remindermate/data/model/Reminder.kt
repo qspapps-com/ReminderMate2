@@ -44,9 +44,10 @@ data class Reminder(
         val searchFrom = after ?: startDateTime.minusNanos(1)
 
         return getAllOccurrencesSequence()
-            // 1. Safety limit to prevent infinite loops on poorly defined rules
             .takeWhile { it.isBefore(startDateTime.plusYears(10)) }
-            // 2. Map to instances so we can see the 'displayTime' (snooze logic)
+            // 1. Filter out ignored occurrences immediately
+            .filter { !ignoredTimes.contains(it) }
+            // 2. Map only valid occurrences to instances
             .map { originalTime ->
                 val snoozeAction = actions.find {
                     it.originalScheduledTime == originalTime && it.type == ActionType.SNOOZED
@@ -64,14 +65,11 @@ data class Reminder(
                     isRecurring = recurrence != null
                 )
             }
-            // 3. Filter out items that are finished/deleted
-            .filter { !ignoredTimes.contains(it.originalTime) }
-            // 4. IMPORTANT: Filter for things happening AFTER our search point first
-            // We use a buffer of original occurrences to find potential "next" candidates
+            // 3. Filter for items appearing AFTER our search point
             .filter { it.displayTime.isAfter(searchFrom) }
-            // 5. Take a small window of candidates to check for chronological "swaps"
-            // (e.g. if r1 was snoozed past r2)
+            // 4. Take a buffer and sort to handle chronological 'swaps' (snoozes)
             .take(5)
-            .toList().minByOrNull { it.displayTime }
+            .toList()
+            .minByOrNull { it.displayTime }
     }
 }
