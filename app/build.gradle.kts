@@ -17,8 +17,8 @@ android {
         applicationId = "com.qspapps.remindermate"
         minSdk = 29
         targetSdk = 36
-        versionCode = 14
-        versionName = "2.0.13"
+        versionCode = 15
+        versionName = "2.0.14"
 
         testInstrumentationRunner = "com.qspapps.remindermate.HiltTestRunner"
     }
