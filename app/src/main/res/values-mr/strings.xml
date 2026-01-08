@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">रिमाइंडरमेट</string>
     <string name="add_reminder">रिमाइंडर जोडा</string>
@@ -137,4 +137,15 @@
     <string name="overdue_reminders_message">तुमच्याकडे %d मुदत संपलेले रिमाइंडर्स आहेत. ते पाहण्यासाठी टॅप करा.</string>
     <string name="snooze_until_menu_item">%1$s पर्यंत स्नूझ करा</string>
     <string name="today">आज</string>
+    <string name="reminders_section_title">स्मरणपत्रे</string>
+    <string name="add_default_time_title">डीफॉल्ट वेळ जोडा</string>
+    <string name="add_default_time_subtitle">स्मरणपत्र तयार करताना सुचवलेल्या वेळा</string>
+    <string name="remove_default_time_subtitle">काढण्यासाठी क्लिक करा</string>
+    <string name="add_button">ॲड</string>
+    <string name="debug_section_title">डीबग करा</string>
+    <string name="last_system_error_title">शेवटची सिस्टम एरर</string>
+    <string name="last_system_error_subtitle">%1$s\nझाले: %2$s</string>
+    <string name="system_status_title">सिस्टम स्थिती</string>
+    <string name="system_status_subtitle_healthy">सर्व कामगार निरोगी आणि अंतराने धावत आहेत.</string>
+    <string name="worker_status_title">कामगार स्थिती</string>
 </resources>

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ReminderMate</string>
     <string name="add_reminder">Erinnerung hinzufügen</string>
@@ -124,7 +124,6 @@
         <item quantity="one"> für 1 Mal</item>
         <item quantity="other"> für %d Mal</item>
     </plurals>
-
     <string name="notifications_disabled_toast">Benachrichtigungen sind deaktiviert. Sie erhalten keine Erinnerungen.</string>
     <string name="permission_required_title">Berechtigung erforderlich</string>
     <string name="notification_permission_rationale">Um sicherzustellen, dass Sie rechtzeitige Erinnerungen erhalten, benötigt diese App die Berechtigung zum Senden von Benachrichtigungen.</string>
@@ -138,4 +137,15 @@
     <string name="overdue_reminders_message">Sie haben %d überfällige Erinnerungen. Tippen Sie zum Anzeigen.</string>
     <string name="snooze_until_menu_item">Schlummern bis %1$s</string>
     <string name="today">Heute</string>
+    <string name="reminders_section_title">Erinnerungen</string>
+    <string name="add_default_time_title">Standardzeit hinzufügen</string>
+    <string name="add_default_time_subtitle">Beim Erstellen einer Erinnerung vorgeschlagene Zeiten</string>
+    <string name="remove_default_time_subtitle">Klicken Sie zum Entfernen</string>
+    <string name="add_button">Hinzufügen</string>
+    <string name="debug_section_title">Debuggen</string>
+    <string name="last_system_error_title">Letzter Systemfehler</string>
+    <string name="last_system_error_subtitle">%1$s\nAufgetreten: %2$s</string>
+    <string name="system_status_title">Systemstatus</string>
+    <string name="system_status_subtitle_healthy">Alle Arbeiter sind gesund und laufen innerhalb der Intervalle.</string>
+    <string name="worker_status_title">Arbeiterstatus</string>
 </resources>

@@ -143,10 +143,10 @@ fun SettingsScreen(
                     val newList = (uiState.defaultReminderTimes + newTime).sorted()
                     viewModel.updateDefaultReminderTimes(newList)
                     showTimePickerDialog = false
-                }) { Text("Add") }
+                }) { Text(stringResource(id = R.string.add_button)) }
             },
             dismissButton = {
-                TextButton(onClick = { showTimePickerDialog = false }) { Text("Cancel") }
+                TextButton(onClick = { showTimePickerDialog = false }) { Text(stringResource(id = R.string.cancel_button)) }
             },
             text = { TimePicker(state = timePickerState) }
         )
@@ -238,13 +238,13 @@ fun SettingsScreen(
                 )
             }
             item { HorizontalDivider() }
-            item { SettingsSectionTitle("Reminders") }
+            item { SettingsSectionTitle(stringResource(id = R.string.reminders_section_title)) }
             uiState.defaultReminderTimes.forEach { time ->
                 item(key = time.toString()) {
                     SettingsItem(
                         icon = Icons.Default.AccessTime,
                         title = time.format(DateTimeFormatter.ofPattern("hh:mm a")),
-                        subtitle = "Click to remove",
+                        subtitle = stringResource(id = R.string.remove_default_time_subtitle),
                         onClick = {
                             val newList = uiState.defaultReminderTimes.filter { it != time }
                             viewModel.updateDefaultReminderTimes(newList)
@@ -255,14 +255,14 @@ fun SettingsScreen(
             item {
                 SettingsItem(
                     icon = Icons.Default.Add,
-                    title = "Add Default Time",
-                    subtitle = "Times suggested when creating a reminder",
+                    title = stringResource(id = R.string.add_default_time_title),
+                    subtitle = stringResource(id = R.string.add_default_time_subtitle),
                     onClick = { showTimePickerDialog = true }
                 )
             }
             item { HorizontalDivider() }
             item {
-                SettingsSectionTitle("Debug")
+                SettingsSectionTitle(stringResource(id = R.string.debug_section_title))
             }
             item {
                 val errorData = uiState.lastError
@@ -277,8 +277,8 @@ fun SettingsScreen(
 
                     SettingsItem(
                         icon = Icons.Default.BugReport,
-                        title = "Last System Error",
-                        subtitle = "$message\nOccurred: $dateString",
+                        title = stringResource(id = R.string.last_system_error_title),
+                        subtitle = stringResource(id = R.string.last_system_error_subtitle, message, dateString),
                         onClick = { }
                     )
                 } else {
@@ -287,14 +287,14 @@ fun SettingsScreen(
                     if (statusMessages.isEmpty()) {
                         SettingsItem(
                             icon = Icons.Default.CheckCircle,
-                            title = "System Status",
-                            subtitle = "All workers healthy and running within intervals.",
+                            title = stringResource(id = R.string.system_status_title),
+                            subtitle = stringResource(id = R.string.system_status_subtitle_healthy),
                             onClick = { }
                         )
                     } else {
                         SettingsItem(
                             icon = Icons.Default.History,
-                            title = "Worker Status",
+                            title = stringResource(id = R.string.worker_status_title),
                             subtitle = statusMessages.joinToString("\n"),
                             onClick = { }
                         )

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">റിമൈൻഡർമേറ്റ്</string>
     <string name="add_reminder">ഓർമ്മപ്പെടുത്തൽ ചേർക്കുക</string>
@@ -137,4 +137,15 @@
     <string name="overdue_reminders_message">നിങ്ങൾക്ക് %d കാലാവധി കഴിഞ്ഞ ഓർമ്മപ്പെടുത്തലുകൾ ഉണ്ട്. അവ കാണാൻ ടാപ്പ് ചെയ്യുക.</string>
     <string name="snooze_until_menu_item">%1$s വരെ സ്‌നൂസ് ചെയ്യുക</string>
     <string name="today">ഇന്ന്</string>
+    <string name="reminders_section_title">ഓർമ്മപ്പെടുത്തലുകൾ</string>
+    <string name="add_default_time_title">ഡിഫോൾട്ട് സമയം ചേർക്കുക</string>
+    <string name="add_default_time_subtitle">ഒരു റിമൈൻഡർ സൃഷ്‌ടിക്കുമ്പോൾ നിർദ്ദേശിച്ച സമയങ്ങൾ</string>
+    <string name="remove_default_time_subtitle">നീക്കം ചെയ്യാൻ ക്ലിക്ക് ചെയ്യുക</string>
+    <string name="add_button">ചേർക്കുക</string>
+    <string name="debug_section_title">ഡീബഗ് ചെയ്യുക</string>
+    <string name="last_system_error_title">അവസാനത്തെ സിസ്റ്റം പിശക്</string>
+    <string name="last_system_error_subtitle">%1$s\nസംഭവിച്ചത്: %2$s</string>
+    <string name="system_status_title">സിസ്റ്റം സ്റ്റാറ്റസ്</string>
+    <string name="system_status_subtitle_healthy">എല്ലാ തൊഴിലാളികളും ആരോഗ്യമുള്ളവരും ഇടവേളകളിൽ പ്രവർത്തിക്കുന്നു.</string>
+    <string name="worker_status_title">തൊഴിലാളി നില</string>
 </resources>

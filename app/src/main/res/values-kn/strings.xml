@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ರಿಮೈಂಡರ್‌ಮೇಟ್</string>
     <string name="add_reminder">ಜ್ಞಾಪನೆ ಸೇರಿಸಿ</string>
@@ -97,37 +97,30 @@
     <string name="language_bengali">ಬೆಂಗಾಲಿ</string>
     <string name="language_marathi">ಮರಾಠಿ</string>
     <plurals name="recurrence_minute">
-        
         <item quantity="one">ಪ್ರತಿ %d ನಿಮಿಷ</item>
         <item quantity="other">ಪ್ರತಿ %d ನಿಮಿಷಗಳು</item>
     </plurals>
     <plurals name="recurrence_hour">
-        
         <item quantity="one">ಪ್ರತಿ %d ಗಂಟೆ</item>
         <item quantity="other">ಪ್ರತಿ %d ಗಂಟೆಗಳು</item>
     </plurals>
     <plurals name="recurrence_day">
-        
         <item quantity="one">ಪ್ರತಿ %d ದಿನ</item>
         <item quantity="other">ಪ್ರತಿ %d ದಿನಗಳು</item>
     </plurals>
     <plurals name="recurrence_week">
-        
         <item quantity="one">ಪ್ರತಿ %d ವಾರ</item>
         <item quantity="other">ಪ್ರತಿ %d ವಾರಗಳು</item>
     </plurals>
     <plurals name="recurrence_month">
-        
         <item quantity="one">ಪ್ರತಿ %d ತಿಂಗಳು</item>
         <item quantity="other">ಪ್ರತಿ %d ತಿಂಗಳುಗಳು</item>
     </plurals>
     <plurals name="recurrence_year">
-        
         <item quantity="one">ಪ್ರತಿ %d ವರ್ಷ</item>
         <item quantity="other">ಪ್ರತಿ %d ವರ್ಷಗಳು</item>
     </plurals>
     <plurals name="recurrence_for_times">
-        
         <item quantity="one"> %d ಬಾರಿಗಾಗಿ</item>
         <item quantity="other"> %d ಬಾರಿಗಳಿಗಾಗಿ</item>
     </plurals>
@@ -144,4 +137,15 @@
     <string name="overdue_reminders_message">ನಿಮ್ಮಲ್ಲಿ %d ಗಡುವು ಮೀರಿದ ಜ್ಞಾಪನೆಗಳಿವೆ. ಅವುಗಳನ್ನು ವೀಕ್ಷಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ.</string>
     <string name="snooze_until_menu_item">%1$s ವರೆಗೆ ಸ್ನೂಜ್ ಮಾಡಿ</string>
     <string name="today">ಇಂದು</string>
+    <string name="reminders_section_title">ಜ್ಞಾಪನೆಗಳು</string>
+    <string name="add_default_time_title">ಡೀಫಾಲ್ಟ್ ಸಮಯವನ್ನು ಸೇರಿಸಿ</string>
+    <string name="add_default_time_subtitle">ಜ್ಞಾಪನೆಯನ್ನು ರಚಿಸುವಾಗ ಸೂಚಿಸಲಾದ ಸಮಯಗಳು</string>
+    <string name="remove_default_time_subtitle">ತೆಗೆದುಹಾಕಲು ಕ್ಲಿಕ್ ಮಾಡಿ</string>
+    <string name="add_button">ಸೇರಿಸಿ</string>
+    <string name="debug_section_title">ಡೀಬಗ್ ಮಾಡಿ</string>
+    <string name="last_system_error_title">ಕೊನೆಯ ಸಿಸ್ಟಮ್ ದೋಷ</string>
+    <string name="last_system_error_subtitle">%1$s\nಸಂಭವಿಸಿದೆ: %2$s</string>
+    <string name="system_status_title">ಸಿಸ್ಟಮ್ ಸ್ಥಿತಿ</string>
+    <string name="system_status_subtitle_healthy">ಎಲ್ಲಾ ಕೆಲಸಗಾರರು ಆರೋಗ್ಯವಾಗಿದ್ದಾರೆ ಮತ್ತು ಮಧ್ಯಂತರದಲ್ಲಿ ಓಡುತ್ತಿದ್ದಾರೆ.</string>
+    <string name="worker_status_title">ಕಾರ್ಮಿಕರ ಸ್ಥಿತಿ</string>
 </resources>

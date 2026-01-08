@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ReminderMate</string>
     <string name="add_reminder">إضافة تذكير</string>
@@ -152,7 +152,6 @@
         <item quantity="many"> %d مرة</item>
         <item quantity="other"> %d مرة</item>
     </plurals>
-
     <string name="notifications_disabled_toast">الإشعارات معطلة. لن تتلقى تذكيرات.</string>
     <string name="permission_required_title">إذن مطلوب</string>
     <string name="notification_permission_rationale">لضمان تلقي التذكيرات في الوقت المناسب، يحتاج هذا التطبيق إلى إذن لنشر الإشعارات.</string>
@@ -166,4 +165,15 @@
     <string name="overdue_reminders_message">لديك %d تذكيرات متأخرة. انقر لعرضها.</string>
     <string name="snooze_until_menu_item">غفوة حتى %1$s</string>
     <string name="today">اليوم</string>
+    <string name="reminders_section_title">تذكيرات</string>
+    <string name="add_default_time_title">أضف الوقت الافتراضي</string>
+    <string name="add_default_time_subtitle">الأوقات المقترحة عند إنشاء تذكير</string>
+    <string name="remove_default_time_subtitle">انقر لإزالة</string>
+    <string name="add_button">يضيف</string>
+    <string name="debug_section_title">تصحيح</string>
+    <string name="last_system_error_title">خطأ النظام الأخير</string>
+    <string name="last_system_error_subtitle">%1$s\nحدث: %2$s</string>
+    <string name="system_status_title">حالة النظام</string>
+    <string name="system_status_subtitle_healthy">جميع العاملين يتمتعون بصحة جيدة ويعملون ضمن فترات زمنية.</string>
+    <string name="worker_status_title">حالة العامل</string>
 </resources>

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">రిమైండర్‌మేట్</string>
     <string name="add_reminder">రిమైండర్ జోడించండి</string>
@@ -137,4 +137,15 @@
     <string name="overdue_reminders_message">మీకు %d గడువు ముగిసిన రిమైండర్‌లు ఉన్నాయి. వాటిని వీక్షించడానికి నొక్కండి.</string>
     <string name="snooze_until_menu_item">%1$s వరకు స్నూజ్ చేయండి</string>
     <string name="today">ఈరోజు</string>
+    <string name="reminders_section_title">రిమైండర్‌లు</string>
+    <string name="add_default_time_title">డిఫాల్ట్ సమయాన్ని జోడించండి</string>
+    <string name="add_default_time_subtitle">రిమైండర్‌ను క్రియేట్ చేస్తున్నప్పుడు సూచించిన సమయాలు</string>
+    <string name="remove_default_time_subtitle">తీసివేయడానికి క్లిక్ చేయండి</string>
+    <string name="add_button">జోడించు</string>
+    <string name="debug_section_title">డీబగ్ చేయండి</string>
+    <string name="last_system_error_title">చివరి సిస్టమ్ లోపం</string>
+    <string name="last_system_error_subtitle">%1$s\nజరిగింది: %2$s</string>
+    <string name="system_status_title">సిస్టమ్ స్థితి</string>
+    <string name="system_status_subtitle_healthy">కార్మికులందరూ ఆరోగ్యంగా ఉన్నారు మరియు వ్యవధిలో నడుస్తున్నారు.</string>
+    <string name="worker_status_title">వర్కర్ స్థితి</string>
 </resources>

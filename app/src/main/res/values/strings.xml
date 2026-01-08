@@ -109,6 +109,17 @@
     <string name="overdue_reminders_message">You have %d overdue reminders. Tap to view them.</string>
     <string name="snooze_until_menu_item">Snooze until %1$s</string>
     <string name="today">Today</string>
+    <string name="reminders_section_title">Reminders</string>
+    <string name="add_default_time_title">Add Default Time</string>
+    <string name="add_default_time_subtitle">Times suggested when creating a reminder</string>
+    <string name="remove_default_time_subtitle">Click to remove</string>
+    <string name="add_button">Add</string>
+    <string name="debug_section_title">Debug</string>
+    <string name="last_system_error_title">Last System Error</string>
+    <string name="last_system_error_subtitle">%1$s\nOccurred: %2$s</string>
+    <string name="system_status_title">System Status</string>
+    <string name="system_status_subtitle_healthy">All workers healthy and running within intervals.</string>
+    <string name="worker_status_title">Worker Status</string>
     <plurals name="recurrence_minute">
         <item quantity="one">every minute</item>
         <item quantity="other">every %d minutes</item>

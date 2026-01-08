@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">রিমাইন্ডারমেট</string>
     <string name="add_reminder">অনুস্মারক যোগ করুন</string>
@@ -137,4 +137,15 @@
     <string name="overdue_reminders_message">আপনার %dটি মেয়াদোত্তীর্ণ রিমাইন্ডার আছে। সেগুলি দেখতে ট্যাপ করুন।</string>
     <string name="snooze_until_menu_item">%1$s পর্যন্ত স্নুজ করুন</string>
     <string name="today">आज</string>
+    <string name="reminders_section_title">অনুস্মারক</string>
+    <string name="add_default_time_title">ডিফল্ট সময় যোগ করুন</string>
+    <string name="add_default_time_subtitle">একটি অনুস্মারক তৈরি করার সময় প্রস্তাবিত সময়</string>
+    <string name="remove_default_time_subtitle">অপসারণ করতে ক্লিক করুন</string>
+    <string name="add_button">যোগ করুন</string>
+    <string name="debug_section_title">ডিবাগ</string>
+    <string name="last_system_error_title">শেষ সিস্টেম ত্রুটি</string>
+    <string name="last_system_error_subtitle">%1$s\nঘটেছে: %2$s</string>
+    <string name="system_status_title">সিস্টেমের অবস্থা</string>
+    <string name="system_status_subtitle_healthy">সমস্ত কর্মী সুস্থ এবং বিরতির মধ্যে চলছে।</string>
+    <string name="worker_status_title">কর্মীর অবস্থা</string>
 </resources>

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">நினைவூட்டல்மேட்</string>
     <string name="add_reminder">நினைவூட்டலைச் சேர்</string>
@@ -137,4 +137,15 @@
     <string name="overdue_reminders_message">உங்களிடம் %d காலாவதியான நினைவூட்டல்கள் உள்ளன. அவற்றைப் பார்க்க தட்டவும்.</string>
     <string name="snooze_until_menu_item">%1$s வரை ஒத்திவை</string>
     <string name="today">இன்று</string>
+    <string name="reminders_section_title">நினைவூட்டல்கள்</string>
+    <string name="add_default_time_title">இயல்புநிலை நேரத்தைச் சேர்க்கவும்</string>
+    <string name="add_default_time_subtitle">நினைவூட்டலை உருவாக்கும் போது பரிந்துரைக்கப்படும் நேரங்கள்</string>
+    <string name="remove_default_time_subtitle">அகற்ற கிளிக் செய்யவும்</string>
+    <string name="add_button">சேர்</string>
+    <string name="debug_section_title">பிழைத்திருத்தம்</string>
+    <string name="last_system_error_title">கடைசி கணினி பிழை</string>
+    <string name="last_system_error_subtitle">%1$s\nநிகழ்ந்தது: %2$s</string>
+    <string name="system_status_title">கணினி நிலை</string>
+    <string name="system_status_subtitle_healthy">அனைத்து தொழிலாளர்களும் ஆரோக்கியமாக உள்ளனர் மற்றும் இடைவெளியில் இயங்குகிறார்கள்.</string>
+    <string name="worker_status_title">தொழிலாளர் நிலை</string>
 </resources>

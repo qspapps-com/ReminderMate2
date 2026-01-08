@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ReminderMate</string>
     <string name="add_reminder">リマインダーを追加</string>
@@ -117,7 +117,6 @@
     <plurals name="recurrence_for_times">
         <item quantity="other">%d回</item>
     </plurals>
-
     <string name="notifications_disabled_toast">通知が無効になっています。リマインダーは届きません。</string>
     <string name="permission_required_title">権限が必要です</string>
     <string name="notification_permission_rationale">タイムリーにリマインダーを受け取るために、このアプリには通知を送信する権限が必要です。</string>
@@ -131,4 +130,15 @@
     <string name="overdue_reminders_message">%d 件の期限切れリマインダーがあります。タップして表示します。</string>
     <string name="snooze_until_menu_item">%1$sまでスヌーズ</string>
     <string name="today">今日</string>
+    <string name="reminders_section_title">リマインダー</string>
+    <string name="add_default_time_title">デフォルト時間を追加</string>
+    <string name="add_default_time_subtitle">リマインダーを作成するときに推奨される時間</string>
+    <string name="remove_default_time_subtitle">クリックして削除します</string>
+    <string name="add_button">追加</string>
+    <string name="debug_section_title">デバッグ</string>
+    <string name="last_system_error_title">最後のシステムエラー</string>
+    <string name="last_system_error_subtitle">%1$s\n発生: %2$s</string>
+    <string name="system_status_title">システムステータス</string>
+    <string name="system_status_subtitle_healthy">すべての作業員は健康で、間隔内で稼働しています。</string>
+    <string name="worker_status_title">労働者のステータス</string>
 </resources>

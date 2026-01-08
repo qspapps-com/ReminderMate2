@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">રિમાઇન્ડરમેટ</string>
     <string name="add_reminder">રિમાઇન્ડર ઉમેરો</string>
@@ -137,4 +137,15 @@
     <string name="overdue_reminders_message">તમારી પાસે %d મુદતવીતી ગયેલા રિમાઇન્ડર્સ છે. તેમને જોવા માટે ટેપ કરો.</string>
     <string name="snooze_until_menu_item">%1$s સુધી સ્નૂઝ કરો</string>
     <string name="today">આજે</string>
+    <string name="reminders_section_title">રીમાઇન્ડર્સ</string>
+    <string name="add_default_time_title">ડિફૉલ્ટ સમય ઉમેરો</string>
+    <string name="add_default_time_subtitle">રિમાઇન્ડર બનાવતી વખતે સૂચવવામાં આવેલ સમય</string>
+    <string name="remove_default_time_subtitle">દૂર કરવા માટે ક્લિક કરો</string>
+    <string name="add_button">ઉમેરો</string>
+    <string name="debug_section_title">ડીબગ</string>
+    <string name="last_system_error_title">છેલ્લી સિસ્ટમ ભૂલ</string>
+    <string name="last_system_error_subtitle">%1$s\nબન્યુ: %2$s</string>
+    <string name="system_status_title">સિસ્ટમ સ્થિતિ</string>
+    <string name="system_status_subtitle_healthy">બધા કામદારો સ્વસ્થ છે અને અંતરાલમાં દોડે છે.</string>
+    <string name="worker_status_title">કાર્યકર સ્થિતિ</string>
 </resources>

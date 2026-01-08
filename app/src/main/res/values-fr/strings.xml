@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RappelMate</string>
     <string name="add_reminder">Ajouter un rappel</string>
@@ -137,4 +137,15 @@
     <string name="overdue_reminders_message">Vous avez %d rappels en retard. Appuyez pour les voir.</string>
     <string name="snooze_until_menu_item">Reporter jusqu\'à %1$s</string>
     <string name="today">Aujourd’hui</string>
+    <string name="reminders_section_title">Rappels</string>
+    <string name="add_default_time_title">Ajouter une heure par défaut</string>
+    <string name="add_default_time_subtitle">Horaires suggérés lors de la création d\'un rappel</string>
+    <string name="remove_default_time_subtitle">Cliquez pour supprimer</string>
+    <string name="add_button">Ajouter</string>
+    <string name="debug_section_title">Déboguer</string>
+    <string name="last_system_error_title">Dernière erreur système</string>
+    <string name="last_system_error_subtitle">%1$s\nSurvenu : %2$s</string>
+    <string name="system_status_title">État du système</string>
+    <string name="system_status_subtitle_healthy">Tous les travailleurs sont en bonne santé et courent à intervalles réguliers.</string>
+    <string name="worker_status_title">Statut de travailleur</string>
 </resources>
