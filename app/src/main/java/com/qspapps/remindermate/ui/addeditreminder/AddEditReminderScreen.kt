@@ -1,6 +1,5 @@
 package com.qspapps.remindermate.ui.addeditreminder
 
-import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,10 +46,10 @@ import androidx.navigation.NavController
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.data.model.RecurrenceRule
+import com.qspapps.remindermate.ui.core.HomeDatePickerDialog
 import com.qspapps.remindermate.utils.DateTimeUtils
 import java.time.DayOfWeek
 import java.time.format.TextStyle
-import java.util.Calendar
 import java.util.Locale
 
 
@@ -248,19 +247,18 @@ fun AddEditReminderScreen(
     }
 
     if (showDatePicker) {
-        val datePickerDialog = DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                viewModel.updateStartDateTime(uiState.startDateTime.withYear(year).withMonth(month + 1).withDayOfMonth(dayOfMonth))
+        HomeDatePickerDialog(
+            initialDate = uiState.startDateTime.toLocalDate(),
+            onDateSelected = { selectedDate ->                viewModel.updateStartDateTime(
+                uiState.startDateTime
+                    .withYear(selectedDate.year)
+                    .withMonth(selectedDate.monthValue)
+                    .withDayOfMonth(selectedDate.dayOfMonth)
+            )
                 showDatePicker = false
             },
-            uiState.startDateTime.year,
-            uiState.startDateTime.monthValue - 1,
-            uiState.startDateTime.dayOfMonth
+            onDismiss = { showDatePicker = false }
         )
-        datePickerDialog.datePicker.minDate = Calendar.getInstance().timeInMillis
-        datePickerDialog.setOnDismissListener { showDatePicker = false }
-        datePickerDialog.show()
     }
 
     if (showTimePicker) {

@@ -1,14 +1,11 @@
 package com.qspapps.remindermate.ui.core
 
 import android.widget.Toast
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,20 +32,7 @@ fun CustomSnoozeDialogs(
     val snoozeTime = now.plusMinutes(30)
     val context = LocalContext.current
 
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = snoozeTime
-            .atZone(ZoneId.systemDefault())
-            .toInstant()
-            .toEpochMilli(),
-        selectableDates = object : SelectableDates {
-            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                val selectedDate = Instant.ofEpochMilli(utcTimeMillis)
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-                return selectedDate >= LocalDate.now()
-            }
-        }
-    )
+    var selectedLocalDate by remember { mutableStateOf(snoozeTime.toLocalDate()) }
 
     val timePickerState = rememberTimePickerState(
         initialHour = snoozeTime.hour,
@@ -56,34 +40,26 @@ fun CustomSnoozeDialogs(
     )
 
     if (showDatePicker) {
-        DatePickerDialog(
-            onDismissRequest = {
+        HomeDatePickerDialog(
+            initialDate = selectedLocalDate,
+            selectableDates = object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                    val date = Instant.ofEpochMilli(utcTimeMillis)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                    return date >= LocalDate.now()
+                }
+            },
+            onDateSelected = { date ->
+                selectedLocalDate = date
+                showDatePicker = false
+                showTimePicker = true
+            },
+            onDismiss = {
                 showDatePicker = false
                 onDismiss()
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showDatePicker = false
-                        showTimePicker = true
-                    }
-                ) {
-                    Text(stringResource(id = R.string.ok_button))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        showDatePicker = false
-                        onDismiss()
-                    }
-                ) {
-                    Text(stringResource(id = R.string.cancel_button))
-                }
             }
-        ) {
-            DatePicker(state = datePickerState)
-        }
+        )
     }
 
     if (showTimePicker) {
@@ -96,11 +72,8 @@ fun CustomSnoozeDialogs(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val selectedDate = datePickerState.selectedDateMillis?.let {
-                            Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
-                        }
-                        if (selectedDate != null) {
-                            val newDateTime = selectedDate.atTime(timePickerState.hour, timePickerState.minute)
+                        if (selectedLocalDate != null) {
+                            val newDateTime = selectedLocalDate.atTime(timePickerState.hour, timePickerState.minute)
                             if (newDateTime.isBefore(LocalDateTime.now())) {
                                 Toast.makeText(
                                     context,

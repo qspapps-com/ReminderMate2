@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -20,14 +21,15 @@ import java.time.ZoneOffset
 fun HomeDatePickerDialog(
     initialDate: LocalDate,
     onDateSelected: (LocalDate) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    selectableDates: SelectableDates = object : SelectableDates {} // Default allows all dates
 ) {
-    // DatePickerState uses UTC milliseconds
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = initialDate
             .atStartOfDay(ZoneOffset.UTC)
             .toInstant()
-            .toEpochMilli()
+            .toEpochMilli(),
+        selectableDates = selectableDates
     )
 
     DatePickerDialog(
@@ -35,7 +37,6 @@ fun HomeDatePickerDialog(
         confirmButton = {
             TextButton(onClick = {
                 datePickerState.selectedDateMillis?.let { millis ->
-                    // Convert UTC millis back to LocalDate using System Default Zone
                     val selectedDate = Instant.ofEpochMilli(millis)
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate()
@@ -47,19 +48,19 @@ fun HomeDatePickerDialog(
         },
         dismissButton = {
             Row {
-                TextButton(onClick = {
-                    val todayMillis = LocalDate.now()
-                        .atStartOfDay(ZoneOffset.UTC)
-                        .toInstant()
-                        .toEpochMilli()
-                    // This jumps the UI to today's date and selects it
-                    datePickerState.selectedDateMillis = todayMillis
-                    datePickerState.displayedMonthMillis = todayMillis
-                }) {
-                    // You might need to add this string to your strings.xml
-                    // or use a hardcoded string/android resource
-                    Text(stringResource(id = R.string.today))
+                // Only show "Today" shortcut if today is selectable
+                val today = LocalDate.now()
+                val todayMillis = today.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+
+                if (selectableDates.isSelectableDate(todayMillis)) {
+                    TextButton(onClick = {
+                        datePickerState.selectedDateMillis = todayMillis
+                        datePickerState.displayedMonthMillis = todayMillis
+                    }) {
+                        Text(stringResource(id = R.string.today))
+                    }
                 }
+
                 TextButton(onClick = onDismiss) {
                     Text(stringResource(id = android.R.string.cancel))
                 }
