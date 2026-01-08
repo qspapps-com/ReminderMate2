@@ -3,8 +3,6 @@ package com.qspapps.remindermate.ui.core
 import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SelectableDates
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -40,7 +38,7 @@ fun CustomSnoozeDialogs(
     )
 
     if (showDatePicker) {
-        HomeDatePickerDialog(
+        DatePickerDialog(
             initialDate = selectedLocalDate,
             selectableDates = object : SelectableDates {
                 override fun isSelectableDate(utcTimeMillis: Long): Boolean {
@@ -69,61 +67,22 @@ fun CustomSnoozeDialogs(
                 showTimePicker = false
                 onDismiss()
             },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        if (selectedLocalDate != null) {
-                            val newDateTime = selectedLocalDate.atTime(timePickerState.hour, timePickerState.minute)
-                            if (newDateTime.isBefore(LocalDateTime.now())) {
-                                Toast.makeText(
-                                    context,
-                                    pastSnoozeErrorText,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                onConfirm(newDateTime)
-                                showTimePicker = false
-                                onDismiss()
-                            }
-                        } else {
-                            // Should not happen as a date must be selected to get here
-                            showTimePicker = false
-                            onDismiss()
-                        }
-                    }
-                ) {
-                    Text(stringResource(id = R.string.ok_button))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        showTimePicker = false
-                        onDismiss()
-                    }
-                ) {
-                    Text(stringResource(id = R.string.cancel_button))
+            onConfirm = {
+                val newDateTime = selectedLocalDate.atTime(timePickerState.hour, timePickerState.minute)
+                if (newDateTime.isBefore(LocalDateTime.now())) {
+                    Toast.makeText(
+                        context,
+                        pastSnoozeErrorText,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    onConfirm(newDateTime)
+                    showTimePicker = false
+                    onDismiss()
                 }
             }
         ) {
             TimePicker(state = timePickerState)
         }
     }
-}
-
-@Composable
-fun TimePickerDialog(
-    title: String = stringResource(id = R.string.select_time_title),
-    onDismissRequest: () -> Unit,
-    confirmButton: @Composable () -> Unit,
-    dismissButton: (@Composable () -> Unit)?,
-    content: @Composable () -> Unit,
-) {
-    androidx.compose.material3.AlertDialog(
-        onDismissRequest = onDismissRequest,
-        title = { Text(title) },
-        text = content,
-        confirmButton = confirmButton,
-        dismissButton = dismissButton
-    )
 }

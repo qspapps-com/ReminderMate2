@@ -43,7 +43,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.qspapps.remindermate.R
-import com.qspapps.remindermate.ui.core.HomeDatePickerDialog
+import com.qspapps.remindermate.ui.core.DatePickerDialog
 import com.qspapps.remindermate.ui.core.ReminderInstanceItem
 import com.qspapps.remindermate.ui.navigation.AppScreen
 import java.time.LocalDate
@@ -196,7 +196,7 @@ fun HomeScreen(
     }
 
     if (showDatePicker) {
-        HomeDatePickerDialog(
+        DatePickerDialog(
             initialDate = uiState.selectedDate,
             onDateSelected = { selectedDate ->
                 viewModel.loadRemindersForDay(selectedDate)

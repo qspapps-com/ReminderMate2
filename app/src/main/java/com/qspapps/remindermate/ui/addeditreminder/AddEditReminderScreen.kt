@@ -1,6 +1,5 @@
 package com.qspapps.remindermate.ui.addeditreminder
 
-import android.app.TimePickerDialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -27,7 +26,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,7 +47,8 @@ import androidx.navigation.NavController
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.data.model.RecurrenceRule
-import com.qspapps.remindermate.ui.core.HomeDatePickerDialog
+import com.qspapps.remindermate.ui.core.DatePickerDialog
+import com.qspapps.remindermate.ui.core.TimePickerDialog
 import com.qspapps.remindermate.utils.DateTimeUtils
 import java.time.DayOfWeek
 import java.time.format.TextStyle
@@ -247,7 +249,7 @@ fun AddEditReminderScreen(
     }
 
     if (showDatePicker) {
-        HomeDatePickerDialog(
+        DatePickerDialog(
             initialDate = uiState.startDateTime.toLocalDate(),
             onDateSelected = { selectedDate ->                viewModel.updateStartDateTime(
                 uiState.startDateTime
@@ -262,20 +264,23 @@ fun AddEditReminderScreen(
     }
 
     if (showTimePicker) {
-        val timePickerDialog = TimePickerDialog(
-            context,
-            { _, hour, minute ->
-                viewModel.updateStartDateTime(uiState.startDateTime.withHour(hour).withMinute(minute))
-                showTimePicker = false
-            },
-            uiState.startDateTime.hour,
-            uiState.startDateTime.minute, true
+        val timeState = rememberTimePickerState(
+            initialHour = uiState.startDateTime.hour,
+            initialMinute = uiState.startDateTime.minute
         )
-        timePickerDialog.setOnDismissListener { showTimePicker = false }
-        timePickerDialog.show()
+        TimePickerDialog(
+            onDismissRequest = { showTimePicker = false },
+            onConfirm = {
+                viewModel.updateStartDateTime(
+                    uiState.startDateTime.withHour(timeState.hour).withMinute(timeState.minute)
+                )
+                showTimePicker = false
+            }
+        ) {
+            TimePicker(state = timeState)
+        }
     }
 }
-
 @Composable
 private fun RecurrenceRule?.toDisplayString(): String {
     if (this == null) return stringResource(id = R.string.repeat_option_none)

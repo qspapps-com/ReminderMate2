@@ -2,7 +2,6 @@ package com.qspapps.remindermate.ui.core
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
@@ -18,7 +17,7 @@ import java.time.ZoneOffset
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeDatePickerDialog(
+fun DatePickerDialog(
     initialDate: LocalDate,
     onDateSelected: (LocalDate) -> Unit,
     onDismiss: () -> Unit,
@@ -32,7 +31,7 @@ fun HomeDatePickerDialog(
         selectableDates = selectableDates
     )
 
-    DatePickerDialog(
+    androidx.compose.material3.DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
