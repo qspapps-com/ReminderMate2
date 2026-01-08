@@ -58,7 +58,6 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     var showDatePicker by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
-    val context = LocalContext.current
     val currentTime by viewModel.currentTime.collectAsStateWithLifecycle()
     val hideCompletedRemindersTooltipState = rememberTooltipState()
     val showCompletedText = if (uiState.showCompleted) stringResource(id = R.string.hide_completed) else stringResource(id = R.string.show_completed)

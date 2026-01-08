@@ -4,7 +4,6 @@ import android.util.Log
 import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 
 private const val TAG = "RecurrenceRule"
 

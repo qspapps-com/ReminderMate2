@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qspapps.remindermate.data.local.BackupAndRestore
 import com.qspapps.remindermate.data.local.BackupData
-import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.data.repository.Theme
 import com.qspapps.remindermate.data.repository.UserPreferencesRepository

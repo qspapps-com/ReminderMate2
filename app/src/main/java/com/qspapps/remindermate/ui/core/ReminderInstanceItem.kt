@@ -1,6 +1,5 @@
 package com.qspapps.remindermate.ui.core
 
-import androidx.compose.animation.with
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons

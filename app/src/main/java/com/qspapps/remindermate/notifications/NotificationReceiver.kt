@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.qspapps.remindermate.data.local.ReminderActionDao
-import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.model.ActionType
 import com.qspapps.remindermate.data.model.ReminderAction
 import com.qspapps.remindermate.data.repository.ReminderRepository

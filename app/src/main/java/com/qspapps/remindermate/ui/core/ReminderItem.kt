@@ -14,11 +14,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.qspapps.remindermate.R
-import com.qspapps.remindermate.data.model.Frequency
-import com.qspapps.remindermate.data.model.RecurrenceRule
 import com.qspapps.remindermate.data.model.Reminder
 import java.time.format.DateTimeFormatter
 

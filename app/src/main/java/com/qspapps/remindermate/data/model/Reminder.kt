@@ -3,10 +3,7 @@ package com.qspapps.remindermate.data.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
-import java.time.DayOfWeek
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 
 @Serializable
 @Entity(tableName = "reminders")
