@@ -35,12 +35,12 @@ object AppModule {
     }
 
     @Provides
-    internal fun provideReminderDao(database: ReminderDatabase): ReminderDao {
+    fun provideReminderDao(database: ReminderDatabase): ReminderDao {
         return database.reminderDao()
     }
 
     @Provides
-    internal fun provideReminderActionDao(database: ReminderDatabase): ReminderActionDao {
+    fun provideReminderActionDao(database: ReminderDatabase): ReminderActionDao {
         return database.reminderActionDao()
     }
 
