@@ -67,28 +67,20 @@ class ReminderRepository(private val reminderDao: ReminderDao, private val remin
                 // Find all occurrences from startDateTime up to threshold
                 val occurrencesBeforeThreshold = reminder.getOccurrences(reminder.startDateTime, threshold)
 
-                var firstRemainingTime: LocalDateTime? = null
-                
                 // Find the first instance that is NOT completed and NOT deleted before threshold
-                for (time in occurrencesBeforeThreshold) {
+                val firstUnclearedTime = occurrencesBeforeThreshold.firstOrNull { time ->
                     val action = actions.find { it.originalScheduledTime == time }
-                    if (action?.type != ActionType.COMPLETED && action?.type != ActionType.DELETED) {
-                        firstRemainingTime = time
-                        break
-                    }
+                    action?.type != ActionType.COMPLETED && action?.type != ActionType.DELETED
                 }
 
-                if (firstRemainingTime == null) {
-                    // All instances before threshold are completed/deleted.
-                    // Find the first raw occurrence at or after threshold (passing empty actions to get raw schedule)
-                    firstRemainingTime = reminder.getNextOccurrence(emptyList(), threshold.minusNanos(1))?.originalTime
-                }
+                val firstRemainingTime = firstUnclearedTime
+                    ?: reminder.getNextOccurrence(emptyList(), threshold.minusNanos(1))?.originalTime
 
                 if (firstRemainingTime != null) {
                     if (firstRemainingTime != reminder.startDateTime) {
                         update(reminder.copy(startDateTime = firstRemainingTime))
                         // Clean up actions that are now before the new startDateTime
-                        actions.filter { it.originalScheduledTime.isBefore(firstRemainingTime!!) }
+                        actions.filter { it.originalScheduledTime.isBefore(firstRemainingTime) }
                             .forEach { reminderActionDao.delete(it) }
                     }
                 } else {

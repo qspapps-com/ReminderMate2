@@ -11,12 +11,15 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
+import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val TAG = "BackupAndRestore"
 @Serializable
 data class BackupData(val reminders: List<Reminder>, val actions: List<ReminderAction>)
 
-class BackupAndRestore {
+@Singleton
+class BackupAndRestore @Inject constructor() {
 
     private val json = Json { prettyPrint = true; isLenient = true; ignoreUnknownKeys = true }
 

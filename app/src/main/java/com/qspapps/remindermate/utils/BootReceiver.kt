@@ -3,7 +3,7 @@ package com.qspapps.remindermate.utils
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.qspapps.remindermate.data.local.ReminderDao
+import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.data.repository.UserPreferencesRepository
 import com.qspapps.remindermate.di.ApplicationScope
 import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class BootReceiver : BroadcastReceiver() {
 
     @Inject
-    lateinit var reminderDao: ReminderDao
+    lateinit var reminderRepository: ReminderRepository
 
     @Inject
     lateinit var scheduler: ReminderAlarmScheduler
@@ -34,7 +34,7 @@ class BootReceiver : BroadcastReceiver() {
             val pendingResult = goAsync()
             applicationScope.launch {
                 try {
-                    val reminders = reminderDao.getAll().first()
+                    val reminders = reminderRepository.getAllReminders().first()
                     reminders.forEach { scheduler.schedule(it) }
                 } catch (e: Exception) {
                     userPreferencesRepository.saveError("BootReceiver Error: ${e.localizedMessage}")

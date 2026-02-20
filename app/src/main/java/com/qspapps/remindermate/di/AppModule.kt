@@ -1,12 +1,11 @@
 package com.qspapps.remindermate.di
 
 import android.content.Context
-import com.qspapps.remindermate.data.local.BackupAndRestore
+import androidx.room.Room
 import com.qspapps.remindermate.data.local.ReminderActionDao
 import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.local.ReminderDatabase
 import com.qspapps.remindermate.data.repository.ReminderRepository
-import com.qspapps.remindermate.data.repository.UserPreferencesRepository
 import com.qspapps.remindermate.notifications.NotificationService
 import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
 import dagger.Module
@@ -31,7 +30,13 @@ object AppModule {
     @Provides
     @Singleton
     fun provideReminderDatabase(@ApplicationContext context: Context): ReminderDatabase {
-        return ReminderDatabase.getDatabase(context)
+        return Room.databaseBuilder(
+            context.applicationContext,
+            ReminderDatabase::class.java,
+            "reminder_database"
+        )
+            .fallbackToDestructiveMigration(true)
+            .build()
     }
 
     @Provides
@@ -69,15 +74,4 @@ object AppModule {
         return CoroutineScope(SupervisorJob() + Dispatchers.Default)
     }
 
-    @Provides
-    @Singleton
-    fun provideBackupAndRestore(): BackupAndRestore {
-        return BackupAndRestore()
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserPreferencesRepository(@ApplicationContext context: Context): UserPreferencesRepository {
-        return UserPreferencesRepository(context)
-    }
 }

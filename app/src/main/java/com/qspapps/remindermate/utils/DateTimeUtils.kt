@@ -6,18 +6,18 @@ import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 object DateTimeUtils {
+    private val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.getDefault())
+    private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM, yyyy", Locale.getDefault())
+
     fun formatDateTime(dateTime: LocalDateTime, separator: String = "-"): String =
         "${formatDate(dateTime)}$separator${formatTime(dateTime)}"
-    fun formatTime(localDateTime: LocalDateTime): String {
-        val formatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.getDefault())
-        return localDateTime.format(formatter)
-    }
-    fun formatDate(localDateTime: LocalDateTime): String {
-        val formatter = DateTimeFormatter.ofPattern("dd MMM, yyyy", Locale.getDefault())
-        return localDateTime.format(formatter)
-    }
 
-    fun minsFromNow(minutes: Long): LocalDateTime {
-        return LocalDateTime.now().plusMinutes(minutes).truncatedTo(ChronoUnit.MINUTES)
-    }
+    fun formatTime(localDateTime: LocalDateTime): String =
+        localDateTime.format(timeFormatter)
+
+    fun formatDate(localDateTime: LocalDateTime): String =
+        localDateTime.format(dateFormatter)
+
+    fun minsFromNow(minutes: Long): LocalDateTime =
+        LocalDateTime.now().plusMinutes(minutes).truncatedTo(ChronoUnit.MINUTES)
 }

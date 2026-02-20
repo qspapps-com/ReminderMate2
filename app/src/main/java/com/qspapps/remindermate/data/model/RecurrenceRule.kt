@@ -4,6 +4,7 @@ import android.util.Log
 import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDateTime
+import java.time.temporal.TemporalAdjusters
 
 private const val TAG = "RecurrenceRule"
 
@@ -48,9 +49,9 @@ data class RecurrenceRule(
                     if (interval > 1) {
                         // Find the start of the week for both dates (Monday)
                         val fromStartOfWeek = fromDateTime.toLocalDate()
-                            .with(java.time.temporal.TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                            .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                         val candidateStartOfWeek = candidate.toLocalDate()
-                            .with(java.time.temporal.TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                            .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 
                         // If candidate falls in next week, we should skip by interval weeks - 1
                         if (fromStartOfWeek != candidateStartOfWeek) {
