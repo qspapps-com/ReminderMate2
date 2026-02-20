@@ -33,6 +33,7 @@ import androidx.navigation.NavController
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.ui.core.ReminderItem
+import com.qspapps.remindermate.ui.navigation.AppScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,12 +62,6 @@ fun AllRemindersScreen(
             var expanded by remember { mutableStateOf(false) }
             val filterOptions = listOf(FilterType.All, FilterType.None) + Frequency.entries.map(FilterType::FrequencyFilter)
 
-            val selectedText = when (val filter = uiState.selectedFilter) {
-                is FilterType.All -> stringResource(id = R.string.filter_option_all)
-                is FilterType.None -> stringResource(id = R.string.filter_option_none)
-                is FilterType.FrequencyFilter -> stringResource(id = filter.frequency.toStringResource())
-            }
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -77,7 +72,7 @@ fun AllRemindersScreen(
                     onExpandedChange = { expanded = !expanded }
                 ) {
                     OutlinedTextField(
-                        value = selectedText,
+                        value = uiState.selectedFilter.displayText(),
                         onValueChange = {},
                         readOnly = true,
                         label = { Text(stringResource(id = R.string.filter_by_frequency_label)) },
@@ -91,13 +86,8 @@ fun AllRemindersScreen(
                         onDismissRequest = { expanded = false }
                     ) {
                         filterOptions.forEach { filter ->
-                            val text = when (filter) {
-                                is FilterType.All -> stringResource(id = R.string.filter_option_all)
-                                is FilterType.None -> stringResource(id = R.string.filter_option_none)
-                                is FilterType.FrequencyFilter -> stringResource(id = filter.frequency.toStringResource())
-                            }
                             DropdownMenuItem(
-                                text = { Text(text) },
+                                text = { Text(filter.displayText()) },
                                 onClick = {
                                     viewModel.setFilter(filter)
                                     expanded = false
@@ -113,7 +103,7 @@ fun AllRemindersScreen(
                     ReminderItem(
                         reminder = reminder,
                         onUpdate = {
-                            navController.navigate("add_edit_reminder?reminderId=${it}")
+                            navController.navigate(AppScreen.AddEditReminder.createRoute(it))
                         },
                         onDelete = viewModel::deleteReminder
                     )
@@ -124,13 +114,17 @@ fun AllRemindersScreen(
 }
 
 @Composable
-private fun Frequency.toStringResource(): Int {
-    return when (this) {
-        Frequency.MINUTE -> R.string.repeat_option_minute
-        Frequency.HOURLY -> R.string.repeat_option_hourly
-        Frequency.DAILY -> R.string.repeat_option_daily
-        Frequency.WEEKLY -> R.string.repeat_option_weekly
-        Frequency.MONTHLY -> R.string.repeat_option_monthly
-        Frequency.YEARLY -> R.string.repeat_option_yearly
-    }
+private fun FilterType.displayText(): String = when (this) {
+    is FilterType.All -> stringResource(id = R.string.filter_option_all)
+    is FilterType.None -> stringResource(id = R.string.filter_option_none)
+    is FilterType.FrequencyFilter -> stringResource(id = frequency.toStringResource())
+}
+
+private fun Frequency.toStringResource(): Int = when (this) {
+    Frequency.MINUTE -> R.string.repeat_option_minute
+    Frequency.HOURLY -> R.string.repeat_option_hourly
+    Frequency.DAILY -> R.string.repeat_option_daily
+    Frequency.WEEKLY -> R.string.repeat_option_weekly
+    Frequency.MONTHLY -> R.string.repeat_option_monthly
+    Frequency.YEARLY -> R.string.repeat_option_yearly
 }

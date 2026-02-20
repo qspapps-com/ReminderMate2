@@ -7,7 +7,6 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -31,7 +30,6 @@ import com.qspapps.remindermate.utils.DateTimeUtils.formatTime
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReminderInstanceItem(
     reminderInstance: ReminderInstance,
@@ -105,7 +103,7 @@ fun ReminderInstanceItem(
                             val now = LocalDateTime.now()
                             val nextDefaultTime = defaultTimes
                                 .map { now.with(it) }
-                                .filter { it.isAfter(reminderInstance.displayTime) }
+                                .filter { it.isAfter(now) && it.isAfter(reminderInstance.displayTime)}
                                 .minByOrNull { it }
 
                             if (nextDefaultTime != null) {

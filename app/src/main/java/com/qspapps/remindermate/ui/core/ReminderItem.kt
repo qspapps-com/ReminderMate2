@@ -30,7 +30,8 @@ fun ReminderItem(
     ListItem(
         headlineContent = { Text(reminder.title) },
         supportingContent = {
-            val dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(id = R.string.reminder_item_date_time_format))
+            val formatPattern = stringResource(id = R.string.reminder_item_date_time_format)
+            val dateTimeFormatter = remember(formatPattern) { DateTimeFormatter.ofPattern(formatPattern) }
             val fullDescription = buildString {
                 if (!reminder.description.isNullOrEmpty()) {
                     append(reminder.description)

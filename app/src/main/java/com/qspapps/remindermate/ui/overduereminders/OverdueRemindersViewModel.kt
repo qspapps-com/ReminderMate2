@@ -25,7 +25,7 @@ data class OverdueRemindersUiState(
 @HiltViewModel
 class OverdueRemindersViewModel @Inject constructor(
     reminderRepository: ReminderRepository,
-    private val userPreferencesRepository: UserPreferencesRepository, // Injected
+    userPreferencesRepository: UserPreferencesRepository, // Injected
     reminderAlarmScheduler: ReminderAlarmScheduler,
     notificationService: NotificationService
 ) : ReminderViewModel(reminderRepository, reminderAlarmScheduler, notificationService) {

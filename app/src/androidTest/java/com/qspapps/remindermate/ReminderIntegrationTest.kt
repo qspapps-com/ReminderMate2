@@ -368,16 +368,14 @@ class ReminderIntegrationTest {
             .assertIsDisplayed()
 
         // Click on Theme setting
-        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.theme_setting_title))
-            .performClick()
+        composeTestRule.onNodeWithTag("setting_theme").performClick()
 
         // Verify Theme dialog is shown
         composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.choose_theme_dialog_title))
             .assertIsDisplayed()
 
         // Select Dark theme
-        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.theme_dark))
-            .performClick()
+        composeTestRule.onNodeWithTag("theme_option_DARK").performClick()
 
         // Verify dialog is closed and theme text is updated
         composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.theme_dark))

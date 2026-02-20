@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -53,8 +54,10 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.ui.platform.testTag
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -177,6 +180,7 @@ fun SettingsScreen(
             }
             item {
                 SettingsItem(
+                    modifier = Modifier.testTag("setting_theme"), // Tag for the main row
                     icon = if (uiState.theme == Theme.DARK) Icons.Default.DarkMode else Icons.Default.LightMode,
                     title = stringResource(id = R.string.theme_setting_title),
                     subtitle = stringResource(id = uiState.theme.toStringResource()),
@@ -306,7 +310,7 @@ fun SettingsScreen(
 }
 
 @Composable
-fun ThemeSelectionDialog(
+private fun ThemeSelectionDialog(
     currentTheme: Theme,
     onThemeSelected: (Theme) -> Unit,
     onDismiss: () -> Unit
@@ -319,13 +323,15 @@ fun ThemeSelectionDialog(
                 Theme.entries.forEach { theme ->
                     ListItem(
                         headlineContent = { Text(stringResource(id = theme.toStringResource())) },
-                        modifier = Modifier.clickable { onThemeSelected(theme); onDismiss() },
+                        modifier = Modifier
+                            .testTag("theme_option_${theme.name}") // Unique tag per theme
+                            .clickable { onThemeSelected(theme); onDismiss() },
                         leadingContent = {
                             Icon(
                                 imageVector = when (theme) {
                                     Theme.LIGHT -> Icons.Default.LightMode
                                     Theme.DARK -> Icons.Default.DarkMode
-                                    Theme.SYSTEM -> Icons.Default.DarkMode // Choose an appropriate icon
+                                    Theme.SYSTEM -> Icons.Default.Home
                                 },
                                 contentDescription = null
                             )
@@ -345,7 +351,7 @@ fun ThemeSelectionDialog(
 // --- Reusable Custom Composables ---
 
 @Composable
-fun SettingsSectionTitle(text: String) {
+private fun SettingsSectionTitle(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.titleMedium,
@@ -358,23 +364,21 @@ fun SettingsSectionTitle(text: String) {
  * A standard clickable settings item (Navigation or Action)
  */
 @Composable
-fun SettingsItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+private fun SettingsItem(
+    icon: ImageVector,
     title: String,
+    modifier: Modifier = Modifier,
     subtitle: String? = null,
     onClick: () -> Unit
 ) {
     ListItem(
-        modifier = Modifier.clickable { onClick() },
+        modifier = modifier.clickable { onClick() }, // Use the modifier here
         headlineContent = { Text(title) },
         supportingContent = if (subtitle != null) {
             { Text(subtitle) }
         } else null,
         leadingContent = {
-            Icon(
-                imageVector = icon,
-                contentDescription = null
-            )
+            Icon(imageVector = icon, contentDescription = null)
         }
     )
 }
@@ -383,28 +387,22 @@ fun SettingsItem(
  * A settings item with a toggle switch
  */
 @Composable
-fun SettingsSwitchItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+private fun SettingsSwitchItem(
+    icon: ImageVector,
     title: String,
     checked: Boolean,
+    modifier: Modifier = Modifier, // Added modifier parameter
     onCheckedChange: (Boolean) -> Unit
 ) {
     ListItem(
+        modifier = modifier.clickable { onCheckedChange(!checked) }, // Use the modifier here
         headlineContent = { Text(title) },
         leadingContent = {
-            Icon(
-                imageVector = icon,
-                contentDescription = null
-            )
+            Icon(imageVector = icon, contentDescription = null)
         },
         trailingContent = {
-            Switch(
-                checked = checked,
-                onCheckedChange = onCheckedChange
-            )
-        },
-        // Using Modifier.clickable on the row allows clicking anywhere to toggle
-        modifier = Modifier.clickable { onCheckedChange(!checked) }
+            Switch(checked = checked, onCheckedChange = onCheckedChange)
+        }
     )
 }
 

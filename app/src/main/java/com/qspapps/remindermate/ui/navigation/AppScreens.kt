@@ -13,15 +13,15 @@ sealed class AppScreen(
     val displayName: Int? = null,
     val icon: ImageVector? = null
 ) {
-    object Home : AppScreen("home")
-    object Settings : AppScreen("settings", R.string.settings_title, Icons.Default.Settings)
-    object About : AppScreen("about", R.string.about, Icons.Default.Info)
-    object AllReminders : AppScreen("all_reminders", R.string.all_reminders_title,
+    data object Home : AppScreen("home")
+    data object Settings : AppScreen("settings", R.string.settings_title, Icons.Default.Settings)
+    data object About : AppScreen("about", R.string.about, Icons.Default.Info)
+    data object AllReminders : AppScreen("all_reminders", R.string.all_reminders_title,
         Icons.AutoMirrored.Filled.List
     )
-    object OverdueReminders : AppScreen("overdue_reminders", R.string.overdue_reminders_title, Icons.Default.Notifications)
+    data object OverdueReminders : AppScreen("overdue_reminders", R.string.overdue_reminders_title, Icons.Default.Notifications)
 
-    object AddEditReminder : AppScreen("add_edit_reminder?reminderId={reminderId}") {
+    data object AddEditReminder : AppScreen("add_edit_reminder?reminderId={reminderId}") {
         fun createRoute(reminderId: Long) = "add_edit_reminder?reminderId=$reminderId"
     }
 }

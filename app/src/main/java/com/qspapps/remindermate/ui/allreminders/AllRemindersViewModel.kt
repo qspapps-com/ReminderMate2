@@ -16,8 +16,8 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 sealed class FilterType {
-    object All : FilterType()
-    object None : FilterType()
+    data object All : FilterType()
+    data object None : FilterType()
     data class FrequencyFilter(val frequency: Frequency) : FilterType()
 }
 
