@@ -6,8 +6,11 @@ import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 object DateTimeUtils {
-    private val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.getDefault())
-    private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM, yyyy", Locale.getDefault())
+    private val timeFormatter: DateTimeFormatter
+        get() = DateTimeFormatter.ofPattern("hh:mm a", Locale.getDefault())
+
+    private val dateFormatter: DateTimeFormatter
+        get() = DateTimeFormatter.ofPattern("dd MMM, yyyy", Locale.getDefault())
 
     fun formatDateTime(dateTime: LocalDateTime, separator: String = "-"): String =
         "${formatDate(dateTime)}$separator${formatTime(dateTime)}"

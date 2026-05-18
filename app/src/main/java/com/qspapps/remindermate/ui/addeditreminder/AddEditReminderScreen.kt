@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -51,7 +52,6 @@ import com.qspapps.remindermate.ui.core.TimePickerDialog
 import com.qspapps.remindermate.utils.DateTimeUtils
 import java.time.DayOfWeek
 import java.time.format.TextStyle
-import java.util.Locale
 
 
 private sealed class RepeatOption(val displayName: Int) {
@@ -91,11 +91,11 @@ fun AddEditReminderScreen(
                 }
             )
         }
-    ) {
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
+                .padding(innerPadding)
                 .padding(16.dp)
         ) {
             if (uiState.isLoading) {
@@ -249,12 +249,13 @@ fun AddEditReminderScreen(
     if (showDatePicker) {
         DatePickerDialog(
             initialDate = uiState.startDateTime.toLocalDate(),
-            onDateSelected = { selectedDate ->                viewModel.updateStartDateTime(
-                uiState.startDateTime
-                    .withYear(selectedDate.year)
-                    .withMonth(selectedDate.monthValue)
-                    .withDayOfMonth(selectedDate.dayOfMonth)
-            )
+            onDateSelected = { selectedDate ->
+                viewModel.updateStartDateTime(
+                    uiState.startDateTime
+                        .withYear(selectedDate.year)
+                        .withMonth(selectedDate.monthValue)
+                        .withDayOfMonth(selectedDate.dayOfMonth)
+                )
                 showDatePicker = false
             },
             onDismiss = { showDatePicker = false }
@@ -325,6 +326,7 @@ private fun DayOfWeekButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val locale = LocalConfiguration.current.locales[0]
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -333,6 +335,6 @@ private fun DayOfWeekButton(
         ),
         modifier = modifier
     ) {
-        Text(text = day.getDisplayName(TextStyle.NARROW, Locale.getDefault()))
+        Text(text = day.getDisplayName(TextStyle.NARROW, locale))
     }
 }
