@@ -6,6 +6,10 @@ Reminder Mate is a minimal productivity app designed to help you manage your rem
 
 Built with a philosophy of simplicity and quality, Reminder Mate is your perfect companion for staying organized.
 
+<a href="https://play.google.com/store/apps/details?id=com.qspapps.remindermate">
+  <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="60"/>
+</a>
+
 ---
 
 ## ✨ Key Features
