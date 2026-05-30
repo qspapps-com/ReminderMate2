@@ -30,9 +30,9 @@ Built with a philosophy of simplicity and quality, Reminder Mate is your perfect
 
 ## 📸 Screenshots
 
-| Home Screen (Empty) | Home Screen (With Reminders) | Add/Edit Reminder |
-| :-----------------: | :--------------------------: | :-----------------: |
-| ![Screenshot of Home Screen (Empty)](https://via.placeholder.com/250x500.png?text=Home+Screen) | ![Screenshot of Home Screen (With Reminders)](https://via.placeholder.com/250x500.png?text=Active+Reminders) | ![Screenshot of Add Reminder Screen](https://via.placeholder.com/250x500.png?text=Add+Reminder) |
+|                    Home Screen (Empty)                    |                           Add Reminder Screen                            |                        Dark Mode                        |
+|:---------------------------------------------------------:|:------------------------------------------------------------------------:|:-------------------------------------------------------:|
+| ![Screenshot of Home Screen](screenshots/home_screen.png) | ![Screenshot of Add/Edit Reminders](screenshots/add_reminder_screen.png) | ![Screenshot of Dark Mode](screenshots/dark_screen.png) |
 
 ---
 
