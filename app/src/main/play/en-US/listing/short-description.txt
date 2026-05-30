@@ -1,0 +1,1 @@
+Simple, private, offline & ad-free reminder app built with Material 3.

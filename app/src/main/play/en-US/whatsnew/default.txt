@@ -1,0 +1,4 @@
+• Modern Material 3 UI design.
+• Create daily, weekly, monthly, or custom recurring reminders.
+• Interactive notifications to snooze or complete tasks directly from the drawer.
+• Full offline privacy and offline data backup/restore.
