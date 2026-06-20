@@ -89,3 +89,8 @@ dependencies {
     ksp(libs.androidx.hilt.compiler)
 
 }
+
+configurations.all {
+    exclude(group = "io.opencensus", module = "opencensus-api")
+    exclude(group = "io.opencensus", module = "opencensus-proto")
+}
