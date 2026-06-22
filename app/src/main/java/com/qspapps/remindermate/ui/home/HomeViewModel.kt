@@ -22,6 +22,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 data class HomeUiState(
     val selectedDate: LocalDate = LocalDate.now(),
@@ -49,7 +50,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             while (true) {
                 _currentTime.value = LocalDateTime.now()
-                delay(60_000L) // Delay for a minute
+                delay(60_000L.milliseconds) // Delay for a minute
             }
         }
 

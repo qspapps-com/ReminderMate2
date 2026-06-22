@@ -6,16 +6,20 @@ plugins {
     alias(libs.plugins.kotlin.plugin.serialization)
 }
 
+kotlin {
+    jvmToolchain(21)
+}
+
 android {
     namespace = "com.qspapps.remindermate"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     defaultConfig {
         applicationId = "com.qspapps.remindermate"
         minSdk = 29
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 20
         versionName = "2.0.19"
 
@@ -35,11 +39,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
-    }
-    kotlin {
-        jvmToolchain {
-            jvmToolchain(21)
-        }
     }
     buildFeatures {
         compose = true
