@@ -1,4 +1,4 @@
-# ⏰ Reminder Mate
+# ⏰ Reminder Mate 2.0
 
 **A simple, private, and ad-free reminder app for Android, built with Jetpack Compose and Material 3.**
 
