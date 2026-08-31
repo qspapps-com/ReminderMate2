@@ -11,25 +11,16 @@ import java.time.LocalDateTime
 class RecurrenceRuleTest {
 
     @Test
-    fun `json round trip with only mandatory fields`() {
-        assertRoundTrips(RecurrenceRule(Frequency.DAILY, 1))
-    }
-
-    @Test
-    fun `json round trip with interval and daysOfWeek`() {
-        assertRoundTrips(
-            RecurrenceRule(Frequency.WEEKLY, 2, setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY))
+    fun `every field survives a json round trip`() {
+        val rules = listOf(
+            RecurrenceRule(Frequency.DAILY, 1),
+            RecurrenceRule(Frequency.WEEKLY, 2, setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY)),
+            RecurrenceRule(Frequency.MONTHLY, 1, count = 5),
+            RecurrenceRule(Frequency.YEARLY, 3, setOf(DayOfWeek.FRIDAY), 10)
         )
-    }
-
-    @Test
-    fun `json round trip with count`() {
-        assertRoundTrips(RecurrenceRule(Frequency.MONTHLY, 1, count = 5))
-    }
-
-    @Test
-    fun `json round trip with all fields`() {
-        assertRoundTrips(RecurrenceRule(Frequency.YEARLY, 3, setOf(DayOfWeek.FRIDAY), 10))
+        for (rule in rules) {
+            assertEquals(rule, Json.decodeFromString<RecurrenceRule>(Json.encodeToString(rule)))
+        }
     }
 
     @Test
@@ -57,10 +48,6 @@ class RecurrenceRuleTest {
             val decoded = requireNotNull(RecurrenceRule.decodeLegacy(text)) { "did not decode: $text" }
             assertEquals(decoded, Json.decodeFromString<RecurrenceRule>(Json.encodeToString(decoded)))
         }
-    }
-
-    private fun assertRoundTrips(rule: RecurrenceRule) {
-        assertEquals(rule, Json.decodeFromString<RecurrenceRule>(Json.encodeToString(rule)))
     }
 
     @Test

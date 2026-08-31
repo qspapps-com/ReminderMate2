@@ -147,47 +147,31 @@ fun AppHeaderSection() {
     }
 }
 
+private data class Feature(val icon: ImageVector, val title: String, val desc: String)
+
+private val features = listOf(
+    Feature(Icons.Outlined.CloudOff, "Offline", "No internet needed"),
+    Feature(Icons.Outlined.Security, "Private", "No data sharing"),
+    Feature(Icons.Outlined.DoNotDisturb, "No Ads", "Clean experience"),
+    Feature(Icons.Filled.CheckCircle, "Free", "Forever free")
+)
+
 @Composable
 fun FeaturesGrid() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            FeatureCard(
-                modifier = Modifier.weight(1f),
-                icon = Icons.Outlined.CloudOff,
-                title = "Offline",
-                desc = "No internet needed"
-            )
-            FeatureCard(
-                modifier = Modifier.weight(1f),
-                icon = Icons.Outlined.Security,
-                title = "Private",
-                desc = "No data sharing"
-            )
-        }
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            FeatureCard(
-                modifier = Modifier.weight(1f),
-                icon = Icons.Outlined.DoNotDisturb,
-                title = "No Ads",
-                desc = "Clean experience"
-            )
-            FeatureCard(
-                modifier = Modifier.weight(1f),
-                icon = Icons.Filled.CheckCircle, // Or a generic 'Free' icon
-                title = "Free",
-                desc = "Forever free"
-            )
+        features.chunked(2).forEach { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                row.forEach { FeatureCard(it, Modifier.weight(1f)) }
+            }
         }
     }
 }
 
 @Composable
-fun FeatureCard(
-    modifier: Modifier = Modifier,
-    icon: ImageVector,
-    title: String,
-    desc: String
-) {
+private fun FeatureCard(feature: Feature, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -202,18 +186,18 @@ fun FeatureCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                imageVector = icon,
+                imageVector = feature.icon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = title,
+                text = feature.title,
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold
             )
             Text(
-                text = desc,
+                text = feature.desc,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center

@@ -21,103 +21,77 @@ class ReminderRepository @Inject constructor(
 
     suspend fun getReminderById(id: Long): Reminder? = reminderDao.getById(id)
 
-    suspend fun insert(reminder: Reminder): Long {
-        return reminderDao.insert(reminder)
-    }
+    suspend fun insert(reminder: Reminder): Long = reminderDao.insert(reminder)
 
-    suspend fun update(reminder: Reminder) {
-        reminderDao.update(reminder)
-    }
+    suspend fun update(reminder: Reminder) = reminderDao.update(reminder)
 
-    suspend fun deleteReminderById(id: Long) {
-        // Associated actions are deleted using foreign key constraints
-        reminderDao.deleteById(id)
-    }
+    // Associated actions are removed by the foreign key's ON DELETE CASCADE.
+    suspend fun deleteReminderById(id: Long) = reminderDao.deleteById(id)
 
-    suspend fun deleteAllReminders() {
-        // Associated actions are deleted using foreign key constraints
-        reminderDao.deleteAll()
-    }
-
-    suspend fun getActionsByReminderId(reminderId: Long): List<ReminderAction> = reminderActionDao.getActionsByReminderId(reminderId)
+    suspend fun deleteAllReminders() = reminderDao.deleteAll()
 
     fun getAllActions(): Flow<List<ReminderAction>> = reminderActionDao.getAllActions()
 
-    suspend fun insertAction(reminderAction: ReminderAction) {
-        reminderActionDao.insert(reminderAction)
-    }
+    suspend fun getActionsByReminderId(reminderId: Long): List<ReminderAction> =
+        reminderActionDao.getActionsByReminderId(reminderId)
 
-    suspend fun deleteAction(reminderAction: ReminderAction) {
-        reminderActionDao.delete(reminderAction)
-    }
+    suspend fun insertAction(reminderAction: ReminderAction) = reminderActionDao.insert(reminderAction)
 
-    suspend fun deleteAllActions() {
-        reminderActionDao.deleteAll()
-    }
+    suspend fun deleteAction(reminderAction: ReminderAction) = reminderActionDao.delete(reminderAction)
 
+    suspend fun deleteAllActions() = reminderActionDao.deleteAll()
+
+    /**
+     * Drops reminders that are fully dealt with before [threshold], and moves surviving recurring
+     * reminders forward so their start date is the earliest occurrence still pending.
+     */
     suspend fun cleanupOldReminders(threshold: LocalDateTime) {
-        val allReminders = reminderDao.getAll().first()
-        val allActions = reminderActionDao.getAllActions().first().groupBy { it.reminderId }
+        val actionsByReminder = reminderActionDao.getAllActions().first().groupBy { it.reminderId }
 
-        for (reminder in allReminders) {
-            val actions = allActions[reminder.id] ?: emptyList()
-            
+        for (reminder in reminderDao.getAll().first()) {
+            val actions = actionsByReminder[reminder.id].orEmpty()
+
             if (reminder.recurrence == null) {
-                // One-off reminder: Delete if completed or deleted before threshold
-                val terminalAction = actions.find { it.type == ActionType.COMPLETED || it.type == ActionType.DELETED }
-                if (terminalAction != null && reminder.startDateTime.isBefore(threshold)) {
+                if (actions.any { it.isCleared() } && reminder.startDateTime.isBefore(threshold)) {
                     deleteReminderById(reminder.id)
                 }
-            } else {
-                // Recurring reminder
-                // Find all occurrences from startDateTime up to threshold
-                val occurrencesBeforeThreshold = reminder.getOccurrences(reminder.startDateTime, threshold)
+                continue
+            }
 
-                // Find the first instance that is NOT completed and NOT deleted before threshold
-                val firstUnclearedTime = occurrencesBeforeThreshold.firstOrNull { time ->
-                    val action = actions.find { it.originalScheduledTime == time }
-                    action?.type != ActionType.COMPLETED && action?.type != ActionType.DELETED
+            // The earliest past occurrence nobody has dealt with, else the first one still to come.
+            val firstRemaining = reminder.getOccurrences(reminder.startDateTime, threshold)
+                .firstOrNull { time ->
+                    actions.none { it.originalScheduledTime == time && it.isCleared() }
                 }
+                ?: reminder.getNextOccurrence(emptyList(), threshold.minusNanos(1))?.originalTime
 
-                val firstRemainingTime = firstUnclearedTime
-                    ?: reminder.getNextOccurrence(emptyList(), threshold.minusNanos(1))?.originalTime
+            when {
+                // Nothing left, ever, and every past occurrence is handled.
+                firstRemaining == null -> deleteReminderById(reminder.id)
 
-                if (firstRemainingTime != null) {
-                    if (firstRemainingTime != reminder.startDateTime) {
-                        update(reminder.copy(startDateTime = firstRemainingTime))
-                        // Clean up actions that are now before the new startDateTime
-                        actions.filter { it.originalScheduledTime.isBefore(firstRemainingTime) }
-                            .forEach { reminderActionDao.delete(it) }
-                    }
-                } else {
-                    // No more occurrences ever and all past ones are handled
-                    deleteReminderById(reminder.id)
+                firstRemaining != reminder.startDateTime -> {
+                    update(reminder.copy(startDateTime = firstRemaining))
+                    // The actions before the new start date can no longer be reached.
+                    actions.filter { it.originalScheduledTime.isBefore(firstRemaining) }
+                        .forEach { reminderActionDao.delete(it) }
                 }
             }
         }
     }
 
-    suspend fun restoreBackupData(reminders: List<Reminder>, actions: List<ReminderAction>): List<Reminder> {
-        val idMap = mutableMapOf<Long, Long>()
-        val newReminders = mutableListOf<Reminder>()
-
-        // 1. Insert Reminders and store the new IDs
-        reminders.forEach { reminder ->
-            val oldId = reminder.id
-            // Insert with id = 0 to let Room generate a new auto-increment ID
-            val newId = insert(reminder.copy(id = 0))
-            idMap[oldId] = newId
-            newReminders.add(reminder.copy(id = newId))
-        }
-
-        // 2. Insert Actions using the mapped Reminder IDs
+    /** Inserts a backup under fresh ids, remapping its actions. Returns the stored reminders. */
+    suspend fun restoreBackupData(
+        reminders: List<Reminder>,
+        actions: List<ReminderAction>
+    ): List<Reminder> {
+        // id = 0 lets Room assign a new auto-increment id; keep the old id to remap actions.
+        val restored = reminders.associateBy({ it.id }, { it.copy(id = insert(it.copy(id = 0))) })
         actions.forEach { action ->
-            val newReminderId = idMap[action.reminderId]
-            if (newReminderId != null) {
-                insertAction(action.copy(reminderId = newReminderId))
-            }
+            restored[action.reminderId]?.let { insertAction(action.copy(reminderId = it.id)) }
         }
-
-        return newReminders
+        return restored.values.toList()
     }
 }
+
+private fun ReminderAction.isCleared() =
+    type == ActionType.COMPLETED || type == ActionType.DELETED
