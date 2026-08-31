@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -44,8 +45,12 @@ import com.qspapps.remindermate.R
 import com.qspapps.remindermate.ui.core.DatePickerDialog
 import com.qspapps.remindermate.ui.core.ReminderInstanceItem
 import com.qspapps.remindermate.ui.navigation.AppScreen
+import com.qspapps.remindermate.ui.navigation.homeMenuDestinations
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+
+/** Horizontal drag distance, in pixels, that moves the view by one day. */
+private const val DAY_SWIPE_THRESHOLD = 100f
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,85 +61,60 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showDatePicker by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
-    val currentTime by viewModel.currentTime.collectAsStateWithLifecycle()
-    val hideCompletedRemindersTooltipState = rememberTooltipState()
-    val showCompletedText = if (uiState.showCompleted) stringResource(id = R.string.hide_completed) else stringResource(id = R.string.show_completed)
-    val selectDateTooltipState = rememberTooltipState()
+    val showCompletedText = stringResource(
+        id = if (uiState.showCompleted) R.string.hide_completed else R.string.show_completed
+    )
 
+    // Built once per screen, not once per row: a fresh instance would defeat item skipping.
+    val reminderActions = remember(navController) { viewModel.getReminderActions(navController) }
+
+    val datePattern = stringResource(id = R.string.home_date_format)
     val title = if (uiState.selectedDate.isEqual(LocalDate.now())) {
         stringResource(id = R.string.today_reminders)
     } else {
-        uiState.selectedDate.format(DateTimeFormatter.ofPattern(stringResource(id = R.string.home_date_format)))
+        val formatter = remember(datePattern) { DateTimeFormatter.ofPattern(datePattern) }
+        uiState.selectedDate.format(formatter)
     }
-
-    val menuItems = listOf(
-        AppScreen.AllReminders,
-        AppScreen.OverdueReminders,
-        AppScreen.Settings,
-        AppScreen.About
-    )
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = title) },
                 actions = {
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                            TooltipAnchorPosition.Above),
-                        tooltip = {
-                            PlainTooltip {
-                                Text(showCompletedText)
-                            }
-                        },
-                        state = hideCompletedRemindersTooltipState,
-                        content = {
-                            IconButton(onClick = { viewModel.toggleShowCompleted() }) {
-                                Icon(
-                                    imageVector = if (uiState.showCompleted) Icons.Filled.Check else Icons.Filled.CheckCircle,
-                                    contentDescription = showCompletedText
-                                )
-                            }
-                        }
+                    TooltipIconButton(
+                        tooltip = showCompletedText,
+                        icon = if (uiState.showCompleted) Icons.Filled.Check else Icons.Filled.CheckCircle,
+                        onClick = viewModel::toggleShowCompleted
                     )
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                            TooltipAnchorPosition.Above),
-                        tooltip = {
-                            PlainTooltip {
-                                Text(stringResource(id = R.string.select_date))
-                            }
-                        },
-                        state = selectDateTooltipState,
-                        content = {
-                            IconButton(onClick = { showDatePicker = true }) {
-                                Icon(Icons.Default.DateRange, contentDescription = stringResource(id = R.string.select_date))
-                            }
-                        }
+                    TooltipIconButton(
+                        tooltip = stringResource(id = R.string.select_date),
+                        icon = Icons.Default.DateRange,
+                        onClick = { showDatePicker = true }
                     )
                     Box {
                         IconButton(
                             onClick = { showMenu = true },
                             modifier = Modifier.testTag("home_more_options")
                         ) {
-                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_options))
+                            Icon(
+                                Icons.Default.MoreVert,
+                                contentDescription = stringResource(id = R.string.more_options)
+                            )
                         }
                         DropdownMenu(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }
                         ) {
-                            menuItems.forEach { screen ->
+                            homeMenuDestinations.forEach { destination ->
+                                val label = stringResource(id = destination.displayName)
                                 DropdownMenuItem(
-                                    text = { Text(stringResource(id = screen.displayName!!)) },
+                                    text = { Text(label) },
                                     onClick = {
                                         showMenu = false
-                                        navController.navigate(screen.route)
+                                        navController.navigate(destination.screen.route)
                                     },
                                     leadingIcon = {
-                                        Icon(
-                                            screen.icon!!,
-                                            contentDescription = stringResource(id = screen.displayName!!)
-                                        )
+                                        Icon(destination.icon, contentDescription = label)
                                     }
                                 )
                             }
@@ -144,15 +124,17 @@ fun HomeScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate(AppScreen.AddEditReminder.createRoute(0L)) }) {
+            FloatingActionButton(
+                onClick = { navController.navigate(AppScreen.AddEditReminder.createRoute(0L)) }
+            ) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.add_reminder))
             }
         }
-    ) {
+    ) { innerPadding ->
         var swipeAmount = 0f
         Box(
             modifier = Modifier
-                .padding(it)
+                .padding(innerPadding)
                 .fillMaxSize()
                 .pointerInput(uiState.selectedDate) {
                     detectHorizontalDragGestures(
@@ -162,12 +144,12 @@ fun HomeScreen(
                             swipeAmount += dragAmount
                         },
                         onDragEnd = {
-                            val threshold = 100
-                            if (swipeAmount < -threshold) {
-                                viewModel.loadRemindersForDay(uiState.selectedDate.plusDays(1))
-                            } else if (swipeAmount > threshold) {
-                                viewModel.loadRemindersForDay(uiState.selectedDate.minusDays(1))
+                            val days = when {
+                                swipeAmount < -DAY_SWIPE_THRESHOLD -> 1L
+                                swipeAmount > DAY_SWIPE_THRESHOLD -> -1L
+                                else -> return@detectHorizontalDragGestures
                             }
+                            viewModel.loadRemindersForDay(uiState.selectedDate.plusDays(days))
                         }
                     )
                 }
@@ -176,14 +158,16 @@ fun HomeScreen(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(uiState.reminders) { reminderInstance ->
-                        val isOverDue = !reminderInstance.isCompleted &&
-                                currentTime.isAfter(reminderInstance.displayTime)
+                    items(
+                        items = uiState.reminders,
+                        key = { it.reminderId to it.originalTime }
+                    ) { reminderInstance ->
                         ReminderInstanceItem(
                             reminderInstance = reminderInstance,
-                            actions = viewModel.getReminderActions(navController),
+                            actions = reminderActions,
                             showDate = false,
-                            isOverDue,
+                            isOverdue = !reminderInstance.isCompleted &&
+                                uiState.currentTime.isAfter(reminderInstance.displayTime),
                             defaultTimes = uiState.defaultTimes
                         )
                     }
@@ -201,5 +185,25 @@ fun HomeScreen(
             },
             onDismiss = { showDatePicker = false }
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TooltipIconButton(
+    tooltip: String,
+    icon: ImageVector,
+    onClick: () -> Unit
+) {
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+            TooltipAnchorPosition.Above
+        ),
+        tooltip = { PlainTooltip { Text(tooltip) } },
+        state = rememberTooltipState()
+    ) {
+        IconButton(onClick = onClick) {
+            Icon(imageVector = icon, contentDescription = tooltip)
+        }
     }
 }

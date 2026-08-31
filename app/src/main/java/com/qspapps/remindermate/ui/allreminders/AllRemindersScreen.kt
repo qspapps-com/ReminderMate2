@@ -33,6 +33,7 @@ import androidx.navigation.NavController
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.ui.core.ReminderItem
+import com.qspapps.remindermate.ui.core.labelRes
 import com.qspapps.remindermate.ui.navigation.AppScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,7 +100,7 @@ fun AllRemindersScreen(
             }
 
             LazyColumn(modifier = Modifier.weight(1f)) {
-                items(uiState.reminders) { reminder ->
+                items(items = uiState.reminders, key = { it.id }) { reminder ->
                     ReminderItem(
                         reminder = reminder,
                         onUpdate = {
@@ -114,17 +115,10 @@ fun AllRemindersScreen(
 }
 
 @Composable
-private fun FilterType.displayText(): String = when (this) {
-    is FilterType.All -> stringResource(id = R.string.filter_option_all)
-    is FilterType.None -> stringResource(id = R.string.filter_option_none)
-    is FilterType.FrequencyFilter -> stringResource(id = frequency.toStringResource())
-}
-
-private fun Frequency.toStringResource(): Int = when (this) {
-    Frequency.MINUTE -> R.string.repeat_option_minute
-    Frequency.HOURLY -> R.string.repeat_option_hourly
-    Frequency.DAILY -> R.string.repeat_option_daily
-    Frequency.WEEKLY -> R.string.repeat_option_weekly
-    Frequency.MONTHLY -> R.string.repeat_option_monthly
-    Frequency.YEARLY -> R.string.repeat_option_yearly
-}
+private fun FilterType.displayText(): String = stringResource(
+    id = when (this) {
+        FilterType.All -> R.string.filter_option_all
+        FilterType.None -> R.string.filter_option_none
+        is FilterType.FrequencyFilter -> frequency.labelRes
+    }
+)

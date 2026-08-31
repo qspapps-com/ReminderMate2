@@ -148,4 +148,12 @@
         <item quantity="one"> for 1 time</item>
         <item quantity="other"> for %d times</item>
     </plurals>
+    <!-- Notification channel -->
+    <string name="notification_channel_name">Reminders</string>
+    <string name="notification_channel_description">Channel for Reminder notifications</string>
+    <!-- Snoozed instance subtitle, e.g. "\u23f0Zzz (Orig: 9:00 AM)" -->
+    <string name="snoozed_original_time">\u23f0Zzz (Orig: %1$s)</string>
+    <!-- Background worker health, shown in Settings -->
+    <string name="worker_status_never_run">%1$s: Never run</string>
+    <string name="worker_status_interval_exceeded">%1$s: Last run %2$s (interval exceeded)</string>
 </resources>

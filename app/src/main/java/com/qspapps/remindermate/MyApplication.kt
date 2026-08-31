@@ -15,6 +15,7 @@ import com.qspapps.remindermate.workers.CleanupWorker
 import com.qspapps.remindermate.workers.OverdueWorker
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
@@ -34,17 +35,27 @@ class MyApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
-        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-            // We use runBlocking because we are about to exit the process
-            runBlocking {
-                userPrefs.saveError("App Crash: ${throwable.localizedMessage}")
-            }
-            defaultHandler?.uncaughtException(thread, throwable)
-        }
+        installCrashRecorder()
         createNotificationChannel()
         scheduleTasks()
     }
+
+    /**
+     * Records the crash so it shows up in Settings. The write has to block, since the process is
+     * about to die, but it is bounded: a slow disk must not turn a crash into an ANR.
+     */
+    private fun installCrashRecorder() {
+        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            runBlocking {
+                withTimeoutOrNull(CRASH_SAVE_TIMEOUT_MS) {
+                    userPrefs.saveError("App Crash: ${throwable.localizedMessage}")
+                }
+            }
+            defaultHandler?.uncaughtException(thread, throwable)
+        }
+    }
+
     private fun scheduleTasks() {
         val workManager = WorkManager.getInstance(this)
 
@@ -60,8 +71,8 @@ class MyApplication : Application(), Configuration.Provider {
             cleanupRequest
         )
 
-        // 2. Daily Overdue Check (Targeting 6 AM)
-        val delay = calculateDelayUntilSixAM()
+        // 2. Daily Overdue Check
+        val delay = delayUntilNext(OVERDUE_CHECK_HOUR)
         val overdueRequest = PeriodicWorkRequestBuilder<OverdueWorker>(OverdueWorker.REPEAT_INTERVAL_HOURS,
             TimeUnit.HOURS)
             .setInitialDelay(delay, TimeUnit.MILLISECONDS)
@@ -74,25 +85,27 @@ class MyApplication : Application(), Configuration.Provider {
         )
     }
 
-    private fun calculateDelayUntilSixAM(): Long {
+    /** Millis until the next occurrence of [hour] o'clock, local time. */
+    private fun delayUntilNext(hour: Int): Long {
         val now = LocalDateTime.now()
-        var target = now.withHour(6).withMinute(0).withSecond(0).withNano(0)
-        if (now.isAfter(target)) {
-            target = target.plusDays(1)
-        }
+        val today = now.withHour(hour).truncatedTo(ChronoUnit.HOURS)
+        val target = if (now.isAfter(today)) today.plusDays(1) else today
         return ChronoUnit.MILLIS.between(now, target)
     }
 
     private fun createNotificationChannel() {
-        val name = "Reminder-Channel"
-        val descriptionText = "Channel for Reminder notifications"
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel(NotificationService.REMINDER_CHANNEL_ID, name, importance).apply {
-            description = descriptionText
-        }
-        // Register the channel with the system
-        val notificationManager: NotificationManager =
-            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val channel = NotificationChannel(
+            NotificationService.REMINDER_CHANNEL_ID,
+            getString(R.string.notification_channel_name),
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply { description = getString(R.string.notification_channel_description) }
+
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
+    }
+
+    private companion object {
+        const val CRASH_SAVE_TIMEOUT_MS = 500L
+        const val OVERDUE_CHECK_HOUR = 6
     }
 }

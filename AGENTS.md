@@ -35,18 +35,17 @@ This project is a native Android application written in Kotlin, using the Jetpac
         *   `DataStore`: For storing user preferences and settings.
     *   **UI & Theming:**
         *   `Compose Material 3`: The primary design system for UI components.
-        *   `Coil` : Coil for loading images from the network asynchronously.
+    *   **Serialization:**
+        *   `kotlinx.serialization`: Backup files, stored recurrence rules, and preference values.
     *   **Background Tasks:**
         *   `WorkManager`: For deferrable, guaranteed background execution (cleanup and daily checks).
         *   `Hilt Work`: For dependency injection into Worker classes.
 
-*   **Networking:**
-    *   `Retrofit`: For making type-safe HTTP requests to our REST API.
-    *   `OkHttp`: As the underlying HTTP client for Retrofit (often used for interceptors).
-    *   `Moshi` : Moshi for parsing JSON responses into Kotlin data classes.
+*   **Networking:** None. The app is fully offline and must stay that way -- do not add an HTTP
+    client, an image loader, or analytics.
 
 *   **Testing:**
-    *   `JUnit 4/5`: For unit testing ViewModels and Repositories.
+    *   `JUnit 4`: For unit testing models, ViewModels and Repositories.
     *   `MockK` : MockK for creating mocks in unit tests.
     *   `Turbine`: For testing Kotlin Flow emissions.
     *   `Compose Test Suite`: For UI and integration testing of composable functions.
@@ -58,9 +57,11 @@ The project follows the **MVVM (Model-View-ViewModel)** architecture pattern, or
 ```
 com.qspapps.remindermate/
 ├── data/                  # Data layer implementation
-│   ├── model/             # Data Transfer Objects (DTOs) and domain models
-│   ├── local/             # Room DAO and database definitions
+│   ├── model/             # Entities and value types (no Android dependencies)
+│   ├── local/             # Room DAO, database, type converters and migrations
+│   ├── legacy/            # Readers for older backup formats
 │   └── repository/        # Repository implementations
+├── domain/                # Pure scheduling logic over the models (ReminderSchedule.kt)
 ├── di/                    # Feature-specific or app-wide Hilt modules
 ├── notifications/         # Notification-related classes and services
 ├── ui/                    # Presentation layer (Jetpack Compose)
@@ -80,8 +81,10 @@ com.qspapps.remindermate/
 
 *   **View (Composables):** Reside in the `ui/feature_name` packages. They are responsible for displaying state and forwarding user events to the ViewModel. They should be as "dumb" as possible and observe state from a `StateFlow`.
 *   **ViewModel:** Resides alongside its screen composable. It contains the business logic for the screen, exposes UI state via a `StateFlow<UiState>`, and is injected with repositories or use cases. All asynchronous work is launched in `viewModelScope`.
-*   **Repository:** The single source of truth for data. It fetches data from remote (network) or local (database) sources and abstracts the data source from the ViewModel.
-*   **Dependency Injection:** Hilt is used to provide dependencies. ViewModels are injected using `@HiltViewModel`, and dependencies like repositories are provided in Hilt Modules (`@Module`, `@Provides`).
+*   **Repository:** The single source of truth for data. It abstracts the data source from the ViewModel, and owns all file and `ContentResolver` access -- a ViewModel should never hold a `Context`.
+*   **Domain:** `domain/` holds pure functions that derive `ReminderInstance`s from reminders plus their recorded actions. It has no Android dependencies (no `android.util.Log`), so it is unit-testable without mocks.
+*   **Dependency Injection:** Hilt is used to provide dependencies. ViewModels are injected using `@HiltViewModel`. Prefer `@Singleton class Foo @Inject constructor(...)` over a `@Provides` method; `AppModule` should only hold things the app does not own the constructor for (the database, DAOs, the application scope).
+*   **Persistence:** The Room schema is exported to `app/schemas/` and every version bump needs a real `Migration` in `data/local/Migrations.kt`. Destructive fallback is limited to schema versions no install can still be on.
 *   **Background Maintenance:** All periodic tasks (cleaning old data, 6 AM overdue checks) must be implemented using `WorkManager`. Do not put this logic in `MainActivity`.
 *   **Worker Initialization:** WorkManager uses custom initialization via `Configuration.Provider` in `MyApplication` to support Hilt injection.
 

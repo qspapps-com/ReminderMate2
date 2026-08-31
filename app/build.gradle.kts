@@ -49,6 +49,12 @@ android {
     }
 }
 
+// Room needs a schema directory to export to; the JSON files are committed so that migrations
+// can be validated against the shipped schema.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)

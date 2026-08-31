@@ -2,26 +2,19 @@ package com.qspapps.remindermate.data.local
 
 import androidx.room.TypeConverter
 import com.qspapps.remindermate.data.model.RecurrenceRule
+import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
 
 class Converters {
     @TypeConverter
-    fun fromTimestamp(value: String?): LocalDateTime? {
-        return value?.let { LocalDateTime.parse(it) }
-    }
+    fun toLocalDateTime(value: String?): LocalDateTime? = value?.let(LocalDateTime::parse)
 
     @TypeConverter
-    fun dateToTimestamp(date: LocalDateTime?): String? {
-        return date?.toString()
-    }
+    fun fromLocalDateTime(dateTime: LocalDateTime?): String? = dateTime?.toString()
 
     @TypeConverter
-    fun fromRecurrenceRule(value: String?): RecurrenceRule? {
-        return value?.let { RecurrenceRule.fromString(it) }
-    }
+    fun toRecurrenceRule(value: String?): RecurrenceRule? = value?.let(Json::decodeFromString)
 
     @TypeConverter
-    fun recurrenceRuleToString(recurrenceRule: RecurrenceRule?): String? {
-        return recurrenceRule?.toString()
-    }
+    fun fromRecurrenceRule(rule: RecurrenceRule?): String? = rule?.let(Json::encodeToString)
 }

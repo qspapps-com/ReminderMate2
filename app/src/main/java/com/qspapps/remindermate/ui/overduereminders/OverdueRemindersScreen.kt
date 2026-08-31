@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -28,6 +29,7 @@ fun OverdueRemindersScreen(
     viewModel: OverdueRemindersViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val reminderActions = remember(navController) { viewModel.getReminderActions(navController) }
 
     Scaffold(
         topBar = {
@@ -45,10 +47,13 @@ fun OverdueRemindersScreen(
         }
     ) { padding ->
         LazyColumn(modifier = Modifier.padding(padding)) {
-            items(uiState.overdueReminders) { reminderInstance ->
+            items(
+                items = uiState.overdueReminders,
+                key = { it.reminderId to it.originalTime }
+            ) { reminderInstance ->
                 ReminderInstanceItem(
                     reminderInstance = reminderInstance,
-                    actions = viewModel.getReminderActions(navController),
+                    actions = reminderActions,
                     showDate = true,
                     isOverdue = true,
                     defaultTimes = uiState.defaultTimes

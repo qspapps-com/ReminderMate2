@@ -8,8 +8,14 @@ import com.qspapps.remindermate.data.model.ReminderAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.time.LocalDateTime
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ReminderRepository(private val reminderDao: ReminderDao, private val reminderActionDao: ReminderActionDao) {
+@Singleton
+class ReminderRepository @Inject constructor(
+    private val reminderDao: ReminderDao,
+    private val reminderActionDao: ReminderActionDao
+) {
 
     fun getAllReminders(): Flow<List<Reminder>> = reminderDao.getAll()
 

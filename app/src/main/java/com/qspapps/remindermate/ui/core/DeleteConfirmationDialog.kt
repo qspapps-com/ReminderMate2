@@ -15,56 +15,42 @@ fun DeleteConfirmationDialog(
     onDeleteInstance: (ReminderInstance) -> Unit,
     onDeleteReminder: (Long) -> Unit
 ) {
-    val title = stringResource(R.string.delete_reminder)
+    // A recurring reminder offers "this instance" as the alternative to deleting everything;
+    // a one-off has nothing to distinguish, so the alternative is simply cancelling.
+    val recurring = reminderInstance.isRecurring
 
-    if (reminderInstance.isRecurring) {
-        // Dialog for recurring reminders
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(title) },
-            text = { Text(stringResource(R.string.delete_reminder_confirmation)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDeleteReminder(reminderInstance.reminderId)
-                        onDismiss()
-                    }
-                ) {
-                    Text(stringResource(R.string.delete_all_occurrences))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        onDeleteInstance(reminderInstance)
-                        onDismiss()
-                    }
-                ) {
-                    Text(stringResource(R.string.delete_this_instance))
-                }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.delete_reminder)) },
+        text = {
+            Text(
+                stringResource(
+                    if (recurring) R.string.delete_reminder_confirmation
+                    else R.string.delete_confirmation_simple
+                )
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onDeleteReminder(reminderInstance.reminderId)
+                onDismiss()
+            }) {
+                Text(
+                    stringResource(
+                        if (recurring) R.string.delete_all_occurrences else R.string.delete
+                    )
+                )
             }
-        )
-    } else {
-        // Dialog for non-recurring reminders
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text(title) },
-            text = { Text(stringResource(R.string.delete_confirmation_simple)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDeleteReminder(reminderInstance.reminderId)
-                        onDismiss()
-                    }
-                ) {
-                    Text(stringResource(R.string.delete))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(stringResource(R.string.cancel))
-                }
+        },
+        dismissButton = {
+            if (recurring) {
+                TextButton(onClick = {
+                    onDeleteInstance(reminderInstance)
+                    onDismiss()
+                }) { Text(stringResource(R.string.delete_this_instance)) }
+            } else {
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
             }
-        )
-    }
+        }
+    )
 }

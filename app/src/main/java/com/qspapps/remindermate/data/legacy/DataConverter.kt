@@ -16,7 +16,7 @@ import java.util.Locale
 private const val TAG = "DataConverter"
 object DataConverter {
 
-    // 1. Formatter matching your JSON format
+    // Matches the date format used by the legacy JSON export
     private val formatter = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a", Locale.ENGLISH)
 
     fun convertToBackupData(jsonReminders: List<JsonReminder>): BackupData {

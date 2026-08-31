@@ -1,11 +1,17 @@
-package com.qspapps.remindermate.data.model
+package com.qspapps.remindermate.domain
+
+import com.qspapps.remindermate.data.model.ActionType
+import com.qspapps.remindermate.data.model.Frequency
+import com.qspapps.remindermate.data.model.RecurrenceRule
+import com.qspapps.remindermate.data.model.Reminder
+import com.qspapps.remindermate.data.model.ReminderAction
 
 import org.junit.Assert.*
 import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class ReminderInstanceTest {
+class ReminderScheduleTest {
 
     // Helper to create a reminder
     private fun createReminder(id: Long, start: LocalDateTime, rule: RecurrenceRule? = null): Reminder {
@@ -28,19 +34,19 @@ class ReminderInstanceTest {
     }
 
     @Test
-    fun getRemindersForDay_noReminders_returnsEmptyList() {
+    fun remindersForDay_noReminders_returnsEmptyList() {
         val day = LocalDate.of(2024, 7, 10)
-        val instances = ReminderInstance.getRemindersForDay(day, emptyList(), emptyList())
+        val instances = remindersForDay(day, emptyList(), emptyList())
         assertTrue(instances.isEmpty())
     }
 
     @Test
-    fun getRemindersForDay_oneTimeReminder_onDay_noActions() {
+    fun remindersForDay_oneTimeReminder_onDay_noActions() {
         val day = LocalDate.of(2024, 7, 10)
         val reminderTime = day.atTime(9, 0)
         val reminder = createReminder(1, reminderTime)
 
-        val instances = ReminderInstance.getRemindersForDay(day, listOf(reminder), emptyList())
+        val instances = remindersForDay(day, listOf(reminder), emptyList())
 
         assertEquals(1, instances.size)
         assertEquals(reminderTime, instances.first().displayTime)
@@ -49,14 +55,14 @@ class ReminderInstanceTest {
     }
 
     @Test
-    fun getRemindersForDay_multipleReminders_onlyReturnsForRequestedDay() {
+    fun remindersForDay_multipleReminders_onlyReturnsForRequestedDay() {
         val today = LocalDate.of(2024, 7, 10)
         val tomorrow = today.plusDays(1)
         
         val reminderToday = createReminder(1, today.atTime(0, 0))
         val reminderTomorrow = createReminder(2, tomorrow.atTime(0, 0))
 
-        val instances = ReminderInstance.getRemindersForDay(today, listOf(reminderToday, reminderTomorrow), emptyList())
+        val instances = remindersForDay(today, listOf(reminderToday, reminderTomorrow), emptyList())
 
         assertEquals(1, instances.size)
         assertEquals(1L, instances.first().reminderId)
@@ -64,27 +70,27 @@ class ReminderInstanceTest {
     }
 
     @Test
-    fun getRemindersForDay_oneTimeReminder_completed() {
+    fun remindersForDay_oneTimeReminder_completed() {
         val day = LocalDate.of(2024, 7, 10)
         val reminderTime = day.atTime(9, 0)
         val reminder = createReminder(1, reminderTime)
         val actions = listOf(createAction(1, ActionType.COMPLETED, reminderTime))
 
-        val instances = ReminderInstance.getRemindersForDay(day, listOf(reminder), actions)
+        val instances = remindersForDay(day, listOf(reminder), actions)
 
         assertEquals(1, instances.size)
         assertTrue(instances.first().isCompleted)
     }
 
     @Test
-    fun getRemindersForDay_oneTimeReminder_snoozed_onSameDay() {
+    fun remindersForDay_oneTimeReminder_snoozed_onSameDay() {
         val day = LocalDate.of(2024, 7, 10)
         val originalTime = day.atTime(9, 0)
         val snoozedTime = day.atTime(11, 0)
         val reminder = createReminder(1, originalTime)
         val actions = listOf(createAction(1, ActionType.SNOOZED, originalTime, snoozedTime))
 
-        val instances = ReminderInstance.getRemindersForDay(day, listOf(reminder), actions)
+        val instances = remindersForDay(day, listOf(reminder), actions)
 
         assertEquals(1, instances.size)
         assertEquals(snoozedTime, instances.first().displayTime)
@@ -92,21 +98,21 @@ class ReminderInstanceTest {
     }
 
     @Test
-    fun getRemindersForDay_oneTimeReminder_snoozed_toDifferentDay() {
+    fun remindersForDay_oneTimeReminder_snoozed_toDifferentDay() {
         val day = LocalDate.of(2024, 7, 10)
         val originalTime = day.atTime(9, 0)
         val snoozedTime = day.plusDays(1).atTime(9, 0)
         val reminder = createReminder(1, originalTime)
         val actions = listOf(createAction(1, ActionType.SNOOZED, originalTime, snoozedTime))
 
-        val instances = ReminderInstance.getRemindersForDay(day, listOf(reminder), actions)
+        val instances = remindersForDay(day, listOf(reminder), actions)
 
         // The original is replaced by the snoozed one, which is not on this day
         assertTrue(instances.isEmpty())
     }
 
     @Test
-    fun getRemindersForDay_snoozedFromPreviousDay() {
+    fun remindersForDay_snoozedFromPreviousDay() {
         val today = LocalDate.of(2024, 7, 10)
         val yesterday = today.minusDays(1)
         val originalTime = yesterday.atTime(20, 0)
@@ -114,7 +120,7 @@ class ReminderInstanceTest {
         val reminder = createReminder(1, originalTime) // Original start was yesterday
         val actions = listOf(createAction(1, ActionType.SNOOZED, originalTime, snoozedTime))
 
-        val instances = ReminderInstance.getRemindersForDay(today, listOf(reminder), actions)
+        val instances = remindersForDay(today, listOf(reminder), actions)
 
         assertEquals(1, instances.size)
         assertEquals(snoozedTime, instances.first().displayTime)
@@ -122,7 +128,7 @@ class ReminderInstanceTest {
     }
 
     @Test
-    fun getRemindersForDay_dailyRecurrence_withMixedActions() {
+    fun remindersForDay_dailyRecurrence_withMixedActions() {
         val day = LocalDate.of(2024, 7, 10)
         val start = LocalDateTime.of(2024, 7, 8, 14, 0)
         val reminder = createReminder(1, start, RecurrenceRule(Frequency.DAILY))
@@ -134,7 +140,7 @@ class ReminderInstanceTest {
         )
 
         // For 'today' (July 10th), we expect the original, unaltered occurrence
-        val instances = ReminderInstance.getRemindersForDay(day, listOf(reminder), actions)
+        val instances = remindersForDay(day, listOf(reminder), actions)
 
         assertEquals(2, instances.size)
         assertEquals(day.atTime(14, 0), instances.first().displayTime)
@@ -143,7 +149,7 @@ class ReminderInstanceTest {
     }
 
     @Test
-    fun getRemindersForDay_sortsCorrectly() {
+    fun remindersForDay_sortsCorrectly() {
         val day = LocalDate.of(2024, 7, 10)
 
         val reminder1 = createReminder(1, day.atTime(10, 0)) // 10:00
@@ -155,7 +161,7 @@ class ReminderInstanceTest {
             createAction(3, ActionType.SNOOZED, reminder3.startDateTime, day.atTime(9, 0))
         )
 
-        val instances = ReminderInstance.getRemindersForDay(day, listOf(reminder1, reminder2, reminder3), actions)
+        val instances = remindersForDay(day, listOf(reminder1, reminder2, reminder3), actions)
 
         assertEquals(3, instances.size)
         // Expected order by displayTime: 09:00, 10:00, 11:00
@@ -165,7 +171,7 @@ class ReminderInstanceTest {
     }
 
     @Test
-    fun getOverdueReminders_returnsOnlyPendingPastReminders() {
+    fun overdueReminders_returnsOnlyPendingPastReminders() {
         val now = LocalDateTime.of(2024, 7, 10, 12, 0)
         
         // 1. A past reminder that is not completed (Overdue)
@@ -189,7 +195,7 @@ class ReminderInstanceTest {
         val reminders = listOf(overdueReminder, completedReminder, futureReminder, snoozedOverdueReminder, snoozedFutureReminder)
         val actions = listOf(completedAction, snoozedAction, snoozedFutureAction)
 
-        val overdue = ReminderInstance.getOverdueReminders(reminders, actions, now)
+        val overdue = overdueReminders(reminders, actions, now)
 
         assertEquals(2, overdue.size)
         assertTrue(overdue.any { it.reminderId == 1L })
@@ -200,7 +206,7 @@ class ReminderInstanceTest {
     }
 
     @Test
-    fun getOverdueReminders_recurringReminders() {
+    fun overdueReminders_recurringReminders() {
         val now = LocalDateTime.of(2024, 7, 10, 12, 0)
         
         // Daily reminder starting 3 days ago at 10 AM.
@@ -211,7 +217,7 @@ class ReminderInstanceTest {
         // Action: Complete the very first one
         val actions = listOf(createAction(1, ActionType.COMPLETED, start))
 
-        val overdue = ReminderInstance.getOverdueReminders(listOf(recurringReminder), actions, now)
+        val overdue = overdueReminders(listOf(recurringReminder), actions, now)
 
         // Expected overdue: 7/8 10:00, 7/9 10:00, 7/10 10:00
         assertEquals(3, overdue.size)

@@ -1,5 +1,6 @@
 package com.qspapps.remindermate.ui.addeditreminder
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -49,21 +50,40 @@ import com.qspapps.remindermate.data.model.Frequency
 import com.qspapps.remindermate.data.model.RecurrenceRule
 import com.qspapps.remindermate.ui.core.DatePickerDialog
 import com.qspapps.remindermate.ui.core.TimePickerDialog
+import com.qspapps.remindermate.ui.core.labelRes
 import com.qspapps.remindermate.utils.DateTimeUtils
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 
 
-private sealed class RepeatOption(val displayName: Int) {
-    data object None : RepeatOption(R.string.repeat_option_none)
-    data object Minute : RepeatOption(R.string.repeat_option_minute)
-    data object Hourly : RepeatOption(R.string.repeat_option_hourly)
-    data object Daily : RepeatOption(R.string.repeat_option_daily)
-    data object Weekdays : RepeatOption(R.string.repeat_option_weekdays)
-    data object Weekends : RepeatOption(R.string.repeat_option_weekends)
-    data object Weekly : RepeatOption(R.string.repeat_option_weekly)
-    data object Monthly : RepeatOption(R.string.repeat_option_monthly)
-    data object Yearly : RepeatOption(R.string.repeat_option_yearly)
+/**
+ * An entry in the "Repeats" picker. Each option knows the rule it produces, so adding one is a
+ * single line rather than another branch in a `when`.
+ *
+ * @param startDay the reminder's own weekday, used by options that repeat on "this day".
+ */
+private enum class RepeatOption(
+    @StringRes val displayName: Int,
+    val toRule: (startDay: DayOfWeek) -> RecurrenceRule?
+) {
+    None(R.string.repeat_option_none, { null }),
+    Minute(R.string.repeat_option_minute, { RecurrenceRule(Frequency.MINUTE) }),
+    Hourly(R.string.repeat_option_hourly, { RecurrenceRule(Frequency.HOURLY) }),
+    Daily(R.string.repeat_option_daily, { RecurrenceRule(Frequency.DAILY) }),
+    Weekdays(
+        R.string.repeat_option_weekdays,
+        { RecurrenceRule(Frequency.WEEKLY, daysOfWeek = RecurrenceRule.WEEKDAYS) }
+    ),
+    Weekends(
+        R.string.repeat_option_weekends,
+        { RecurrenceRule(Frequency.WEEKLY, daysOfWeek = RecurrenceRule.WEEKENDS) }
+    ),
+    Weekly(
+        R.string.repeat_option_weekly,
+        { startDay -> RecurrenceRule(Frequency.WEEKLY, daysOfWeek = setOf(startDay)) }
+    ),
+    Monthly(R.string.repeat_option_monthly, { RecurrenceRule(Frequency.MONTHLY) }),
+    Yearly(R.string.repeat_option_yearly, { RecurrenceRule(Frequency.YEARLY) })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -159,32 +179,13 @@ fun AddEditReminderScreen(
                         expanded = isFrequencyDropdownExpanded,
                         onDismissRequest = { isFrequencyDropdownExpanded = false }
                     ) {
-                        val options = listOf(RepeatOption.None, RepeatOption.Minute, RepeatOption.Hourly, RepeatOption.Daily, RepeatOption.Weekdays, RepeatOption.Weekends, RepeatOption.Weekly, RepeatOption.Monthly, RepeatOption.Yearly)
-                        options.forEach { option ->
+                        RepeatOption.entries.forEach { option ->
                             DropdownMenuItem(
                                 text = { Text(stringResource(id = option.displayName)) },
                                 onClick = {
-                                    val newRule: RecurrenceRule? = when (option) {
-                                        RepeatOption.None -> null
-                                        RepeatOption.Minute -> RecurrenceRule(frequency = Frequency.MINUTE)
-                                        RepeatOption.Hourly -> RecurrenceRule(frequency = Frequency.HOURLY)
-                                        RepeatOption.Daily -> RecurrenceRule(frequency = Frequency.DAILY)
-                                        RepeatOption.Weekdays -> RecurrenceRule(
-                                            frequency = Frequency.WEEKLY,
-                                            daysOfWeek = setOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY)
-                                        )
-                                        RepeatOption.Weekends -> RecurrenceRule(
-                                            frequency = Frequency.WEEKLY,
-                                            daysOfWeek = setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
-                                        )
-                                        RepeatOption.Weekly -> RecurrenceRule(
-                                            frequency = Frequency.WEEKLY,
-                                            daysOfWeek = setOf(uiState.startDateTime.dayOfWeek)
-                                        )
-                                        RepeatOption.Monthly -> RecurrenceRule(frequency = Frequency.MONTHLY)
-                                        RepeatOption.Yearly -> RecurrenceRule(frequency = Frequency.YEARLY)
-                                    }
-                                    viewModel.updateRecurrence(newRule)
+                                    viewModel.updateRecurrence(
+                                        option.toRule(uiState.startDateTime.dayOfWeek)
+                                    )
                                     isFrequencyDropdownExpanded = false
                                 }
                             )
@@ -221,7 +222,8 @@ fun AddEditReminderScreen(
                     OutlinedTextField(
                         value = recurrence.count?.toString() ?: "",
                         onValueChange = { countString ->
-                            val count = countString.toIntOrNull()
+                            // Blank clears the limit; 0 or junk would be an invalid rule.
+                            val count = countString.toIntOrNull()?.takeIf { it > 0 }
                             viewModel.updateRecurrence(recurrence.copy(count = count))
                         },
                         label = { Text(stringResource(id = R.string.number_of_times_label)) },
@@ -281,24 +283,15 @@ fun AddEditReminderScreen(
     }
 }
 @Composable
-private fun RecurrenceRule?.toDisplayString(): String {
-    if (this == null) return stringResource(id = R.string.repeat_option_none)
-
-    if (this.frequency == Frequency.WEEKLY) {
-        val weekdays = setOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY)
-        val weekends = setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
-        if (this.daysOfWeek == weekdays) return stringResource(id = R.string.repeat_option_weekdays)
-        if (this.daysOfWeek == weekends) return stringResource(id = R.string.repeat_option_weekends)
+private fun RecurrenceRule?.toDisplayString(): String = stringResource(
+    id = when {
+        this == null -> R.string.repeat_option_none
+        frequency != Frequency.WEEKLY -> frequency.labelRes
+        daysOfWeek == RecurrenceRule.WEEKDAYS -> R.string.repeat_option_weekdays
+        daysOfWeek == RecurrenceRule.WEEKENDS -> R.string.repeat_option_weekends
+        else -> frequency.labelRes
     }
-    return when (this.frequency) {
-        Frequency.MINUTE -> stringResource(id = R.string.repeat_option_minute)
-        Frequency.HOURLY -> stringResource(id = R.string.repeat_option_hourly)
-        Frequency.DAILY -> stringResource(id = R.string.repeat_option_daily)
-        Frequency.WEEKLY -> stringResource(id = R.string.repeat_option_weekly)
-        Frequency.MONTHLY -> stringResource(id = R.string.repeat_option_monthly)
-        Frequency.YEARLY -> stringResource(id = R.string.repeat_option_yearly)
-    }
-}
+)
 
 @Composable
 private fun DayOfWeekSelector(

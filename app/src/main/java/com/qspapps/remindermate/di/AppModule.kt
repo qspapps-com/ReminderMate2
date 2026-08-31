@@ -2,12 +2,10 @@ package com.qspapps.remindermate.di
 
 import android.content.Context
 import androidx.room.Room
+import com.qspapps.remindermate.data.local.MIGRATION_3_4
 import com.qspapps.remindermate.data.local.ReminderActionDao
 import com.qspapps.remindermate.data.local.ReminderDao
 import com.qspapps.remindermate.data.local.ReminderDatabase
-import com.qspapps.remindermate.data.repository.ReminderRepository
-import com.qspapps.remindermate.notifications.NotificationService
-import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,49 +27,28 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideReminderDatabase(@ApplicationContext context: Context): ReminderDatabase {
-        return Room.databaseBuilder(
+    fun provideReminderDatabase(@ApplicationContext context: Context): ReminderDatabase =
+        Room.databaseBuilder(
             context.applicationContext,
             ReminderDatabase::class.java,
             "reminder_database"
         )
-            .fallbackToDestructiveMigration(true)
+            .addMigrations(MIGRATION_3_4)
+            // Schema versions 1 and 2 predate the destructive fallback being removed, so no
+            // install can still be on them. Everything from v3 on migrates without data loss.
+            .fallbackToDestructiveMigrationFrom(dropAllTables = true, 1, 2)
             .build()
-    }
 
     @Provides
-    fun provideReminderDao(database: ReminderDatabase): ReminderDao {
-        return database.reminderDao()
-    }
+    fun provideReminderDao(database: ReminderDatabase): ReminderDao = database.reminderDao()
 
     @Provides
-    fun provideReminderActionDao(database: ReminderDatabase): ReminderActionDao {
-        return database.reminderActionDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideReminderRepository(reminderDao: ReminderDao, reminderActionDao: ReminderActionDao): ReminderRepository {
-        return ReminderRepository(reminderDao, reminderActionDao)
-    }
-
-    @Provides
-    @Singleton
-    fun provideReminderAlarmScheduler(@ApplicationContext context: Context, reminderRepository: ReminderRepository): ReminderAlarmScheduler {
-        return ReminderAlarmScheduler(context, reminderRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideNotificationService(@ApplicationContext context: Context): NotificationService {
-        return NotificationService(context)
-    }
+    fun provideReminderActionDao(database: ReminderDatabase): ReminderActionDao =
+        database.reminderActionDao()
 
     @ApplicationScope
     @Provides
     @Singleton
-    fun provideApplicationScope(): CoroutineScope {
-        return CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    }
-
+    fun provideApplicationScope(): CoroutineScope =
+        CoroutineScope(SupervisorJob() + Dispatchers.Default)
 }

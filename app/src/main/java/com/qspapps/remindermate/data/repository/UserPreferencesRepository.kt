@@ -55,29 +55,14 @@ class UserPreferencesRepository @Inject constructor(@param:ApplicationContext pr
             if (message != null) message to time else null
         }
     val workerRunHistory: Flow<Map<String, Long>> = context.dataStore.data
-        .map { preferences ->
-            val json = preferences[PreferencesKeys.WORKER_RUN_HISTORY] ?: "{}"
-            try {
-                Json.decodeFromString<Map<String, Long>>(json)
-            } catch (e: Exception) {
-                emptyMap()
-            }
-        }
+        .map { preferences -> decodeWorkerRunHistory(preferences[PreferencesKeys.WORKER_RUN_HISTORY]) }
 
     val defaultReminderTimes: Flow<List<LocalTime>> = context.dataStore.data
         .map { preferences ->
-            val json = preferences[PreferencesKeys.DEFAULT_REMINDER_TIMES]
-            if (json == null) {
-                emptyList()
-            } else {
-                try {
-                    Json.decodeFromString<List<String>>(json).map {
-                        LocalTime.parse(it, timeFormatter)
-                    }
-                } catch (e: Exception) {
-                    emptyList()
-                }
-            }
+            val json = preferences[PreferencesKeys.DEFAULT_REMINDER_TIMES] ?: return@map emptyList()
+            runCatching {
+                Json.decodeFromString<List<String>>(json).map { LocalTime.parse(it, timeFormatter) }
+            }.getOrDefault(emptyList())
         }
     suspend fun setTheme(theme: Theme) {
         context.dataStore.edit { preferences ->
@@ -98,15 +83,9 @@ class UserPreferencesRepository @Inject constructor(@param:ApplicationContext pr
     }
     suspend fun updateWorkerRunTime(workerName: String) {
         context.dataStore.edit { preferences ->
-            val currentJson = preferences[PreferencesKeys.WORKER_RUN_HISTORY] ?: "{}"
-            val currentMap = try {
-                Json.decodeFromString<Map<String, Long>>(currentJson).toMutableMap()
-            } catch (e: Exception) {
-                mutableMapOf()
-            }
-
-            currentMap[workerName] = System.currentTimeMillis()
-            preferences[PreferencesKeys.WORKER_RUN_HISTORY] = Json.encodeToString(currentMap)
+            val history = decodeWorkerRunHistory(preferences[PreferencesKeys.WORKER_RUN_HISTORY])
+            preferences[PreferencesKeys.WORKER_RUN_HISTORY] =
+                Json.encodeToString(history + (workerName to System.currentTimeMillis()))
         }
     }
     suspend fun updateDefaultReminderTimes(times: List<LocalTime>) {
@@ -116,3 +95,11 @@ class UserPreferencesRepository @Inject constructor(@param:ApplicationContext pr
         }
     }
 }
+
+/** Worker name to last-run epoch millis, or an empty map if the stored value is unusable. */
+private fun decodeWorkerRunHistory(json: String?): Map<String, Long> =
+    if (json == null) {
+        emptyMap()
+    } else {
+        runCatching { Json.decodeFromString<Map<String, Long>>(json) }.getOrDefault(emptyMap())
+    }

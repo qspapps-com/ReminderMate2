@@ -4,32 +4,30 @@ import androidx.lifecycle.viewModelScope
 import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.data.repository.UserPreferencesRepository
+import com.qspapps.remindermate.domain.remindersForDay
 import com.qspapps.remindermate.notifications.NotificationService
-import com.qspapps.remindermate.ui.core.ReminderViewModel
 import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
+import com.qspapps.remindermate.ui.core.ReminderViewModel
+import com.qspapps.remindermate.utils.minuteTicker
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
 
 data class HomeUiState(
     val selectedDate: LocalDate = LocalDate.now(),
     val reminders: List<ReminderInstance> = emptyList(),
     val isLoading: Boolean = false,
     val showCompleted: Boolean = true,
-    val defaultTimes: List<LocalTime> = emptyList()
+    val defaultTimes: List<LocalTime> = emptyList(),
+    val currentTime: LocalDateTime = LocalDateTime.now()
 )
 
 @HiltViewModel
@@ -40,46 +38,25 @@ class HomeViewModel @Inject constructor(
     notificationService: NotificationService
 ) : ReminderViewModel(reminderRepository, reminderAlarmScheduler, notificationService) {
 
-    private val _selectedDate = MutableStateFlow(LocalDate.now())
-    private val _showCompleted = MutableStateFlow(true)
-    private val _currentTime = MutableStateFlow(LocalDateTime.now())
-    val currentTime: StateFlow<LocalDateTime> = _currentTime.asStateFlow()
-
-    init {
-        // 1. Launch the long-running live-time update coroutine
-        viewModelScope.launch {
-            while (true) {
-                _currentTime.value = LocalDateTime.now()
-                delay(60_000L.milliseconds) // Delay for a minute
-            }
-        }
-
-        // 2. Launch the one-time preference loading coroutine
-        viewModelScope.launch {
-            _showCompleted.value = !userPreferencesRepository.hideCompleted.first()
-        }
-    }
+    private val selectedDate = MutableStateFlow(LocalDate.now())
 
     val uiState: StateFlow<HomeUiState> = combine(
         reminderRepository.getAllReminders(),
         reminderRepository.getAllActions(),
-        _selectedDate,
-        _showCompleted,
+        selectedDate,
+        userPreferencesRepository.hideCompleted,
         userPreferencesRepository.defaultReminderTimes
-    ) { reminders, actions, date, showCompleted, defaultTimes ->
-        val instances = ReminderInstance.getRemindersForDay(date, reminders, actions)
-        val filteredInstances = if (showCompleted) {
-            instances
-        } else {
-            instances.filter { !it.isCompleted }
-        }
+    ) { reminders, actions, date, hideCompleted, defaultTimes ->
+        val instances = remindersForDay(date, reminders, actions)
         HomeUiState(
             selectedDate = date,
-            reminders = filteredInstances,
+            reminders = if (hideCompleted) instances.filterNot { it.isCompleted } else instances,
             isLoading = false,
-            showCompleted = showCompleted,
-            defaultTimes
+            showCompleted = !hideCompleted,
+            defaultTimes = defaultTimes
         )
+    }.combine(minuteTicker()) { state, now ->
+        state.copy(currentTime = now)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -87,10 +64,13 @@ class HomeViewModel @Inject constructor(
     )
 
     fun loadRemindersForDay(date: LocalDate) {
-        _selectedDate.value = date
+        selectedDate.value = date
     }
 
+    /** Persists the choice, so Home and Settings cannot disagree about it. */
     fun toggleShowCompleted() {
-        _showCompleted.update { !it }
+        viewModelScope.launch {
+            userPreferencesRepository.setHideCompleted(uiState.value.showCompleted)
+        }
     }
 }

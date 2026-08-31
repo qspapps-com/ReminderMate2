@@ -24,11 +24,10 @@ class CleanupWorker @AssistedInject constructor(
     companion object {
         const val WORK_NAME = "CleanupWork"
         const val REPEAT_INTERVAL_DAYS = 7L
+        private const val RETENTION_DAYS = 30L
     }
 
-    override suspend fun executeWork(): Result {
-        val threshold = LocalDateTime.now().minusDays(30)
-        reminderRepository.cleanupOldReminders(threshold)
-        return Result.success()
+    override suspend fun executeWork() {
+        reminderRepository.cleanupOldReminders(LocalDateTime.now().minusDays(RETENTION_DAYS))
     }
 }

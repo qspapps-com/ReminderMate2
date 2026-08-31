@@ -12,21 +12,15 @@ abstract class BaseReminderWorker(
     val workName: String
 ) : CoroutineWorker(context, params) {
 
-    abstract suspend fun executeWork(): Result
+    /** Performs the work. Throwing marks the run as failed and schedules a retry. */
+    protected abstract suspend fun executeWork()
 
-    override suspend fun doWork(): Result {
-        return try {
-            val result = executeWork()
-
-            // Fix: Check for success using equality with the static factory result
-            // since 'Result.Success' is restricted to library groups.
-            if (result == Result.success()) {
-                userPrefs.updateWorkerRunTime(workName)
-            }
-            result
-        } catch (e: Exception) {
-            userPrefs.saveError("$workName Error: ${e.localizedMessage}")
-            Result.retry()
-        }
+    final override suspend fun doWork(): Result = try {
+        executeWork()
+        userPrefs.updateWorkerRunTime(workName)
+        Result.success()
+    } catch (e: Exception) {
+        userPrefs.saveError("$workName Error: ${e.localizedMessage}")
+        Result.retry()
     }
 }

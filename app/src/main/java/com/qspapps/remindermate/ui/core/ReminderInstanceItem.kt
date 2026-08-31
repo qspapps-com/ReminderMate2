@@ -27,8 +27,11 @@ import com.qspapps.remindermate.data.model.ReminderInstance
 import com.qspapps.remindermate.utils.DateTimeUtils
 import com.qspapps.remindermate.utils.DateTimeUtils.formatDateTime
 import com.qspapps.remindermate.utils.DateTimeUtils.formatTime
+import com.qspapps.remindermate.utils.nextAfter
 import java.time.LocalDateTime
 import java.time.LocalTime
+
+private const val QUICK_SNOOZE_MINUTES = 15L
 
 @Composable
 fun ReminderInstanceItem(
@@ -40,31 +43,31 @@ fun ReminderInstanceItem(
 ) {
     var showMenu by remember { mutableStateOf(false) }
     var showCustomSnoozeDialog by remember { mutableStateOf(false) }
-    var showDeleteConfirmation by remember { mutableStateOf<ReminderInstance?>(null) }
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
 
     if (showCustomSnoozeDialog) {
         CustomSnoozeDialogs(
             onDismiss = { showCustomSnoozeDialog = false },
-            onConfirm = { newDateTime ->
-                actions.onSnooze(reminderInstance, newDateTime)
-            }
+            onConfirm = { newDateTime -> actions.onSnooze(reminderInstance, newDateTime) }
         )
     }
 
-    showDeleteConfirmation?.let { reminderToDelete ->
+    if (showDeleteConfirmation) {
         DeleteConfirmationDialog(
-            reminderInstance = reminderToDelete,
-            onDismiss = { showDeleteConfirmation = null },
+            reminderInstance = reminderInstance,
+            onDismiss = { showDeleteConfirmation = false },
             onDeleteInstance = actions.onDeleteInstance,
             onDeleteReminder = actions.onDeleteReminder
         )
     }
 
+    val baseStyle = MaterialTheme.typography.bodyLarge
     val textStyle = if (reminderInstance.isCompleted) {
-        MaterialTheme.typography.bodyLarge.copy(textDecoration = TextDecoration.LineThrough)
+        baseStyle.copy(textDecoration = TextDecoration.LineThrough)
     } else {
-        MaterialTheme.typography.bodyLarge
+        baseStyle
     }
+
     ListItem(
         modifier = Modifier.testTag("reminder_item_${reminderInstance.title}"),
         leadingContent = {
@@ -74,80 +77,40 @@ fun ReminderInstanceItem(
             )
         },
         headlineContent = { Text(reminderInstance.title, style = textStyle) },
-        supportingContent = { getSupportingContent(reminderInstance)?.let { Text(it) } },
+        supportingContent = { supportingText(reminderInstance)?.let { Text(it) } },
         trailingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    if (showDate) formatDateTime(reminderInstance.displayTime, "\n") else formatTime(reminderInstance.displayTime),
-                    color = if (isOverdue) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                    text = if (showDate) {
+                        formatDateTime(reminderInstance.displayTime, "\n")
+                    } else {
+                        formatTime(reminderInstance.displayTime)
+                    },
+                    color = if (isOverdue) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    }
                 )
                 if (!reminderInstance.isCompleted) {
                     Box {
                         IconButton(onClick = { showMenu = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(id = R.string.more_options))
+                            Icon(
+                                Icons.Default.MoreVert,
+                                contentDescription = stringResource(id = R.string.more_options)
+                            )
                         }
                         DropdownMenu(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }
                         ) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(id = R.string.snooze_15_minutes_menu_item)) },
-                                onClick = {
-                                    actions.onSnooze(
-                                        reminderInstance,
-                                        DateTimeUtils.minsFromNow(15)
-                                    )
-                                    showMenu = false
-                                }
-                            )
-                            val now = LocalDateTime.now()
-                            val nextDefaultTime = defaultTimes
-                                .map { now.with(it) }
-                                .filter { it.isAfter(now) && it.isAfter(reminderInstance.displayTime)}
-                                .minByOrNull { it }
-
-                            if (nextDefaultTime != null) {
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(id = R.string.snooze_until_menu_item,
-                                        formatTime(nextDefaultTime))) },
-                                    onClick = {
-                                        actions.onSnooze(reminderInstance, nextDefaultTime)
-                                        showMenu = false
-                                    }
-                                )
-                            } else {
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(id = R.string.snooze_1_day_menu_item)) },
-                                    onClick = {
-                                        actions.onSnooze(
-                                            reminderInstance,
-                                            reminderInstance.displayTime.plusDays(1)
-                                        )
-                                        showMenu = false
-                                    }
-                                )
-                            }
-
-                            DropdownMenuItem(
-                                text = { Text(stringResource(id = R.string.custom_snooze_menu_item)) },
-                                onClick = {
-                                    showMenu = false
-                                    showCustomSnoozeDialog = true
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(id = R.string.update_menu_item)) },
-                                onClick = {
-                                    actions.onUpdate(reminderInstance.reminderId)
-                                    showMenu = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(id = R.string.delete_menu_item)) },
-                                onClick = {
-                                    showDeleteConfirmation = reminderInstance
-                                    showMenu = false
-                                }
+                            InstanceMenuItems(
+                                reminderInstance = reminderInstance,
+                                defaultTimes = defaultTimes,
+                                actions = actions,
+                                onItemClicked = { showMenu = false },
+                                onCustomSnooze = { showCustomSnoozeDialog = true },
+                                onDelete = { showDeleteConfirmation = true }
                             )
                         }
                     }
@@ -157,21 +120,90 @@ fun ReminderInstanceItem(
     )
 }
 
-private fun getSupportingContent(rem: ReminderInstance):String? {
-    val s1 = rem.description
-    val s2 = if (rem.displayTime != rem.originalTime) {
-        val timeLabel = if (rem.displayTime.toLocalDate() == rem.originalTime.toLocalDate()) {
-            formatTime(rem.originalTime)
-        } else {
-            formatDateTime(rem.originalTime, " ")
+@Composable
+private fun InstanceMenuItems(
+    reminderInstance: ReminderInstance,
+    defaultTimes: List<LocalTime>,
+    actions: ReminderActions,
+    onItemClicked: () -> Unit,
+    onCustomSnooze: () -> Unit,
+    onDelete: () -> Unit
+) {
+    DropdownMenuItem(
+        text = { Text(stringResource(id = R.string.snooze_15_minutes_menu_item)) },
+        onClick = {
+            actions.onSnooze(reminderInstance, DateTimeUtils.minsFromNow(QUICK_SNOOZE_MINUTES))
+            onItemClicked()
         }
-        "⏰Zzz (Orig: $timeLabel)"
-    } else null
+    )
 
-    return when {
-        s1 != null && s2 != null -> "$s1\n$s2"
-        s1 != null -> s1 // s2 must be null here
-        s2 != null -> s2 // s1 must be null here
-        else -> null // Both are null
+    val nextDefaultTime = defaultTimes.nextAfter(
+        reference = LocalDateTime.now(),
+        mustBeAfter = reminderInstance.displayTime
+    )
+    // Offer the next configured reminder time, falling back to "tomorrow" when none is left today.
+    if (nextDefaultTime != null) {
+        DropdownMenuItem(
+            text = {
+                Text(
+                    stringResource(
+                        id = R.string.snooze_until_menu_item,
+                        formatTime(nextDefaultTime)
+                    )
+                )
+            },
+            onClick = {
+                actions.onSnooze(reminderInstance, nextDefaultTime)
+                onItemClicked()
+            }
+        )
+    } else {
+        DropdownMenuItem(
+            text = { Text(stringResource(id = R.string.snooze_1_day_menu_item)) },
+            onClick = {
+                actions.onSnooze(reminderInstance, reminderInstance.displayTime.plusDays(1))
+                onItemClicked()
+            }
+        )
     }
+
+    DropdownMenuItem(
+        text = { Text(stringResource(id = R.string.custom_snooze_menu_item)) },
+        onClick = {
+            onItemClicked()
+            onCustomSnooze()
+        }
+    )
+    DropdownMenuItem(
+        text = { Text(stringResource(id = R.string.update_menu_item)) },
+        onClick = {
+            actions.onUpdate(reminderInstance.reminderId)
+            onItemClicked()
+        }
+    )
+    DropdownMenuItem(
+        text = { Text(stringResource(id = R.string.delete_menu_item)) },
+        onClick = {
+            onItemClicked()
+            onDelete()
+        }
+    )
+}
+
+/** Description and, for a snoozed instance, a note about when it was originally due. */
+@Composable
+private fun supportingText(instance: ReminderInstance): String? {
+    val snoozeNote = if (instance.displayTime != instance.originalTime) {
+        val original = if (instance.displayTime.toLocalDate() == instance.originalTime.toLocalDate()) {
+            formatTime(instance.originalTime)
+        } else {
+            formatDateTime(instance.originalTime, " ")
+        }
+        stringResource(id = R.string.snoozed_original_time, original)
+    } else {
+        null
+    }
+    return listOfNotNull(instance.description, snoozeNote)
+        .joinToString("\n")
+        .ifEmpty { null }
 }

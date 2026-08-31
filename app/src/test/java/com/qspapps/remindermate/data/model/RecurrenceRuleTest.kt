@@ -1,118 +1,131 @@
 package com.qspapps.remindermate.data.model
 
-import android.util.Log
-import io.mockk.every
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
-import org.junit.After
+import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
-import org.junit.Before
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import java.time.DayOfWeek
 import java.time.LocalDateTime
 
 class RecurrenceRuleTest {
 
-    @Before
-    fun setUp() {
-        mockkStatic(Log::class)
-        every { Log.e(any(), any(), any()) } returns 0
-    }
-
-    @After
-    fun tearDown() {
-        unmockkStatic(Log::class)
+    @Test
+    fun `json round trip with only mandatory fields`() {
+        assertRoundTrips(RecurrenceRule(Frequency.DAILY, 1))
     }
 
     @Test
-    fun `toString with only mandatory fields`() {
-        val rule = RecurrenceRule(Frequency.DAILY, 1)
-        assertEquals("DAILY;1;;", rule.toString())
+    fun `json round trip with interval and daysOfWeek`() {
+        assertRoundTrips(
+            RecurrenceRule(Frequency.WEEKLY, 2, setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY))
+        )
     }
 
     @Test
-    fun `toString with interval and daysOfWeek`() {
-        val rule = RecurrenceRule(Frequency.WEEKLY, 2, setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY))
-        val expected = "WEEKLY;2;MONDAY,WEDNESDAY;"
-        assertEquals(expected, rule.toString())
+    fun `json round trip with count`() {
+        assertRoundTrips(RecurrenceRule(Frequency.MONTHLY, 1, count = 5))
     }
 
     @Test
-    fun `toString with count`() {
-        val rule = RecurrenceRule(Frequency.MONTHLY, 1, count = 5)
-        assertEquals("MONTHLY;1;;5", rule.toString())
+    fun `json round trip with all fields`() {
+        assertRoundTrips(RecurrenceRule(Frequency.YEARLY, 3, setOf(DayOfWeek.FRIDAY), 10))
     }
 
     @Test
-    fun `toString with all fields`() {
-        val rule = RecurrenceRule(Frequency.YEARLY, 3, setOf(DayOfWeek.FRIDAY), 10)
-        assertEquals("YEARLY;3;FRIDAY;10", rule.toString())
+    fun `rejects non positive interval`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            RecurrenceRule(Frequency.DAILY, interval = 0)
+        }
     }
 
     @Test
-    fun `fromString happy path mandatory fields`() {
+    fun `rejects non positive count`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            RecurrenceRule(Frequency.DAILY, count = 0)
+        }
+    }
+
+    /**
+     * The v3 -> v4 migration decodes the legacy text and re-encodes it as JSON. Both halves have
+     * to agree, or a recurring reminder silently becomes a one-off.
+     */
+    @Test
+    fun `legacy text survives re-encoding as json`() {
+        val legacy = listOf("DAILY;1;;", "WEEKLY;2;MONDAY,WEDNESDAY;", "MONTHLY;1;;5", "YEARLY;3;FRIDAY;10")
+        for (text in legacy) {
+            val decoded = requireNotNull(RecurrenceRule.decodeLegacy(text)) { "did not decode: $text" }
+            assertEquals(decoded, Json.decodeFromString<RecurrenceRule>(Json.encodeToString(decoded)))
+        }
+    }
+
+    private fun assertRoundTrips(rule: RecurrenceRule) {
+        assertEquals(rule, Json.decodeFromString<RecurrenceRule>(Json.encodeToString(rule)))
+    }
+
+    @Test
+    fun `decodeLegacy happy path mandatory fields`() {
         val ruleString = "DAILY;1;;"
         val expected = RecurrenceRule(Frequency.DAILY, 1)
-        assertEquals(expected, RecurrenceRule.fromString(ruleString))
+        assertEquals(expected, RecurrenceRule.decodeLegacy(ruleString))
     }
 
     @Test
-    fun `fromString happy path with daysOfWeek`() {
+    fun `decodeLegacy happy path with daysOfWeek`() {
         val ruleString = "WEEKLY;2;MONDAY,WEDNESDAY;"
         val expected = RecurrenceRule(Frequency.WEEKLY, 2, setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY))
-        assertEquals(expected, RecurrenceRule.fromString(ruleString))
+        assertEquals(expected, RecurrenceRule.decodeLegacy(ruleString))
     }
 
     @Test
-    fun `fromString happy path with count`() {
+    fun `decodeLegacy happy path with count`() {
         val ruleString = "MONTHLY;1;;5"
         val expected = RecurrenceRule(Frequency.MONTHLY, 1, count = 5)
-        assertEquals(expected, RecurrenceRule.fromString(ruleString))
+        assertEquals(expected, RecurrenceRule.decodeLegacy(ruleString))
     }
 
     @Test
-    fun `fromString happy path all fields`() {
+    fun `decodeLegacy happy path all fields`() {
         val ruleString = "YEARLY;3;FRIDAY;10"
         val expected = RecurrenceRule(Frequency.YEARLY, 3, setOf(DayOfWeek.FRIDAY), 10)
-        assertEquals(expected, RecurrenceRule.fromString(ruleString))
+        assertEquals(expected, RecurrenceRule.decodeLegacy(ruleString))
     }
 
     @Test
-    fun `fromString with minimum parts`() {
+    fun `decodeLegacy with minimum parts`() {
         val ruleString = "DAILY;2"
         val expected = RecurrenceRule(Frequency.DAILY, 2)
-        assertEquals(expected, RecurrenceRule.fromString(ruleString))
+        assertEquals(expected, RecurrenceRule.decodeLegacy(ruleString))
     }
 
     @Test
-    fun `fromString returns null for empty string`() {
-        assertNull(RecurrenceRule.fromString(""))
+    fun `decodeLegacy returns null for empty string`() {
+        assertNull(RecurrenceRule.decodeLegacy(""))
     }
 
     @Test
-    fun `fromString returns null for too few parts`() {
-        assertNull(RecurrenceRule.fromString("DAILY"))
+    fun `decodeLegacy returns null for too few parts`() {
+        assertNull(RecurrenceRule.decodeLegacy("DAILY"))
     }
 
     @Test
-    fun `fromString returns null for invalid frequency`() {
-        assertNull(RecurrenceRule.fromString("INVALID;1"))
+    fun `decodeLegacy returns null for invalid frequency`() {
+        assertNull(RecurrenceRule.decodeLegacy("INVALID;1"))
     }
 
     @Test
-    fun `fromString returns null for invalid interval`() {
-        assertNull(RecurrenceRule.fromString("DAILY;abc"))
+    fun `decodeLegacy returns null for invalid interval`() {
+        assertNull(RecurrenceRule.decodeLegacy("DAILY;abc"))
     }
 
     @Test
-    fun `fromString returns null for invalid day of week`() {
-        assertNull(RecurrenceRule.fromString("WEEKLY;1;NOT_A_DAY"))
+    fun `decodeLegacy returns null for invalid day of week`() {
+        assertNull(RecurrenceRule.decodeLegacy("WEEKLY;1;NOT_A_DAY"))
     }
 
     @Test
-    fun `fromString returns null for invalid count`() {
-        assertNull(RecurrenceRule.fromString("DAILY;1;;abc"))
+    fun `decodeLegacy returns null for invalid count`() {
+        assertNull(RecurrenceRule.decodeLegacy("DAILY;1;;abc"))
     }
 
     @Test

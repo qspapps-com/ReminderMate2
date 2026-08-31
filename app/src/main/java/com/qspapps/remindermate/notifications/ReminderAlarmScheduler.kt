@@ -12,7 +12,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDateTime
 import java.time.ZoneId
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ReminderAlarmScheduler @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val reminderRepository: ReminderRepository
@@ -36,57 +38,40 @@ class ReminderAlarmScheduler @Inject constructor(
             action = NotificationService.ACTION_TRIGGER_REMINDER
             putExtra(NotificationService.EXTRA_REMINDER_ID, instance.reminderId)
             putExtra(NotificationService.EXTRA_ORIGINAL_TIME, instance.originalTime)
-            putExtra(NotificationService.EXTRA_TRIGGER_TIME, instance.displayTime) // LocalDateTime is serializable
+            putExtra(NotificationService.EXTRA_TRIGGER_TIME, instance.displayTime)
         }
-
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            instance.reminderId.toInt(),
+            NotificationService.alarmRequestCode(instance.reminderId),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+        val triggerAtMillis =
+            instance.displayTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
-        val triggerAtMillis = instance.displayTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (alarmManager.canScheduleExactAlarms()) {
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    triggerAtMillis,
-                    pendingIntent
-                )
-            } else {
-                alarmManager.setAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    triggerAtMillis,
-                    pendingIntent
-                )
-            }
+        // Exact alarms need a user-granted permission from API 31; fall back to an inexact one.
+        val canScheduleExact = Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+            alarmManager.canScheduleExactAlarms()
+        if (canScheduleExact) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
         } else {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                triggerAtMillis,
-                pendingIntent
-            )
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
         }
     }
 
     fun cancel(reminder: Reminder) {
+        // PendingIntent matching ignores extras, so only the action and request code matter here.
         val intent = Intent(context, NotificationReceiver::class.java).apply {
             action = NotificationService.ACTION_TRIGGER_REMINDER
-            putExtra(NotificationService.EXTRA_REMINDER_ID, reminder.id)
         }
-
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            reminder.id.toInt(),
+            NotificationService.alarmRequestCode(reminder.id),
             intent,
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-        )
+        ) ?: return
 
-        if (pendingIntent != null) {
-            alarmManager.cancel(pendingIntent)
-            pendingIntent.cancel()
-        }
+        alarmManager.cancel(pendingIntent)
+        pendingIntent.cancel()
     }
 }

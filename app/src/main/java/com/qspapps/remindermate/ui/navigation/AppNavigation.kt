@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.qspapps.remindermate.notifications.NotificationService
 import com.qspapps.remindermate.ui.about.AboutScreen
 import com.qspapps.remindermate.ui.addeditreminder.AddEditReminderScreen
 import com.qspapps.remindermate.ui.allreminders.AllRemindersScreen
@@ -15,25 +16,33 @@ import com.qspapps.remindermate.ui.overduereminders.OverdueRemindersScreen
 import com.qspapps.remindermate.ui.settings.SettingsScreen
 
 @Composable
-fun AppNavigation(startScreen: String? = null) {
+fun AppNavigation(
+    startScreen: String? = null,
+    onStartScreenHandled: () -> Unit = {}
+) {
     val navController = rememberNavController()
-    // Handle deep link/intent navigation
+
+    // Deep link from a notification: navigate once, then let the caller clear the request so a
+    // later recomposition or configuration change does not navigate again.
     LaunchedEffect(startScreen) {
-        if (startScreen == "overdue") {
+        if (startScreen == null) return@LaunchedEffect
+        if (startScreen == NotificationService.TARGET_SCREEN_OVERDUE) {
             navController.navigate(AppScreen.OverdueReminders.route) {
                 // Ensure we don't have multiple copies of home on the stack
                 popUpTo(AppScreen.Home.route) { saveState = true }
                 launchSingleTop = true
             }
         }
+        onStartScreenHandled()
     }
+
     NavHost(navController = navController, startDestination = AppScreen.Home.route) {
         composable(AppScreen.Home.route) {
             HomeScreen(navController = navController)
         }
         composable(
             route = AppScreen.AddEditReminder.route,
-            arguments = listOf(navArgument("reminderId") {
+            arguments = listOf(navArgument(ARG_REMINDER_ID) {
                 type = NavType.LongType
                 defaultValue = 0L
             })

@@ -47,7 +47,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.qspapps.remindermate.R
 import com.qspapps.remindermate.data.repository.Theme
-import com.qspapps.remindermate.workers.WorkerStatusUtils
+import com.qspapps.remindermate.utils.DateTimeUtils
+import com.qspapps.remindermate.workers.WorkerStatus
+import com.qspapps.remindermate.workers.workerStatuses
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -59,6 +61,7 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.ui.platform.testTag
 import java.time.LocalTime
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -205,10 +208,8 @@ fun SettingsScreen(
                     title = stringResource(id = R.string.backup_data_setting_title),
                     subtitle = stringResource(id = R.string.backup_data_setting_subtitle),
                     onClick = {
-                        val currentDateTime = LocalDateTime.now()
-                        val formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm")
-                        val formattedDateTime = currentDateTime.format(formatter)
-                        val fileName = "remindermate_${formattedDateTime}.json.gz"
+                        val timestamp = LocalDateTime.now().format(BACKUP_FILE_TIMESTAMP)
+                        val fileName = "remindermate_$timestamp.json.gz"
 
                         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                             addCategory(Intent.CATEGORY_OPENABLE)
@@ -247,7 +248,7 @@ fun SettingsScreen(
                 item(key = time.toString()) {
                     SettingsItem(
                         icon = Icons.Default.AccessTime,
-                        title = time.format(DateTimeFormatter.ofPattern("hh:mm a")),
+                        title = DateTimeUtils.formatTime(time),
                         subtitle = stringResource(id = R.string.remove_default_time_subtitle),
                         onClick = {
                             val newList = uiState.defaultReminderTimes.filter { it != time }
@@ -270,14 +271,15 @@ fun SettingsScreen(
             }
             item {
                 val errorData = uiState.lastError
-                val sevenDaysAgo = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000L)
+                val sevenDaysAgo =
+                    System.currentTimeMillis() - TimeUnit.DAYS.toMillis(ERROR_VISIBLE_DAYS)
 
                 if (errorData != null && errorData.second > sevenDaysAgo) {
                     val (message, timestamp) = errorData
                     val dateString = LocalDateTime.ofInstant(
                         Instant.ofEpochMilli(timestamp),
                         ZoneId.systemDefault()
-                    ).format(DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm:ss"))
+                    ).format(ERROR_TIMESTAMP_FORMAT)
 
                     SettingsItem(
                         icon = Icons.Default.BugReport,
@@ -286,9 +288,9 @@ fun SettingsScreen(
                         onClick = { }
                     )
                 } else {
-                    val statusMessages = WorkerStatusUtils.getWorkerStatusMessages(uiState.workerRunHistory)
+                    val statuses = workerStatuses(uiState.workerRunHistory)
 
-                    if (statusMessages.isEmpty()) {
+                    if (statuses.isEmpty()) {
                         SettingsItem(
                             icon = Icons.Default.CheckCircle,
                             title = stringResource(id = R.string.system_status_title),
@@ -299,7 +301,8 @@ fun SettingsScreen(
                         SettingsItem(
                             icon = Icons.Default.History,
                             title = stringResource(id = R.string.worker_status_title),
-                            subtitle = statusMessages.joinToString("\n"),
+                            // map is inline, so the composable describe() may be called inside it
+                            subtitle = statuses.map { it.describe() }.joinToString("\n"),
                             onClick = { }
                         )
                     }
@@ -307,6 +310,17 @@ fun SettingsScreen(
             }
         }
     }
+}
+
+/** Worker health as a localized line for the debug section. */
+@Composable
+private fun WorkerStatus.describe(): String = when (this) {
+    is WorkerStatus.NeverRun -> stringResource(id = R.string.worker_status_never_run, workName)
+    is WorkerStatus.Overdue -> stringResource(
+        id = R.string.worker_status_interval_exceeded,
+        workName,
+        lastRun.format(WORKER_LAST_RUN_FORMAT)
+    )
 }
 
 @Composable
@@ -414,3 +428,10 @@ private fun Theme.toStringResource(): Int {
         Theme.SYSTEM -> R.string.theme_system
     }
 }
+
+private const val ERROR_VISIBLE_DAYS = 7L
+
+private val BACKUP_FILE_TIMESTAMP: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm")
+private val WORKER_LAST_RUN_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd, HH:mm")
+private val ERROR_TIMESTAMP_FORMAT: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm:ss")

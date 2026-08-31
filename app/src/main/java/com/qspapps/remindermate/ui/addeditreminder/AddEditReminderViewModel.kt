@@ -7,8 +7,10 @@ import com.qspapps.remindermate.data.model.RecurrenceRule
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.repository.ReminderRepository
 import com.qspapps.remindermate.data.repository.UserPreferencesRepository
-import com.qspapps.remindermate.utils.DateTimeUtils
 import com.qspapps.remindermate.notifications.ReminderAlarmScheduler
+import com.qspapps.remindermate.ui.navigation.ARG_REMINDER_ID
+import com.qspapps.remindermate.utils.DateTimeUtils
+import com.qspapps.remindermate.utils.nextAfter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,53 +43,46 @@ class AddEditReminderViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AddEditReminderUiState())
     val uiState = _uiState.asStateFlow()
 
-    private var reminderId: Long? = null
+    /** Null when adding: the route carries 0 for "new reminder". */
+    private val reminderId: Long? =
+        savedStateHandle.get<Long>(ARG_REMINDER_ID)?.takeIf { it != 0L }
 
     init {
-        reminderId = savedStateHandle.get<Long>("reminderId")
         viewModelScope.launch {
-            if (reminderId != null && reminderId != 0L) {
-                loadReminder(reminderId!!)
-            } else {
-                // Logic for New Reminders
-                val defaults = userPreferencesRepository.defaultReminderTimes.first()
-                val now = LocalDateTime.now()
-
-                // Find first default time that is after 'now' today
-                val suggestedDateTime = defaults
-                    .map { now.with(it) }
-                    .filter { it.isAfter(now) }
-                    .minByOrNull { it }
-                    ?: now.plusHours(1) // Fallback if no future default time today
-
-                _uiState.update {
-                    it.copy(
-                        isNewReminder = true,
-                        startDateTime = suggestedDateTime,
-                        defaultTimes = defaults
-                    )
-                }
-            }
+            if (reminderId != null) loadReminder(reminderId) else prefillNewReminder()
         }
     }
 
-    private fun loadReminder(id: Long) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            val reminder = reminderRepository.getReminderById(id)
-            if (reminder != null) {
-                _uiState.update {
-                    it.copy(
-                        title = reminder.title,
-                        description = reminder.description ?: "",
-                        startDateTime = reminder.startDateTime,
-                        recurrence = reminder.recurrence,
-                        isNewReminder = false,
-                        isLoading = false,
-                        showDateTimeError = false
-                    )
-                }
-            }
+    private suspend fun loadReminder(id: Long) {
+        _uiState.update { it.copy(isLoading = true) }
+        val reminder = reminderRepository.getReminderById(id)
+        if (reminder == null) {
+            _uiState.update { it.copy(isLoading = false) }
+            return
+        }
+        _uiState.update {
+            it.copy(
+                title = reminder.title,
+                description = reminder.description ?: "",
+                startDateTime = reminder.startDateTime,
+                recurrence = reminder.recurrence,
+                isNewReminder = false,
+                isLoading = false,
+                showDateTimeError = false
+            )
+        }
+    }
+
+    private suspend fun prefillNewReminder() {
+        val defaults = userPreferencesRepository.defaultReminderTimes.first()
+        val now = LocalDateTime.now()
+        _uiState.update {
+            it.copy(
+                isNewReminder = true,
+                // The next configured reminder time today, or an hour from now if none is left.
+                startDateTime = defaults.nextAfter(now) ?: now.plusHours(1),
+                defaultTimes = defaults
+            )
         }
     }
 

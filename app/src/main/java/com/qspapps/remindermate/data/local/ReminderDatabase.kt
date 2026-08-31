@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import com.qspapps.remindermate.data.model.Reminder
 import com.qspapps.remindermate.data.model.ReminderAction
 
-@Database(entities = [Reminder::class, ReminderAction::class], version = 3, exportSchema = false)
+@Database(entities = [Reminder::class, ReminderAction::class], version = 4, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class ReminderDatabase : RoomDatabase() {
 
