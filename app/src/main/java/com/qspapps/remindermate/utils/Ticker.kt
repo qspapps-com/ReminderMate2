@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.flow
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Emits the current time immediately and then on every minute boundary, so anything derived from
@@ -17,6 +18,6 @@ fun minuteTicker(): Flow<LocalDateTime> = flow {
         val now = LocalDateTime.now()
         emit(now)
         val nextMinute = now.truncatedTo(ChronoUnit.MINUTES).plusMinutes(1)
-        delay(Duration.between(now, nextMinute).toMillis())
+        delay(Duration.between(now, nextMinute).toMillis().milliseconds)
     }
 }

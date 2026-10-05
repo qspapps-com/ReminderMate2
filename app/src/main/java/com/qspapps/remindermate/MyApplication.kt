@@ -20,6 +20,7 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltAndroidApp
 class MyApplication : Application(), Configuration.Provider {
@@ -48,7 +49,7 @@ class MyApplication : Application(), Configuration.Provider {
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             runBlocking {
-                withTimeoutOrNull(CRASH_SAVE_TIMEOUT_MS) {
+                withTimeoutOrNull(CRASH_SAVE_TIMEOUT_MS.milliseconds) {
                     userPrefs.saveError("App Crash: ${throwable.localizedMessage}")
                 }
             }
