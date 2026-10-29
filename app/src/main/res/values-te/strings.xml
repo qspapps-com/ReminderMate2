@@ -148,4 +148,9 @@
     <string name="system_status_title">సిస్టమ్ స్థితి</string>
     <string name="system_status_subtitle_healthy">కార్మికులందరూ ఆరోగ్యంగా ఉన్నారు మరియు వ్యవధిలో నడుస్తున్నారు.</string>
     <string name="worker_status_title">వర్కర్ స్థితి</string>
+    <string name="notification_channel_name">రిమైండర్‌లు</string>
+    <string name="notification_channel_description">రిమైండర్ నోటిఫికేషన్ల కోసం ఛానెల్</string>
+    <string name="snoozed_original_time">\u23f0Zzz (అసలు: %1$s)</string>
+    <string name="worker_status_never_run">%1$s: ఎప్పుడూ అమలు కాలేదు</string>
+    <string name="worker_status_interval_exceeded">%1$s: చివరిగా అమలైంది %2$s (విరామం మించిపోయింది)</string>
 </resources>

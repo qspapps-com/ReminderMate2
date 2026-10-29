@@ -148,4 +148,9 @@
     <string name="system_status_title">সিস্টেমের অবস্থা</string>
     <string name="system_status_subtitle_healthy">সমস্ত কর্মী সুস্থ এবং বিরতির মধ্যে চলছে।</string>
     <string name="worker_status_title">কর্মীর অবস্থা</string>
+    <string name="notification_channel_name">অনুস্মারক</string>
+    <string name="notification_channel_description">অনুস্মারক বিজ্ঞপ্তির চ্যানেল</string>
+    <string name="snoozed_original_time">\u23f0Zzz (মূল: %1$s)</string>
+    <string name="worker_status_never_run">%1$s: কখনও চালানো হয়নি</string>
+    <string name="worker_status_interval_exceeded">%1$s: সর্বশেষ চালানো %2$s (ব্যবধান অতিক্রম করেছে)</string>
 </resources>

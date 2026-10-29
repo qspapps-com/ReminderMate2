@@ -148,4 +148,9 @@
     <string name="system_status_title">સિસ્ટમ સ્થિતિ</string>
     <string name="system_status_subtitle_healthy">બધા કામદારો સ્વસ્થ છે અને અંતરાલમાં દોડે છે.</string>
     <string name="worker_status_title">કાર્યકર સ્થિતિ</string>
+    <string name="notification_channel_name">રીમાઇન્ડર્સ</string>
+    <string name="notification_channel_description">રીમાઇન્ડર સૂચનાઓ માટેની ચેનલ</string>
+    <string name="snoozed_original_time">\u23f0Zzz (મૂળ: %1$s)</string>
+    <string name="worker_status_never_run">%1$s: ક્યારેય ચલાવ્યું નથી</string>
+    <string name="worker_status_interval_exceeded">%1$s: છેલ્લે ચલાવ્યું %2$s (અંતરાલ વટાવી ગયો)</string>
 </resources>

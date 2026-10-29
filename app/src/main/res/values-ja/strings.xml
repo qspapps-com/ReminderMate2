@@ -141,4 +141,9 @@
     <string name="system_status_title">システムステータス</string>
     <string name="system_status_subtitle_healthy">すべての作業員は健康で、間隔内で稼働しています。</string>
     <string name="worker_status_title">労働者のステータス</string>
+    <string name="notification_channel_name">リマインダー</string>
+    <string name="notification_channel_description">リマインダー通知用チャンネル</string>
+    <string name="snoozed_original_time">\u23f0Zzz (元: %1$s)</string>
+    <string name="worker_status_never_run">%1$s: 未実行</string>
+    <string name="worker_status_interval_exceeded">%1$s: 最終実行 %2$s (間隔超過)</string>
 </resources>

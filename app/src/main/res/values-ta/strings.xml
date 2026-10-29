@@ -148,4 +148,9 @@
     <string name="system_status_title">கணினி நிலை</string>
     <string name="system_status_subtitle_healthy">அனைத்து தொழிலாளர்களும் ஆரோக்கியமாக உள்ளனர் மற்றும் இடைவெளியில் இயங்குகிறார்கள்.</string>
     <string name="worker_status_title">தொழிலாளர் நிலை</string>
+    <string name="notification_channel_name">நினைவூட்டல்கள்</string>
+    <string name="notification_channel_description">நினைவூட்டல் அறிவிப்புகளுக்கான சேனல்</string>
+    <string name="snoozed_original_time">\u23f0Zzz (அசல்: %1$s)</string>
+    <string name="worker_status_never_run">%1$s: ஒருபோதும் இயக்கப்படவில்லை</string>
+    <string name="worker_status_interval_exceeded">%1$s: கடைசியாக இயக்கப்பட்டது %2$s (இடைவெளி மீறப்பட்டது)</string>
 </resources>

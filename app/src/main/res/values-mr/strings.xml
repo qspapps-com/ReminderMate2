@@ -148,4 +148,9 @@
     <string name="system_status_title">सिस्टम स्थिती</string>
     <string name="system_status_subtitle_healthy">सर्व कामगार निरोगी आणि अंतराने धावत आहेत.</string>
     <string name="worker_status_title">कामगार स्थिती</string>
+    <string name="notification_channel_name">स्मरणपत्रे</string>
+    <string name="notification_channel_description">स्मरणपत्र सूचनांसाठी चॅनल</string>
+    <string name="snoozed_original_time">\u23f0Zzz (मूळ: %1$s)</string>
+    <string name="worker_status_never_run">%1$s: कधीही चालले नाही</string>
+    <string name="worker_status_interval_exceeded">%1$s: शेवटचे चालले %2$s (अंतर ओलांडले)</string>
 </resources>

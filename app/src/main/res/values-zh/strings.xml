@@ -141,4 +141,9 @@
     <string name="system_status_title">系统状态</string>
     <string name="system_status_subtitle_healthy">所有工人都身体健康，并且按时跑步。</string>
     <string name="worker_status_title">工人身份</string>
+    <string name="notification_channel_name">提醒事项</string>
+    <string name="notification_channel_description">提醒通知渠道</string>
+    <string name="snoozed_original_time">\u23f0Zzz (原定: %1$s)</string>
+    <string name="worker_status_never_run">%1$s:从未运行</string>
+    <string name="worker_status_interval_exceeded">%1$s:上次运行 %2$s(超出间隔)</string>
 </resources>

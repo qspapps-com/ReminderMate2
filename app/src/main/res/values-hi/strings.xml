@@ -148,4 +148,9 @@
     <string name="system_status_title">सिस्टम स्थिति</string>
     <string name="system_status_subtitle_healthy">सभी कर्मचारी स्वस्थ हैं और नियमित अंतराल पर काम कर रहे हैं।</string>
     <string name="worker_status_title">श्रमिक स्थिति</string>
+    <string name="notification_channel_name">अनुस्मारक</string>
+    <string name="notification_channel_description">अनुस्मारक सूचनाओं के लिए चैनल</string>
+    <string name="snoozed_original_time">\u23f0Zzz (मूल: %1$s)</string>
+    <string name="worker_status_never_run">%1$s: कभी नहीं चला</string>
+    <string name="worker_status_interval_exceeded">%1$s: अंतिम बार चला %2$s (अंतराल पार हो गया)</string>
 </resources>

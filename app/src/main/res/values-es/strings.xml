@@ -148,4 +148,9 @@
     <string name="system_status_title">Estado del sistema</string>
     <string name="system_status_subtitle_healthy">Todos los trabajadores sanos y funcionando dentro de intervalos.</string>
     <string name="worker_status_title">Estado del trabajador</string>
+    <string name="notification_channel_name">Recordatorios</string>
+    <string name="notification_channel_description">Canal para notificaciones de recordatorios</string>
+    <string name="snoozed_original_time">\u23f0Zzz (Orig.: %1$s)</string>
+    <string name="worker_status_never_run">%1$s: Nunca ejecutado</string>
+    <string name="worker_status_interval_exceeded">%1$s: Última ejecución %2$s (intervalo excedido)</string>
 </resources>

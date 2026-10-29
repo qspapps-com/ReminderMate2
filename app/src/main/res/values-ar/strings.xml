@@ -176,4 +176,9 @@
     <string name="system_status_title">حالة النظام</string>
     <string name="system_status_subtitle_healthy">جميع العاملين يتمتعون بصحة جيدة ويعملون ضمن فترات زمنية.</string>
     <string name="worker_status_title">حالة العامل</string>
+    <string name="notification_channel_name">تذكيرات</string>
+    <string name="notification_channel_description">قناة إشعارات التذكير</string>
+    <string name="snoozed_original_time">\u23f0Zzz (الأصلي: %1$s)</string>
+    <string name="worker_status_never_run">%1$s: لم يتم التشغيل مطلقًا</string>
+    <string name="worker_status_interval_exceeded">%1$s: آخر تشغيل %2$s (تم تجاوز الفاصل الزمني)</string>
 </resources>

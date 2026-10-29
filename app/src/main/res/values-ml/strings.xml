@@ -148,4 +148,9 @@
     <string name="system_status_title">സിസ്റ്റം സ്റ്റാറ്റസ്</string>
     <string name="system_status_subtitle_healthy">എല്ലാ തൊഴിലാളികളും ആരോഗ്യമുള്ളവരും ഇടവേളകളിൽ പ്രവർത്തിക്കുന്നു.</string>
     <string name="worker_status_title">തൊഴിലാളി നില</string>
+    <string name="notification_channel_name">ഓർമ്മപ്പെടുത്തലുകൾ</string>
+    <string name="notification_channel_description">ഓർമ്മപ്പെടുത്തൽ അറിയിപ്പുകൾക്കുള്ള ചാനൽ</string>
+    <string name="snoozed_original_time">\u23f0Zzz (യഥാർത്ഥം: %1$s)</string>
+    <string name="worker_status_never_run">%1$s: ഒരിക്കലും പ്രവർത്തിച്ചിട്ടില്ല</string>
+    <string name="worker_status_interval_exceeded">%1$s: അവസാനം പ്രവർത്തിച്ചത് %2$s (ഇടവേള കവിഞ്ഞു)</string>
 </resources>

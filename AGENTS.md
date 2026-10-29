@@ -1,4 +1,4 @@
-# AGENT.md: AI Coding Assistant Guide for ReminderMate
+# AGENTS.md: AI Coding Assistant Guide for ReminderMate
 
 This document provides the necessary context for an AI assistant to understand and contribute to this project effectively. It outlines the technology stack, project architecture, coding conventions, and key commands.
 
@@ -47,7 +47,7 @@ This project is a native Android application written in Kotlin, using the Jetpac
 *   **Testing:**
     *   `JUnit 4`: For unit testing models, ViewModels and Repositories.
     *   `MockK` : MockK for creating mocks in unit tests.
-    *   `Turbine`: For testing Kotlin Flow emissions.
+    *   `Turbine`: For testing Kotlin Flow emissions. Currently only on the `androidTest` classpath; add it to `testImplementation` before using it in a unit test.
     *   `Compose Test Suite`: For UI and integration testing of composable functions.
 
 ## 3. Project Structure & Architecture
@@ -101,6 +101,7 @@ com.qspapps.remindermate/
 *   **Immutability:** Prefer `val` over `var` and use immutable data structures (e.g., `List` instead of `MutableList`) for UI state to ensure unidirectional data flow.
 *   **Coroutines:** Use structured concurrency. Launch coroutines from `viewModelScope`. Use `Dispatchers.IO` for network/database operations and `Dispatchers.Default` for CPU-intensive work.
 *   Use DateTimeUtils for most of the date and time related functionality.
+*   **Localization:** No hardcoded UI text. Every string goes in `res/values/strings.xml` and in all 14 locale folders (`ar bn de es fr gu hi ja kn ml mr ta te zh`) with identical keys and placeholders. See the `add-strings` skill in `.claude/skills/`.
 
 ## 5. Setup & Build Instructions
 
@@ -108,7 +109,7 @@ This project uses the Gradle wrapper to ensure a consistent build environment.
 
 **Prerequisites:**
 *   Android Studio [e.g., Hedgehog or newer]
-*   JDK 17 or higher
+*   JDK 21 (the Gradle build uses `jvmToolchain(21)`)
 
 **Setup:**
 1.  Clone the repository: `git clone git@github.com:qspapps-com/ReminderMate2.git`
@@ -150,5 +151,5 @@ Follow these steps to add a new feature, for example, a "Settings" screen:
 2.  **Create ViewModel:** Create `SettingsViewModel.kt` inside `ui.settings`. Annotate it with `@HiltViewModel` and define its `SettingsUiState`.
 3.  **Create Screen:** Create `SettingsScreen.kt`. Define the composable `SettingsScreen()` that takes the `SettingsViewModel` as a parameter (using `hiltViewModel()`).
 4.  **Update Navigation:** Add a new route for the settings screen in your navigation graph file (e.g., `ui/navigation/AppNavigation.kt`).
-5.  **Data Layer (if needed):** If the feature requires new data, add new functions to the relevant `Repository` and create any necessary `DAO` or network API endpoints.
+5.  **Data Layer (if needed):** If the feature requires new data, add new functions to the relevant `Repository` and create any necessary `DAO`. Schema changes follow the `room-migration` skill in `.claude/skills/`.
 6.  **Dependency Injection (if needed):** If you create new repositories or data sources, provide them in a Hilt module.

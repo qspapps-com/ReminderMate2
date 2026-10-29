@@ -148,4 +148,9 @@
     <string name="system_status_title">ಸಿಸ್ಟಮ್ ಸ್ಥಿತಿ</string>
     <string name="system_status_subtitle_healthy">ಎಲ್ಲಾ ಕೆಲಸಗಾರರು ಆರೋಗ್ಯವಾಗಿದ್ದಾರೆ ಮತ್ತು ಮಧ್ಯಂತರದಲ್ಲಿ ಓಡುತ್ತಿದ್ದಾರೆ.</string>
     <string name="worker_status_title">ಕಾರ್ಮಿಕರ ಸ್ಥಿತಿ</string>
+    <string name="notification_channel_name">ಜ್ಞಾಪನೆಗಳು</string>
+    <string name="notification_channel_description">ಜ್ಞಾಪನೆ ಅಧಿಸೂಚನೆಗಳ ಚಾನಲ್</string>
+    <string name="snoozed_original_time">\u23f0Zzz (ಮೂಲ: %1$s)</string>
+    <string name="worker_status_never_run">%1$s: ಎಂದಿಗೂ ಚಲಾಯಿಸಿಲ್ಲ</string>
+    <string name="worker_status_interval_exceeded">%1$s: ಕೊನೆಯ ಬಾರಿ ಚಲಾಯಿಸಿದ್ದು %2$s (ಅಂತರ ಮೀರಿದೆ)</string>
 </resources>

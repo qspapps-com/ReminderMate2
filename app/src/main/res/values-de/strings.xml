@@ -148,4 +148,9 @@
     <string name="system_status_title">Systemstatus</string>
     <string name="system_status_subtitle_healthy">Alle Arbeiter sind gesund und laufen innerhalb der Intervalle.</string>
     <string name="worker_status_title">Arbeiterstatus</string>
+    <string name="notification_channel_name">Erinnerungen</string>
+    <string name="notification_channel_description">Kanal für Erinnerungsbenachrichtigungen</string>
+    <string name="snoozed_original_time">\u23f0Zzz (Orig.: %1$s)</string>
+    <string name="worker_status_never_run">%1$s: Nie ausgeführt</string>
+    <string name="worker_status_interval_exceeded">%1$s: Zuletzt ausgeführt %2$s (Intervall überschritten)</string>
 </resources>
