@@ -1,0 +1,2 @@
+Builds are now reproducible, so F-Droid can verify the APK we publish.
+No changes to app features.
