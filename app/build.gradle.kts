@@ -51,6 +51,13 @@ android {
         includeInApk = false
         includeInBundle = false
     }
+    packaging {
+        jniLibs {
+            // Reproducible builds (F-Droid): AGP strips native libs only when an NDK is installed,
+            // so the output would depend on the build machine. Never strip this prebuilt lib.
+            keepDebugSymbols += "**/libdatastore_shared_counter.so"
+        }
+    }
 }
 
 // Room needs a schema directory to export to; the JSON files are committed so that migrations

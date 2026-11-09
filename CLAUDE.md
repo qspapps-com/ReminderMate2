@@ -87,4 +87,5 @@ F-Droid uses reproducible builds (`Binaries` + `AllowedAPKSigningKeys` in fdroid
 tagged commit and must match our APK byte for byte. So build releases only with
 `scripts/build_release.sh <version>` (clean worktree of `release/<version>`, command-line signing),
 never Android Studio's "Generate Signed APK" (adds a source stamp). Attach the APK to the GitHub
-Release for tag `release/<version>` as `remindermate2-<version>.apk`.
+Release for tag `release/<version>` as `remindermate2-<version>.apk`. Full steps and the Docker pre-submission
+checks (`scripts/fdroid_check.sh`): [docs/fdroid-submission.md](docs/fdroid-submission.md).

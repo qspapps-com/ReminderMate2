@@ -44,9 +44,14 @@ if [[ -z "${KEY_PASSWORD:-}" ]]; then read -rsp "Key password (enter = same as k
 KEY_PASSWORD="${KEY_PASSWORD:-$KEYSTORE_PASSWORD}"
 
 # Build from a pristine checkout of the tag, never from the working tree.
-WORKTREE="$(mktemp -d)/remindermate-$VERSION"
-trap 'git -C "$ROOT" worktree remove --force "$WORKTREE" >/dev/null 2>&1 || true' EXIT
-git -C "$ROOT" worktree add --detach "$WORKTREE" "$TAG" >/dev/null
+# A real clone, not `git worktree`: in a worktree .git is a file that AGP can't read, so it would
+# write NO_VALID_GIT_FOUND into META-INF/version-control-info.textproto, while F-Droid's clone
+# records the commit hash, and the APKs would differ.
+TMP="$(mktemp -d)"
+WORKTREE="$TMP/remindermate-$VERSION"
+trap 'rm -rf "$TMP"' EXIT
+git clone -q --no-hardlinks "$ROOT" "$WORKTREE"
+git -C "$WORKTREE" checkout -q --detach "$TAG"
 cp "$ROOT/local.properties" "$WORKTREE/" 2>/dev/null || true
 echo "Building $TAG ($(git -C "$WORKTREE" rev-parse HEAD))"
 
