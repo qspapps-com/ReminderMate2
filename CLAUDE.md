@@ -82,3 +82,9 @@ both paths exist.
 
 Version is `versionCode`/`versionName` in `app/build.gradle.kts` (bump both). Store listing lives in
 `fastlane/`; built APKs are committed under `releases/download/<version>/`.
+
+F-Droid uses reproducible builds (`Binaries` + `AllowedAPKSigningKeys` in fdroiddata): it rebuilds the
+tagged commit and must match our APK byte for byte. So build releases only with
+`scripts/build_release.sh <version>` (clean worktree of `release/<version>`, command-line signing),
+never Android Studio's "Generate Signed APK" (adds a source stamp). Attach the APK to the GitHub
+Release for tag `release/<version>` as `remindermate2-<version>.apk`.
