@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -157,9 +158,20 @@ fun HomeScreen(
             if (uiState.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                val listState = rememberLazyListState()
+                val reminders = uiState.reminders
+                // LazyColumn keeps the first visible item in place by key, so snoozing the top
+                // reminder (which moves it down the timeline) would drag the viewport with it.
+                // Keep the current index and offset instead whenever the list contents change.
+                remember(reminders) {
+                    listState.requestScrollToItem(
+                        listState.firstVisibleItemIndex,
+                        listState.firstVisibleItemScrollOffset
+                    )
+                }
+                LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
                     items(
-                        items = uiState.reminders,
+                        items = reminders,
                         key = { it.reminderId to it.originalTime }
                     ) { reminderInstance ->
                         ReminderInstanceItem(
